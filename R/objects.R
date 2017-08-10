@@ -1,3 +1,23 @@
+#' Construct cmicroRNA object
+#'
+#' Constructs an S3 object called cmicroRNA contains data returned by calling \link{get_mir}. Used to define
+#' methods for printing and visualizing microRNA-gene expression correlations.
+#'
+#' @param dat_mir A \code{data.frame} such as this returned by calling \link{get_mir}.
+#'
+#' @return An S3 object of class \code{cmicroRNA}
+#' @examples
+#' \dontrun{
+#' # get data for 2 microRNAs in the ACC study
+#' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#'  study = c('ACC', 'BLCA'),
+#'  min_cor = .5)
+#'
+#' # convert to cmicroRNA object
+#' ob <- cmicroRNA(dat)
+#' }
+#' @import dplyr reshape2
+#' @export
 cmicroRNA <- function(dat_mir){
   microRNA <- unique(dat_mir$mirna_base)
   features <- unique(dat_mir$feature)
@@ -23,6 +43,26 @@ cmicroRNA <- function(dat_mir){
   class = 'cmicroRNA')
 }
 
+#' Construct cTF object
+#'
+#' Constructs an S3 object called cTF contains data returned by calling \link{get_tf}. Used to define
+#' methods for printing and visualizing transcription factors-gene expression correlations.
+#'
+#' @param dat_tf A \code{data.frame} such as this returned by calling \link{get_tf}.
+#'
+#' @return An S3 object of class \code{cTF}
+#' @examples
+#' \dontrun{
+#' # get data for 2 microRNAs in the ACC study
+#' dat <- get_tf(c('AFF4', 'ESR1'),
+#'  study = c('ACC', 'BLCA'),
+#'  min_cor = .5)
+#'
+#' # convert to cTF object
+#' ob <- cTF(dat)
+#' }
+#' @import dplyr reshape2
+#' @export
 cTF <- function(dat_tf){
   TF <- unique(dat_tf$tf)
   features <- unique(dat_tf$feature)

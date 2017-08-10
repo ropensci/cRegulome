@@ -1,9 +1,32 @@
+#' Get cRegulome.db file
+#'
+#' This function calls \code{\link[utils]{download.file}} to download the pre-build database file of cRegulome.
+#' Additionally, the function checks the validity of the pre-defined URL and whether the database file exists
+#' in the current working directory to avoid redownloading it. Typically, users would run this function once
+#' at the first time the use the package or to update the database to the latest version.
+#'
+#' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
+#'
+#' @return Downloads a compressed \code{sqlite} file to the current working directory. The file is named
+#'    \code{cRegulome.db.gz} by default and it's not advised to change the name to avoid breaking the other
+#'    functions that calls the database.
+#' @examples
+#' \dontrun{
+#' # downlaod db file
+#' get_db()
+#'
+#' # check it exits in the current working directory
+#' # should return TRUE
+#' file.exits('./cRegulome.db.gz')
+#' }
+#' @import RCurl RSQLite
+#' @export
 get_db <- function(...) {
   # db file url
   url <- 'https://www.dropbox.com/s/unaj94rnk0n4fl5/cRegulome.db.gz?raw=1'
 
   # check url exists
-  if(!RCurl::url.exists(url)) {
+  if(!url.exists(url)) {
     stop("URL doesn't exist.")
   }
 
@@ -19,6 +42,38 @@ get_db <- function(...) {
   }
 }
 
+#' Get microRNA correlations from cRegulome.db
+#'
+#' This function access the \code{sqlite} database file which is obtained by running \link{get_db}.
+#' The function returns an error if the uncompressd database file \code{cRegulome.db} is not in the working
+#' directory. Basically, the function provides fileters to subset the large tables to the items of interest.
+#'
+#' @param mir A required \code{character} vector of the microRNAs of interest. These are the miRBase ID which are
+#'        the official identifiers of the widely used miRBase database, \url{http://www.mirbase.org/}.
+#' @param study A \code{character} vector of The Cancer Genome Atlase (TCGA) study identifiers. To view
+#'        the available studies in TCGA project, \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}.
+#'        When left to defult \code{NULL} all available studies will be included.
+#' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0 and 1 for each \code{mir}.
+#' @param max_num An \code{integer}, maximum number of \code{features} to show for each \code{mir} in each \code{study}.
+#' @param targets_only A \code{logical}, default \code{FALSE}. When \code{TRUE}, \code{features} will be
+#'        the microRNA targets as defined in the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}
+#'
+#' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the microRNA miRBase IDs, \code{feature} is
+#'         the features/genes, \code{cor} is the corresponding expression correaltions and \code{study} is TCGA study ID.
+#' @examples
+#' \dontrun{
+#' # provide only required argument
+#' get_mir('hsa-let-7b')
+#'
+#' # optional arguments
+#' get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#'  study = c('ACC', 'BLCA'),
+#'  min_cor = .5,
+#'  max_num = 100,
+#'  targets_only = TRUE)
+#' }
+#' @import DBI RSQLite dplyr tidyr
+#' @export
 get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_only = FALSE) {
   # check db file exist in the current directory
   if(!file.exists('cRegulome.db')){
@@ -26,8 +81,8 @@ get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_o
   }
 
   # connect to db
-  db <- DBI::dbConnect(RSQLite::SQLite(),
-                       'cRegulome.db')
+  db <- dbConnect(SQLite(),
+                  'cRegulome.db')
 
   # unpack filters and check types
   table <- 'cor_mir'
@@ -41,7 +96,7 @@ get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_o
   }
 
   if(is.null(study)) {
-    study <- DBI::dbListFields(db, table)[-1:-2]
+    study <- dbListFields(db, table)[-1:-2]
   } else if(!is.character(study)){
     stop("Study should be a character vector")
   } else {
@@ -63,7 +118,7 @@ get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_o
     select(mirna_base, feature, study) %>%
     filter(mirna_base %in% mir) %>%
     collect %>%
-    tidyr::gather(study, cor, -mirna_base, -feature) %>%
+    gather(study, cor, -mirna_base, -feature) %>%
     mutate(cor = cor/100) %>%
     filter(abs(cor) > min_cor) %>%
     arrange(desc(abs(cor))) %>%
@@ -93,10 +148,42 @@ get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_o
   }
 
   # disconnect and return dat
-  DBI::dbDisconnect(db)
+  dbDisconnect(db)
   return(dat)
 }
 
+#' Get transcription factor correlations from cRegulome.db
+#'
+#' This function access the \code{sqlite} database file which is obtained by running \link{get_db}.
+#' The function returns an error if the uncompressd database file \code{cRegulome.db} is not in the working
+#' directory. Basically, the function provides fileters to subset the large tables to the items of interest.
+#'
+#' @param tf A required \code{character} vector of the transcription factor of interest. These are the official
+#'        gene symbols of the genes contains the transcription factor.
+#' @inheritParams get_mir
+#' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0 and 1 for each \code{tf}.
+#' @param max_num An \code{integer}, maximum number of \code{features} to show for each \code{tf} in each \code{study}.
+#' @param targets_only A \code{logical}, default \code{FALSE}. When \code{TRUE}, \code{features} will be
+#'        the targets of the transcription factors as identified in the Cistrome Cancer,
+#'         \url{http://cistrome.org/CistromeCancer/}
+#'
+#' @return A tidy \code{data.frame} of four columns. \code{tf} is the officialgene symbols of the genes contains
+#'         the transcription factor, \code{feature} is the features/genes, \code{cor} is the corresponding expression correaltions
+#'          and \code{study} is TCGA study ID.
+#' @examples
+#' \dontrun{
+#' # provide only required argument
+#' get_tf('AFF4')
+#'
+#' # optional arguments
+#' get_mir <- function(c('AFF4', 'ESR1'),
+#'  study = c('ACC', 'BLCA'),
+#'  min_cor = .5,
+#'  max_num = 100,
+#'  targets_only = TRUE)
+#' }
+#' @import DBI RSQLite dplyr tidyr
+#' @export
 get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_only = FALSE) {
   # check db file exist in the current directory
   if(!file.exists('cRegulome.db')){
@@ -104,8 +191,8 @@ get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_onl
   }
 
   # connect to db
-  db <- DBI::dbConnect(RSQLite::SQLite(),
-                       'cRegulome.db')
+  db <- dbConnect(SQLite(),
+                 'cRegulome.db')
 
   # unpack filters and check types
   table <- 'cor_tf'
@@ -119,7 +206,7 @@ get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_onl
   }
 
   if(is.null(study)) {
-    studies <- DBI::dbListFields(db, table)[-1:-2]
+    studies <- dbListFields(db, table)[-1:-2]
   } else if(!is.character(study)){
     stop("Study should be a character vector")
   } else {
@@ -141,7 +228,7 @@ get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_onl
     select(tf, feature, study) %>%
     filter(tf %in% tf_id) %>%
     collect %>%
-    tidyr::gather(study, cor, -tf, -feature) %>%
+    gather(study, cor, -tf, -feature) %>%
     mutate(cor = cor/100) %>%
     filter(abs(cor) > min_cor) %>%
     arrange(desc(abs(cor))) %>%
@@ -171,8 +258,6 @@ get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_onl
   }
 
   # disconnect and return dat
-  DBI::dbDisconnect(db)
+  dbDisconnect(db)
   return(dat)
 }
-
-
