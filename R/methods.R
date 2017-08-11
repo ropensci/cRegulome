@@ -2,25 +2,18 @@
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.
 #' @param ... Other argument to \code{\link[base]{print}}.
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5)
 #'
-#' # convert to cmicroRNA object and plot
+#' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
 #' print(ob)
 #'
-#' #' # get data for 2 transcription factors in the ACC study
-#' dat <- get_tf(c('AFF4', 'ESR1'),
-#'  study = c('ACC', 'BLCA'),
-#'  min_cor = .5)
-#'
-#' # convert to cTF object and plot
-#' ob <- cTF(dat)
-#' print(ob)
-#' }
 #' @export
 print <- function(ob, ...) {
   UseMethod('print')
@@ -65,16 +58,18 @@ print.cTF <- function(ob, ...) {
 #'
 #' @return A \code{ggplot} object of dot plot.
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5)
 #'
-#' # convert to cmicroRNA object and plot
+#' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
 #' plot(ob, study = 'ACC')
-#' }
+#'
 #' @import dplyr tidyr ggplot2
 #' @export
 plot <- function(ob, study = NULL, ...) {
@@ -134,16 +129,19 @@ plot.cTF <- function(ob, study = NULL, ...) {
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the microRNA miRBase IDs, \code{feature} is
 #'         the features/genes, \code{cor} is the corresponding expression correaltions and \code{study} is TCGA study ID.
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5)
 #'
-#' # convert to cmicroRNA object and back
+#' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' tidy(ob)
-#' }
+#' tidy(ob) %>%
+#'    head
+#'
 #' @import dplyr tidyr
 #' @export
 tidy.cmicroRNA <- function(ob) {
@@ -172,7 +170,9 @@ tidy.cmicroRNA <- function(ob) {
 #'         factor, \code{feature} is the features/genes, \code{cor} is the corresponding expression correaltions and \code{study}
 #'          is TCGA study ID.
 #' @examples
-#' \dontrun{
+#' # get db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 transcription factors in the ACC study
 #' dat <- get_tf(c('AFF4', 'ESR1'),
 #'  study = c('ACC', 'BLCA'),
@@ -180,8 +180,9 @@ tidy.cmicroRNA <- function(ob) {
 #'
 #' # convert to cTF object and plot
 #' ob <- cTF(dat)
-#' tidy(ob)
-#' }
+#' tidy(ob) %>%
+#'    head
+#'
 #' @import dplyr tidyr
 #' @export
 tidy.cTF <- function(ob) {
@@ -208,7 +209,9 @@ tidy.cTF <- function(ob) {
 #' @inheritParams plot
 #' @return A venn diagram with a ciccle or an ellipses for each microRNA and the number of correlated features.
 #' @examples
-#' \dontrun{
+#' # get db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
@@ -217,7 +220,7 @@ tidy.cTF <- function(ob) {
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
 #' venn.diagram(ob, study = 'ACC')
-#' }
+#'
 #' @import dplyr tidyr VennDiagram
 #' @export
 venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
@@ -244,7 +247,9 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
 #' @inheritParams plot
 #' @return A venn diagram with a ciccle or an ellipses for each transcription factor and the number of correlated features.
 #' @examples
-#' \dontrun{
+#' # get db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 transcription factors in the ACC study
 #' dat <- get_tf(c('AFF4', 'ESR1'),
 #'  study = c('ACC', 'BLCA'),
@@ -253,7 +258,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
 #' # convert to cTF object and plot
 #' ob <- cTF(dat)
 #' venn.diagram(ob, study = 'ACC')
-#' }
+#'
 #' @import dplyr tidyr VennDiagram
 #' @export
 venn.diagram.cTF <- function(ob, study = NULL, ...) {
@@ -280,7 +285,9 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' @inheritParams plot
 #' @return An \code{\link[UpSetR]{upset}} plot
 #' @examples
-#' \dontrun{
+#' # get db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
@@ -289,7 +296,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
 #' upset(ob, study = 'ACC')
-#' }
+#'
 #' @import dplyr UpSetR
 #' @export
 upset.cmicroRNA <- function(ob, study = NULL, ...) {
@@ -316,7 +323,9 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
 #' @inheritParams plot
 #' @return An \code{\link[UpSetR]{upset}} plot
 #' @examples
-#' \dontrun{
+#' # get db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 transcription factors in the ACC study
 #' dat <- get_tf(c('AFF4', 'ESR1'),
 #'  study = c('ACC', 'BLCA'),
@@ -325,7 +334,7 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
 #' # convert to cTF object and plot
 #' ob <- cTF(dat)
 #' upset(ob, study = 'ACC')
-#' }
+#'
 #' @import dplyr UpSetR
 #' @export
 upset.cTF <- function(ob, study = NULL, ...) {

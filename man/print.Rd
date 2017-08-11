@@ -26,23 +26,16 @@ print(ob, ...)
 Print method for \link{cmicroRNA} and \link{cTF} objects
 }
 \examples{
-\dontrun{
+# downlaod db file
+get_db(test = TRUE)
+
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
  study = c('ACC', 'BLCA'),
  min_cor = .5)
 
-# convert to cmicroRNA object and plot
+# convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 print(ob)
 
-#' # get data for 2 transcription factors in the ACC study
-dat <- get_tf(c('AFF4', 'ESR1'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
-
-# convert to cTF object and plot
-ob <- cTF(dat)
-print(ob)
-}
 }

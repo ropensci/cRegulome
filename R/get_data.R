@@ -11,19 +11,22 @@
 #'    \code{cRegulome.db.gz} by default and it's not advised to change the name to avoid breaking the other
 #'    functions that calls the database.
 #' @examples
-#' \dontrun{
 #' # downlaod db file
-#' get_db()
+#' get_db(test = TRUE)
 #'
 #' # check it exits in the current working directory
 #' # should return TRUE
 #' file.exits('./cRegulome.db.gz')
-#' }
+#'
 #' @import RCurl RSQLite
 #' @export
-get_db <- function(...) {
+get_db <- function(test = FALSE, ...) {
   # db file url
-  url <- 'https://www.dropbox.com/s/unaj94rnk0n4fl5/cRegulome.db.gz?raw=1'
+  if(test == TRUE) {
+    url <- 'https://www.dropbox.com/s/t8ga5j8o81jkcuv/test.db.gz?raw=1'
+  } else {
+    url <- 'https://www.dropbox.com/s/t8ga5j8o81jkcuv/cRegulome.db.gz?raw=1'
+  }
 
   # check url exists
   if(!url.exists(url)) {
@@ -61,17 +64,19 @@ get_db <- function(...) {
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the microRNA miRBase IDs, \code{feature} is
 #'         the features/genes, \code{cor} is the corresponding expression correaltions and \code{study} is TCGA study ID.
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # provide only required argument
-#' get_mir('hsa-let-7b')
+#' dat <- get_mir('hsa-let-7b')
 #'
 #' # optional arguments
-#' get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5,
 #'  max_num = 100,
 #'  targets_only = TRUE)
-#' }
+#'
 #' @import DBI RSQLite dplyr tidyr
 #' @export
 get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_only = FALSE) {
@@ -171,17 +176,18 @@ get_mir <- function(mir, study = NULL, min_cor = NULL, max_num = NULL, targets_o
 #'         the transcription factor, \code{feature} is the features/genes, \code{cor} is the corresponding expression correaltions
 #'          and \code{study} is TCGA study ID.
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # provide only required argument
-#' get_tf('AFF4')
+#' dat <- get_tf('AFF4')
 #'
 #' # optional arguments
-#' get_mir <- function(c('AFF4', 'ESR1'),
+#' dat <- get_mir(c('AFF4', 'ESR1'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5,
 #'  max_num = 100,
 #'  targets_only = TRUE)
-#' }
 #' @import DBI RSQLite dplyr tidyr
 #' @export
 get_tf <- function(tf, study = NULL, min_cor = NULL, max_num = NULL, targets_only = FALSE) {

@@ -7,7 +7,9 @@
 #'
 #' @return An S3 object of class \code{cmicroRNA}
 #' @examples
-#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 #'  study = c('ACC', 'BLCA'),
@@ -15,7 +17,7 @@
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' }
+#'
 #' @import dplyr reshape2
 #' @export
 cmicroRNA <- function(dat_mir){
@@ -52,15 +54,17 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
-#' \dontrun{
-#' # get data for 2 microRNAs in the ACC study
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
+#' # get data for 2 tarnscription factors in the ACC study
 #' dat <- get_tf(c('AFF4', 'ESR1'),
 #'  study = c('ACC', 'BLCA'),
 #'  min_cor = .5)
 #'
 #' # convert to cTF object
 #' ob <- cTF(dat)
-#' }
+#'
 #' @import dplyr reshape2
 #' @export
 cTF <- function(dat_tf){

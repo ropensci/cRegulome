@@ -32,15 +32,17 @@ The function returns an error if the uncompressd database file \code{cRegulome.d
 directory. Basically, the function provides fileters to subset the large tables to the items of interest.
 }
 \examples{
-\dontrun{
+# downlaod db file
+get_db(test = TRUE)
+
 # provide only required argument
-get_mir('hsa-let-7b')
+dat <- get_mir('hsa-let-7b')
 
 # optional arguments
-get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
  study = c('ACC', 'BLCA'),
  min_cor = .5,
  max_num = 100,
  targets_only = TRUE)
-}
+
 }

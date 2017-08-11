@@ -4,7 +4,7 @@
 \alias{get_db}
 \title{Get cRegulome.db file}
 \usage{
-get_db(...)
+get_db(test = FALSE, ...)
 }
 \arguments{
 \item{...}{Optional arguments passed to \code{\link[utils]{download.file}}}
@@ -21,12 +21,11 @@ in the current working directory to avoid redownloading it. Typically, users wou
 at the first time the use the package or to update the database to the latest version.
 }
 \examples{
-\dontrun{
 # downlaod db file
-get_db()
+get_db(test = TRUE)
 
 # check it exits in the current working directory
 # should return TRUE
 file.exits('./cRegulome.db.gz')
-}
+
 }

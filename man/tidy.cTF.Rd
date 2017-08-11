@@ -18,7 +18,9 @@ A tidy \code{data.frame} of four columns. \code{tf} is the official symbol of th
 Tidy \link{cTF} objects
 }
 \examples{
-\dontrun{
+# get db file
+get_db(test = TRUE)
+
 # get data for 2 transcription factors in the ACC study
 dat <- get_tf(c('AFF4', 'ESR1'),
  study = c('ACC', 'BLCA'),
@@ -26,6 +28,7 @@ dat <- get_tf(c('AFF4', 'ESR1'),
 
 # convert to cTF object and plot
 ob <- cTF(dat)
-tidy(ob)
-}
+tidy(ob) \%>\%
+   head
+
 }

@@ -33,14 +33,16 @@ A dot plot of microRNA/TF correlation in a single study of TCGA. When the object
 contains more than one TCGA studies, the argument \code{study} is a requirment.
 }
 \examples{
-\dontrun{
+# downlaod db file
+get_db(test = TRUE)
+
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
  study = c('ACC', 'BLCA'),
  min_cor = .5)
 
-# convert to cmicroRNA object and plot
+# convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 plot(ob, study = 'ACC')
-}
+
 }

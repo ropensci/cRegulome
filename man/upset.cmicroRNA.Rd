@@ -22,7 +22,9 @@ An \code{\link[UpSetR]{upset}} plot
 \code{\link[UpSetR]{upset}} of sets of microRNAs and their correlated features in a TCGA study.
 }
 \examples{
-\dontrun{
+# get db file
+get_db(test = TRUE)
+
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
  study = c('ACC', 'BLCA'),
@@ -31,5 +33,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)
 upset(ob, study = 'ACC')
-}
+
 }

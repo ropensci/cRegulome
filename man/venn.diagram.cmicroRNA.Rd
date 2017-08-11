@@ -22,7 +22,9 @@ A venn diagram with a ciccle or an ellipses for each microRNA and the number of 
 Count and plot the numbers of microRNA correlated features in \code{cmicroRNA} object.
 }
 \examples{
-\dontrun{
+# get db file
+get_db(test = TRUE)
+
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
  study = c('ACC', 'BLCA'),
@@ -31,5 +33,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)
 venn.diagram(ob, study = 'ACC')
-}
+
 }

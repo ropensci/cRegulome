@@ -34,15 +34,16 @@ The function returns an error if the uncompressd database file \code{cRegulome.d
 directory. Basically, the function provides fileters to subset the large tables to the items of interest.
 }
 \examples{
-\dontrun{
+# downlaod db file
+get_db(test = TRUE)
+
 # provide only required argument
-get_tf('AFF4')
+dat <- get_tf('AFF4')
 
 # optional arguments
-get_mir <- function(c('AFF4', 'ESR1'),
+dat <- get_mir(c('AFF4', 'ESR1'),
  study = c('ACC', 'BLCA'),
  min_cor = .5,
  max_num = 100,
  targets_only = TRUE)
-}
 }
