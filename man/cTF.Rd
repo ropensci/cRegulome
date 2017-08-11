@@ -7,14 +7,16 @@
 cTF(dat_tf)
 }
 \arguments{
-\item{dat_tf}{A \code{data.frame} such as this returned by calling \link{get_tf}.}
+\item{dat_tf}{A \code{data.frame} such as this returned by calling
+\link{get_tf}.}
 }
 \value{
 An S3 object of class \code{cTF}
 }
 \description{
-Constructs an S3 object called cTF contains data returned by calling \link{get_tf}. Used to define
-methods for printing and visualizing transcription factors-gene expression correlations.
+Constructs an S3 object called cTF contains data returned by calling
+\link{get_tf}. Used to define methods for printing and visualizing
+transcription factors-gene expression correlations.
 }
 \examples{
 # downlaod db file
@@ -22,8 +24,8 @@ get_db(test = TRUE)
 
 # get data for 2 tarnscription factors in the ACC study
 dat <- get_tf(c('AFF4', 'ESR1'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cTF object
 ob <- cTF(dat)

@@ -7,19 +7,23 @@
 venn.diagram.cmicroRNA(ob, study = NULL, ...)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA) study identifiers. To view
-the available studies in TCGA project, \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}.
-When left to defult \code{NULL} all available studies will be included.}
+\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+study identifiers. To view the available studies in TCGA project,
+\url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+defult \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
 \value{
-A venn diagram with a ciccle or an ellipses for each microRNA and the number of correlated features.
+A venn diagram with a ciccle or an ellipses for each microRNA and
+   the number of correlated features.
 }
 \description{
-Count and plot the numbers of microRNA correlated features in \code{cmicroRNA} object.
+Count and plot the numbers of microRNA correlated features in
+\code{cmicroRNA} object.
 }
 \examples{
 # get db file
@@ -27,8 +31,8 @@ get_db(test = TRUE)
 
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)

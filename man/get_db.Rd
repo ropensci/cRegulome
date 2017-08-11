@@ -10,15 +10,18 @@ get_db(test = FALSE, ...)
 \item{...}{Optional arguments passed to \code{\link[utils]{download.file}}}
 }
 \value{
-Downloads a compressed \code{sqlite} file to the current working directory. The file is named
-   \code{cRegulome.db.gz} by default and it's not advised to change the name to avoid breaking the other
-   functions that calls the database.
+Downloads a compressed \code{sqlite} file to the current working
+   directory. The file is named \code{cRegulome.db.gz} by default and it's
+   not advised to change the name to avoid breaking the other functions
+   that calls the database.
 }
 \description{
-This function calls \code{\link[utils]{download.file}} to download the pre-build database file of cRegulome.
-Additionally, the function checks the validity of the pre-defined URL and whether the database file exists
-in the current working directory to avoid redownloading it. Typically, users would run this function once
-at the first time the use the package or to update the database to the latest version.
+This function calls \code{\link[utils]{download.file}} to download the
+pre-build database file of cRegulome. Additionally, the function checks
+the validity of the pre-defined URL and whether the database file exists
+in the current working directory to avoid redownloading it. Typically,
+users would run this function once at the first time the use the package
+or to update the database to the latest version.
 }
 \examples{
 # downlaod db file

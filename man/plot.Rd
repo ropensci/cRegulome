@@ -13,11 +13,13 @@ plot(ob, study = NULL, ...)
 \method{plot}{cTF}(ob, study = NULL, ...)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA) study identifiers. To view
-the available studies in TCGA project, \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}.
-When left to defult \code{NULL} all available studies will be included.}
+\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+study identifiers. To view the available studies in TCGA project,
+\url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+defult \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
@@ -29,8 +31,9 @@ A \code{ggplot} object of dot plot.
 \code{NULL}
 }
 \description{
-A dot plot of microRNA/TF correlation in a single study of TCGA. When the object \link{cmicroRNA}/\link{cTF}
-contains more than one TCGA studies, the argument \code{study} is a requirment.
+A dot plot of microRNA/TF correlation in a single study of TCGA. When the
+object \link{cmicroRNA}/\link{cTF} contains more than one TCGA studies, the
+argument \code{study} is a requirment.
 }
 \examples{
 # downlaod db file
@@ -38,8 +41,8 @@ get_db(test = TRUE)
 
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)

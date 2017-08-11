@@ -7,11 +7,13 @@
 tidy.cmicroRNA(ob)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 }
 \value{
-A tidy \code{data.frame} of four columns. \code{mirna_base} is the microRNA miRBase IDs, \code{feature} is
-        the features/genes, \code{cor} is the corresponding expression correaltions and \code{study} is TCGA study ID.
+A tidy \code{data.frame} of four columns. \code{mirna_base} is the
+microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor} is
+the corresponding expression correaltions and \code{study} is TCGA study ID.
 }
 \description{
 Tidy \link{cmicroRNA} objects
@@ -22,12 +24,12 @@ get_db(test = TRUE)
 
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 tidy(ob) \%>\%
-   head
+    head
 
 }

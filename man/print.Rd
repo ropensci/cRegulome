@@ -13,7 +13,8 @@ print(ob, ...)
 \method{print}{cTF}(ob, ...)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 
 \item{...}{Other argument to \code{\link[base]{print}}.}
 }
@@ -31,8 +32,8 @@ get_db(test = TRUE)
 
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)

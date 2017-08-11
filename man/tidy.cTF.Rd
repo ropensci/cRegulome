@@ -7,12 +7,14 @@
 tidy.cTF(ob)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 }
 \value{
-A tidy \code{data.frame} of four columns. \code{tf} is the official symbol of the gene containin the transcription
-        factor, \code{feature} is the features/genes, \code{cor} is the corresponding expression correaltions and \code{study}
-         is TCGA study ID.
+A tidy \code{data.frame} of four columns. \code{tf} is the official
+symbol of the gene containin the transcription factor, \code{feature} is the
+features/genes, \code{cor} is the corresponding expression correaltions and
+\code{study} is TCGA study ID.
 }
 \description{
 Tidy \link{cTF} objects
@@ -23,12 +25,12 @@ get_db(test = TRUE)
 
 # get data for 2 transcription factors in the ACC study
 dat <- get_tf(c('AFF4', 'ESR1'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cTF object and plot
 ob <- cTF(dat)
 tidy(ob) \%>\%
-   head
+    head
 
 }

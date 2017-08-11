@@ -7,11 +7,13 @@
 upset.cTF(ob, study = NULL, ...)
 }
 \arguments{
-\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by calling \link{cmicroRNA} or \link{cTF}.}
+\item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
+calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA) study identifiers. To view
-the available studies in TCGA project, \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}.
-When left to defult \code{NULL} all available studies will be included.}
+\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+study identifiers. To view the available studies in TCGA project,
+\url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+defult \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
@@ -19,7 +21,8 @@ When left to defult \code{NULL} all available studies will be included.}
 An \code{\link[UpSetR]{upset}} plot
 }
 \description{
-\code{\link[UpSetR]{upset}} of sets of transcription factors and their correlated features in a TCGA study.
+\code{\link[UpSetR]{upset}} of sets of transcription factors and their
+correlated features in a TCGA study.
 }
 \examples{
 # get db file
@@ -27,8 +30,8 @@ get_db(test = TRUE)
 
 # get data for 2 transcription factors in the ACC study
 dat <- get_tf(c('AFF4', 'ESR1'),
- study = c('ACC', 'BLCA'),
- min_cor = .5)
+    study = c('ACC', 'BLCA'),
+    min_cor = .5)
 
 # convert to cTF object and plot
 ob <- cTF(dat)
