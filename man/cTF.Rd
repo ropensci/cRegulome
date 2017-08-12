@@ -18,16 +18,3 @@ Constructs an S3 object called cTF contains data returned by calling
 \link{get_tf}. Used to define methods for printing and visualizing
 transcription factors-gene expression correlations.
 }
-\examples{
-# downlaod db file
-get_db(test = TRUE)
-
-# get data for 2 tarnscription factors in the ACC study
-dat <- get_tf(c('AFF4', 'ESR1'),
-    study = c('ACC', 'BLCA'),
-    min_cor = .5)
-
-# convert to cTF object
-ob <- cTF(dat)
-
-}

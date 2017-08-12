@@ -49,7 +49,7 @@ get_db(test = TRUE)
 dat <- get_tf('AFF4')
 
 # optional arguments
-dat <- get_mir(c('AFF4', 'ESR1'),
+dat <- get_tf(c('AFF4', 'ESR1'),
     study = c('ACC', 'BLCA'),
     min_cor = .5,
     max_num = 100,

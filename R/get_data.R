@@ -7,6 +7,8 @@
 #' users would run this function once at the first time the use the package
 #' or to update the database to the latest version.
 #'
+#' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE} downlaods
+#'    a database file with the same structure with a subset of the data for speed.
 #' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
 #'
 #' @return Downloads a compressed \code{sqlite} file to the current working
@@ -19,9 +21,10 @@
 #'
 #' # check it exits in the current working directory
 #' # should return TRUE
-#' file.exits('./cRegulome.db.gz')
+#' file.exists('./cRegulome.db.gz')
 #'
-#' @import RCurl RSQLite
+#' @importFrom RCurl url.exists
+#' @import RSQLite
 #' @export
 get_db <- function(test = FALSE, ...) {
     # db file url
@@ -103,6 +106,9 @@ get_mir <- function(mir, study = NULL,
     db <- dbConnect(SQLite(),
                     'cRegulome.db')
 
+    # # disconnect on exit
+    on.exit(dbDisconnect(db), add = TRUE)
+
     # unpack filters and check types
     table <- 'cor_mir'
 
@@ -166,8 +172,7 @@ get_mir <- function(mir, study = NULL,
             slice(1:max_num)
     }
 
-    # disconnect and return dat
-    dbDisconnect(db)
+    # return dat
     return(dat)
 }
 
@@ -204,7 +209,7 @@ get_mir <- function(mir, study = NULL,
 #' dat <- get_tf('AFF4')
 #'
 #' # optional arguments
-#' dat <- get_mir(c('AFF4', 'ESR1'),
+#' dat <- get_tf(c('AFF4', 'ESR1'),
 #'     study = c('ACC', 'BLCA'),
 #'     min_cor = .5,
 #'     max_num = 100,
@@ -222,6 +227,9 @@ get_tf <- function(tf, study = NULL,
     # connect to db
     db <- dbConnect(SQLite(),
                     'cRegulome.db')
+
+    # # disconnect on exit
+    on.exit(dbDisconnect(db), add = TRUE)
 
     # unpack filters and check types
     table <- 'cor_tf'
@@ -286,7 +294,6 @@ get_tf <- function(tf, study = NULL,
             slice(1:max_num)
     }
 
-    # disconnect and return dat
-    dbDisconnect(db)
+    # return dat
     return(dat)
 }

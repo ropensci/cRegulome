@@ -18,16 +18,3 @@ Constructs an S3 object called cmicroRNA contains data returned by calling
 \link{get_mir}. Used to define methods for printing and visualizing
 microRNA-gene expression correlations.
 }
-\examples{
-# downlaod db file
-get_db(test = TRUE)
-
-# get data for 2 microRNAs in the ACC study
-dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'),
-    min_cor = .5)
-
-# convert to cmicroRNA object
-ob <- cmicroRNA(dat)
-
-}
