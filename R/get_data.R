@@ -83,7 +83,7 @@ get_db <- function(test = FALSE, ...) {
 #' \dontrun{
 #' # downlaod db file
 #' get_db(test = TRUE)
-#' R.utils::gunzip('cRegulome.db.gz')
+#' gunzip('cRegulome.db.gz')
 #' }
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
@@ -138,16 +138,17 @@ get_mir <- function(conn,
     }
 
     # get main data by applying filters and tidy
+    `%>%` <- dplyr::`%>%`
     dat <- conn %>%
         dplyr::tbl(table) %>%
         dplyr::select(mirna_base, feature, study) %>%
         dplyr::filter(mirna_base %in% mir) %>%
-        dplyr::collect %>%
+        dplyr::collect() %>%
         tidyr::gather(study, cor, -mirna_base, -feature) %>%
         dplyr::mutate(cor = cor/100) %>%
         dplyr::filter(abs(cor) > min_cor) %>%
         dplyr::arrange(desc(abs(cor))) %>%
-        stats::na.omit
+        stats::na.omit()
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
@@ -156,12 +157,12 @@ get_mir <- function(conn,
         targets <- conn %>%
             dplyr::tbl('targets_mir') %>%
             dplyr::filter(mirna_base %in% mir) %>%
-            dplyr::collect %>%
-            unique
+            dplyr::collect() %>%
+            unique()
 
         # subset main data to targets only
         dat <- dplyr::inner_join(dat, targets) %>%
-            stats::na.omit
+            stats::na.omit()
     }
 
     # subset to max_num
@@ -201,7 +202,7 @@ get_mir <- function(conn,
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{tf} is the official
 #'    gene symbols of the genes contains the transcription factor,
-#'    \code{feature} is the features/genes, \code{cor} is the corresponding
+#'    \code{feature} is the features/genes, cor is the corresponding
 #'    expression correaltions and \code{study} is TCGA study ID.
 #' @examples
 #' \dontrun{
@@ -262,16 +263,17 @@ get_tf <- function(conn,
     }
 
     # get main data by applying filters and tidy
+    `%>%` <- dplyr::`%>%`
     dat <- conn %>%
         dplyr::tbl(table) %>%
         dplyr::select(tf, feature, study) %>%
         dplyr::filter(tf %in% tf_id) %>%
-        dplyr::collect %>%
+        dplyr::collect() %>%
         tidyr::gather(study, cor, -tf, -feature) %>%
         dplyr::mutate(cor = cor/100) %>%
         dplyr::filter(abs(cor) > min_cor) %>%
         dplyr::arrange(desc(abs(cor))) %>%
-        stats::na.omit
+        stats::na.omit()
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
@@ -284,7 +286,7 @@ get_tf <- function(conn,
 
         # subset main data to targets only
         dat <- dplyr::inner_join(dat, targets) %>%
-            stats::na.omit
+            stats::na.omit()
     }
 
     # subset to max_num

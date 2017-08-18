@@ -33,7 +33,7 @@ factors as identified in the Cistrome Cancer,
 \value{
 A tidy \code{data.frame} of four columns. \code{tf} is the official
    gene symbols of the genes contains the transcription factor,
-   \code{feature} is the features/genes, \code{cor} is the corresponding
+   \code{feature} is the features/genes, cor is the corresponding
    expression correaltions and \code{study} is TCGA study ID.
 }
 \description{

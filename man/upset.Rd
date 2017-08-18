@@ -32,8 +32,7 @@ conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 # get data for 2 microRNAs in the ACC study
 dat <- get_mir(conn,
     mir = c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'),
-    min_cor = .5)
+    study = c('ACC', 'BLCA'))
 DBI::dbDisconnect(conn)
 
 # convert to cmicroRNA object and plot

@@ -39,6 +39,6 @@ DBI::dbDisconnect(conn)
 
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)
-venn.diagram(ob, study = 'ACC')
+venn.diagram(ob, study = 'ACC', filename = 'mir.tiff')
 
 }

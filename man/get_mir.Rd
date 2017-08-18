@@ -46,7 +46,7 @@ the items of interest.
 \dontrun{
 # downlaod db file
 get_db(test = TRUE)
-R.utils::gunzip('cRegulome.db.gz')
+gunzip('cRegulome.db.gz')
 }
 # connect to test database file
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")

@@ -32,13 +32,13 @@ print.cmicroRNA <- function(ob, ...) {
     p <- paste('A cmicroRNA object: microRNA expression correlations
              in Cancer\n',
                'Contains:\n',
-               length(ob$studies), 'Cancer study/ies:', paste(head(ob$studies),
+               length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
                                                               collapse = ' '),
                '\n',
-               length(ob$microRNA), 'microRNA/s:', paste(head(ob$microRNA),
+               length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA[1:5],
                                                          collapse = ' '),
                '\n',
-               length(ob$features), 'features:', paste(head(ob$features),
+               length(ob$features), 'features:', paste(ob$features[1:5],
                                                        collapse = ' '),
                '\n')
     cat(p)
@@ -49,13 +49,13 @@ print.cTF <- function(ob, ...) {
     p <- paste('A cTF object: transcription factor expression correlations
              in Cancer\n',
                'Contains:\n',
-               length(ob$studies), 'Cancer study/ies:', paste(head(ob$studies),
+               length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
                                                               collapse = ' '),
                '\n',
-               length(ob$tf), 'Transcription factor/s:', paste(head(ob$TF),
+               length(ob$tf), 'Transcription factor/s:', paste(ob$TF[1:5],
                                                                collapse = ' '),
                '\n',
-               length(ob$features), 'features:', paste(head(ob$features),
+               length(ob$features), 'features:', paste(ob$features[1:5],
                                                        collapse = ' '),
                '\n')
     cat(p)
@@ -109,11 +109,12 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
-        stats::na.omit
+        stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(aes(x = mirna_base, y = feature, size = abs(cor))) +
+        ggplot2::ggplot(ggplot2::aes(x = mirna_base, y = feature, size = abs(cor))) +
         ggplot2::geom_point()
     return(gg)
 }
@@ -129,11 +130,12 @@ plot.cTF <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
-        stats::na.omit
+        stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(aes(x = tf, y = feature, size = abs(cor))) +
+        ggplot2::ggplot(ggplot2::aes(x = tf, y = feature, size = abs(cor))) +
         ggplot2::geom_point()
     return(gg)
 }
@@ -161,26 +163,27 @@ plot.cTF <- function(ob, study = NULL, ...) {
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' tidy(ob) %>%
-#'     head
+#' dat <- tidy(ob)
+#' dat[1:5,]
 #'
 #' @export
-tidy <- function(ob, study = NULL, ...) {
+tidy <- function(ob) {
 UseMethod('tidy')
 }
 
 #' @export
 tidy.cmicroRNA <- function(ob) {
+    `%>%` <- dplyr::`%>%`
     if(length(ob$studies) == 1) {
         dat <- ob$corr %>%
             tidyr::gather(mirna_base, cor, -feature) %>%
-            stats::na.omit %>%
+            stats::na.omit() %>%
             dplyr::mutate(study = ob$studies)
     } else {
         dat <- purrr::map(ob$corr, function(x) {
             x %>%
                 tidyr::gather(mirna_base, cor, -feature) %>%
-                stats::na.omit
+                stats::na.omit()
         }) %>%
             dplyr::bind_rows(.id = 'study') %>%
             dplyr::select(2:3, study)
@@ -190,16 +193,17 @@ tidy.cmicroRNA <- function(ob) {
 
 #' @export
 tidy.cTF <- function(ob) {
+    `%>%` <- dplyr::`%>%`
     if(length(ob$studies) == 1) {
         dat <- ob$corr %>%
             tidyr::gather(tf, cor, -feature) %>%
-            stats::na.omit %>%
+            stats::na.omit() %>%
             dplyr::mutate(study = ob$studies)
     } else {
         dat <- purrr::map(ob$corr, function(x) {
             x %>%
                 tidyr::gather(tf, cor, -feature) %>%
-                stats::na.omit
+                stats::na.omit()
         }) %>%
             dplyr::bind_rows(.id = 'study') %>%
             dplyr::select(2:3, study)
@@ -229,7 +233,7 @@ tidy.cTF <- function(ob) {
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
-#' venn.diagram(ob, study = 'ACC')
+#' venn.diagram(ob, study = 'ACC', filename = 'mir.tiff')
 #'
 #' @export
 venn.diagram <- function(ob, study = NULL, ...) {
@@ -248,9 +252,10 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
-        stats::na.omit
+        stats::na.omit()
     dat <- with(dat, split(feature, mirna_base))
     VennDiagram::venn.diagram(dat, ...)
 }
@@ -266,9 +271,10 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
-        stats::na.omit
+        stats::na.omit()
     dat <- with(dat, split(feature, tf))
     VennDiagram::venn.diagram(dat, ...)
 }
@@ -288,8 +294,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' # get data for 2 microRNAs in the ACC study
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5)
+#'     study = c('ACC', 'BLCA'))
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert to cmicroRNA object and plot
@@ -312,9 +317,9 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
-
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
-        dplyr::mutate_at(vars(2:ncol(dat)),
+        dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
                   function(x) x <- ifelse(is.na(x), 0, 1))
     UpSetR::upset(dat, ...)
 }
@@ -330,9 +335,9 @@ upset.cTF <- function(ob, study = NULL, ...) {
     } else {
         dat <- ob$corr[[study]]
     }
-
+    `%>%` <- dplyr::`%>%`
     dat <- dat %>%
-        dplyr::mutate_at(vars(2:ncol(dat)),
+        dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
                   function(x) x <- ifelse(is.na(x), 0, 1))
     UpSetR::upset(dat, ...)
 }

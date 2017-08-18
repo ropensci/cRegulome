@@ -4,18 +4,11 @@
 \alias{tidy}
 \title{Tidy \link{cmicroRNA} and \link{cTF} objects}
 \usage{
-tidy(ob, study = NULL, ...)
+tidy(ob)
 }
 \arguments{
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
-
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
-study identifiers. To view the available studies in TCGA project,
-\url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
-
-\item{...}{Other options}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} or
@@ -40,7 +33,7 @@ DBI::dbDisconnect(conn)
 
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)
-tidy(ob) \%>\%
-    head
+dat <- tidy(ob)
+dat[1:5,]
 
 }

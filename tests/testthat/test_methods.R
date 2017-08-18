@@ -12,7 +12,7 @@ dat <- get_mir(conn,
                max_num = 5)
 
 cmir <- cmicroRNA(dat)
-tidy_cmir <- tidy.cmicroRNA(cmir)
+tidy_cmir <- tidy(cmir)
 
 test_that('tidy output a data.frame identical to output of get_mir', {
     expect_equal(dat, tidy_cmir)

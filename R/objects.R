@@ -9,9 +9,11 @@
 #'
 #' @return An S3 object of class \code{cmicroRNA}
 #' @examples
+#' library(RSQLite)
+#'
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+#' conn <- dbConnect(SQLite(), db_file)
 #'
 #' # optional arguments
 #' dat <- get_mir(conn,
@@ -20,7 +22,7 @@
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
-#' DBI::dbDisconnect(conn)
+#' dbDisconnect(conn)
 #'
 #' # convert object
 #' ob <- cmicroRNA(dat)
@@ -30,6 +32,8 @@ cmicroRNA <- function(dat_mir){
     microRNA <- unique(dat_mir$mirna_base)
     features <- unique(dat_mir$feature)
     studies <- unique(dat_mir$study)
+
+    `%>%` <- dplyr::`%>%`
     if(length(studies) == 1) {
         corr <- dat_mir %>%
             reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
@@ -62,9 +66,11 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
+#' library(RSQLite)
+#'
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+#' conn <- dbConnect(SQLite(), db_file)
 #'
 #' # optional arguments
 #' dat <- get_tf(conn,
@@ -73,7 +79,7 @@ cmicroRNA <- function(dat_mir){
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
-#' DBI::dbDisconnect(conn)
+#' dbDisconnect(conn)
 #'
 #' # convert to object
 #' ob <- cTF(dat)
@@ -83,6 +89,8 @@ cTF <- function(dat_tf){
     TF <- unique(dat_tf$tf)
     features <- unique(dat_tf$feature)
     studies <- unique(dat_tf$study)
+
+    `%>%` <- dplyr::`%>%`
     if(length(studies) == 1) {
         corr <- dat_tf %>%
             reshape2::dcast(feature ~ tf, value.var = 'cor')
