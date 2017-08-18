@@ -4,10 +4,12 @@
 \alias{get_tf}
 \title{Get transcription factor correlations from cRegulome.db}
 \usage{
-get_tf(tf, study = NULL, min_cor = NULL, max_num = NULL,
+get_tf(conn, tf, study = NULL, min_cor = NULL, max_num = NULL,
   targets_only = FALSE)
 }
 \arguments{
+\item{conn}{A connection to the database file by \code{\link[DBI]{dbConnect}}}
+
 \item{tf}{A required \code{character} vector of the transcription factor of
 interest. These are the official gene symbols of the genes contains the
 transcription factor.}
@@ -42,16 +44,24 @@ Basically, the function provides fileters to subset the large tables to the
 items of interest.
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
+R.utils::gunzip('cRegulome.db.gz')
+}
+# connect to test database file
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
-# provide only required argument
-dat <- get_tf('AFF4')
+# provide only required arguments
+dat <- get_tf(conn, tf = 'AFF4')
 
 # optional arguments
-dat <- get_tf(c('AFF4', 'ESR1'),
+dat <- get_tf(conn,
+    tf = c('AFF4', 'ESR1'),
     study = c('ACC', 'BLCA'),
     min_cor = .5,
     max_num = 100,
     targets_only = TRUE)
+
 }

@@ -27,6 +27,7 @@ calling \link{cmicroRNA} or \link{cTF}.}
 Print method for \link{cmicroRNA} and \link{cTF} objects
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
 
@@ -38,5 +39,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 print(ob)
-
+}
 }

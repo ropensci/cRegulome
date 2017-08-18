@@ -1,6 +1,7 @@
 # load libraries
 library(RCurl)
 library(R.utils)
+library(RSQLite)
 
 context('Downlaoding database and extracting data')
 
@@ -11,15 +12,24 @@ test_that('get_db downlaods db file succussfully', {
 
 # decompress database file
 gunzip('cRegulome.db.gz')
+conn <- dbConnect(SQLite(), 'cRegulome.db')
 
 test_that('Faulty arguments', {
-    expect_error(get_mir(study = 'ACC'))
-    expect_error(get_mir('hsa-let-7b', min_cor = -1))
+    expect_error(get_mir(conn,
+                         study = 'ACC'))
+    expect_error(get_mir(conn,
+                         mir = 'hsa-let-7b',
+                         min_cor = -1))
     })
 
 # get_mir with and without targets_only
-dat <- get_mir('hsa-let-7b', 'ACC')
-dat_targets <- get_mir('hsa-let-7b', 'ACC', targets_only = TRUE)
+dat <- get_mir(conn,
+               mir = 'hsa-let-7b',
+               study = 'ACC')
+dat_targets <- get_mir(conn,
+                       mir = 'hsa-let-7b',
+                       study = 'ACC',
+                       targets_only = TRUE)
 
 test_that('get_mir extracts data properly', {
     expect_true(is.data.frame(dat))
@@ -28,7 +38,11 @@ test_that('get_mir extracts data properly', {
     })
 
 # make a cmircroRNA object
-dat <- get_mir('hsa-let-7b', 'ACC', min_cor = .3, max_num = 5)
+dat <- get_mir(conn,
+               mir = 'hsa-let-7b',
+               study = 'ACC',
+               min_cor = .3,
+               max_num = 5)
 cmir <- cmicroRNA(dat)
 
 test_that('objects cmicroRNA are constructed properly', {

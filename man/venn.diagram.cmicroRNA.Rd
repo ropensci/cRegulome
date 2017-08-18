@@ -26,6 +26,7 @@ Count and plot the numbers of microRNA correlated features in
 \code{cmicroRNA} object.
 }
 \examples{
+\dontrun{
 # get db file
 get_db(test = TRUE)
 
@@ -37,5 +38,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)
 venn.diagram(ob, study = 'ACC')
-
+}
 }

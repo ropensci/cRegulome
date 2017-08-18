@@ -26,6 +26,7 @@ Count and plot the numbers of transcription factors correlated features in
 \code{cTF} object.
 }
 \examples{
+\dontrun{
 # get db file
 get_db(test = TRUE)
 
@@ -37,5 +38,5 @@ dat <- get_tf(c('AFF4', 'ESR1'),
 # convert to cTF object and plot
 ob <- cTF(dat)
 venn.diagram(ob, study = 'ACC')
-
+}
 }

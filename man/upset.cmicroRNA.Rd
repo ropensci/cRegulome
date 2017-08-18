@@ -25,6 +25,7 @@ An \code{\link[UpSetR]{upset}} plot
 features in a TCGA study.
 }
 \examples{
+\dontrun{
 # get db file
 get_db(test = TRUE)
 
@@ -36,5 +37,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object and plot
 ob <- cmicroRNA(dat)
 upset(ob, study = 'ACC')
-
+}
 }

@@ -25,6 +25,7 @@ An \code{\link[UpSetR]{upset}} plot
 correlated features in a TCGA study.
 }
 \examples{
+\dontrun{
 # get db file
 get_db(test = TRUE)
 
@@ -36,5 +37,5 @@ dat <- get_tf(c('AFF4', 'ESR1'),
 # convert to cTF object and plot
 ob <- cTF(dat)
 upset(ob, study = 'ACC')
-
+}
 }

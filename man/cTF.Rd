@@ -18,3 +18,21 @@ Constructs an S3 object called cTF contains data returned by calling
 \link{get_tf}. Used to define methods for printing and visualizing
 transcription factors-gene expression correlations.
 }
+\examples{
+\dontrun{
+# downlaod db file
+get_db(test = TRUE)
+
+# provide only required argument
+dat <- get_tf('AFF4')
+
+# optional arguments
+dat <- get_tf(c('AFF4', 'ESR1'),
+    study = c('ACC', 'BLCA'),
+    min_cor = .5,
+    max_num = 100,
+    targets_only = TRUE)
+# convert to object
+ob <- cTF(dat)
+}
+}

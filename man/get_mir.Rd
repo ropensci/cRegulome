@@ -4,10 +4,12 @@
 \alias{get_mir}
 \title{Get microRNA correlations from cRegulome.db}
 \usage{
-get_mir(mir, study = NULL, min_cor = NULL, max_num = NULL,
+get_mir(conn, mir, study = NULL, min_cor = NULL, max_num = NULL,
   targets_only = FALSE)
 }
 \arguments{
+\item{conn}{A connection to the database file by \code{\link[DBI]{dbConnect}}}
+
 \item{mir}{A required \code{character} vector of the microRNAs of interest.
 These are the miRBase ID which are the official identifiers of the
 widely used miRBase database, \url{http://www.mirbase.org/}.}
@@ -41,14 +43,21 @@ Basically, the function provides fileters to subset the large tables to
 the items of interest.
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
+R.utils::gunzip('cRegulome.db.gz')
+}
+# connect to test database file
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
-# provide only required argument
-dat <- get_mir('hsa-let-7b')
+# provide only required arguments
+dat <- get_mir(conn, mir = 'hsa-let-7b')
 
 # optional arguments
-dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+dat <- get_mir(conn,
+    mir = c('hsa-let-7b', 'hsa-mir-134'),
     study = c('ACC', 'BLCA'),
     min_cor = .5,
     max_num = 100,

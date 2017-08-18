@@ -20,6 +20,7 @@ features/genes, \code{cor} is the corresponding expression correaltions and
 Tidy \link{cTF} objects
 }
 \examples{
+\dontrun{
 # get db file
 get_db(test = TRUE)
 
@@ -32,5 +33,5 @@ dat <- get_tf(c('AFF4', 'ESR1'),
 ob <- cTF(dat)
 tidy(ob) \%>\%
     head
-
+}
 }

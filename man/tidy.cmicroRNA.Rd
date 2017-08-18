@@ -19,6 +19,7 @@ the corresponding expression correaltions and \code{study} is TCGA study ID.
 Tidy \link{cmicroRNA} objects
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
 
@@ -31,5 +32,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 ob <- cmicroRNA(dat)
 tidy(ob) \%>\%
     head
-
+}
 }

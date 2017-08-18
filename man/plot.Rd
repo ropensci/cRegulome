@@ -36,6 +36,7 @@ object \link{cmicroRNA}/\link{cTF} contains more than one TCGA studies, the
 argument \code{study} is a requirment.
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
 
@@ -47,5 +48,5 @@ dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 plot(ob, study = 'ACC')
-
+}
 }

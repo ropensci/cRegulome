@@ -7,8 +7,9 @@
 #' users would run this function once at the first time the use the package
 #' or to update the database to the latest version.
 #'
-#' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE} downlaods
-#'    a database file with the same structure with a subset of the data for speed.
+#' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE}
+#'    downlaods a database file with the same structure with a subset of
+#'    the data for speed.
 #' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
 #'
 #' @return Downloads a compressed \code{sqlite} file to the current working
@@ -16,13 +17,14 @@
 #'    not advised to change the name to avoid breaking the other functions
 #'    that calls the database.
 #' @examples
+#' \dontrun{
 #' # downlaod db file
 #' get_db(test = TRUE)
 #'
 #' # check it exits in the current working directory
 #' # should return TRUE
 #' file.exists('./cRegulome.db.gz')
-#'
+#' }
 #' @importFrom RCurl url.exists
 #' @import RSQLite
 #' @export
@@ -40,7 +42,7 @@ get_db <- function(test = FALSE, ...) {
     }
 
     # download file
-    if(file.exists('cRegulome.db.gz')) {
+    if(file.exists('cRegulome.db')) {
         message('File already exists in the current directory.')
     } else {
         tryCatch(download.file(url, destfile = 'cRegulome.db.gz'),
@@ -59,6 +61,7 @@ get_db <- function(test = FALSE, ...) {
 #' Basically, the function provides fileters to subset the large tables to
 #' the items of interest.
 #'
+#' @param conn A connection to the database file by \code{\link[DBI]{dbConnect}}
 #' @param mir A required \code{character} vector of the microRNAs of interest.
 #'    These are the miRBase ID which are the official identifiers of the
 #'    widely used miRBase database, \url{http://www.mirbase.org/}.
@@ -79,14 +82,21 @@ get_db <- function(test = FALSE, ...) {
 #'    is the corresponding expression correaltions and \code{study} is TCGA
 #'    study ID.
 #' @examples
+#' \dontrun{
 #' # downlaod db file
 #' get_db(test = TRUE)
+#' R.utils::gunzip('cRegulome.db.gz')
+#' }
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
-#' # provide only required argument
-#' dat <- get_mir('hsa-let-7b')
+#' # provide only required arguments
+#' dat <- get_mir(conn, mir = 'hsa-let-7b')
 #'
 #' # optional arguments
-#' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#' dat <- get_mir(conn,
+#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
 #'     min_cor = .5,
 #'     max_num = 100,
@@ -94,20 +104,12 @@ get_db <- function(test = FALSE, ...) {
 #'
 #' @import DBI RSQLite dplyr tidyr
 #' @export
-get_mir <- function(mir, study = NULL,
-                    min_cor = NULL, max_num = NULL,
+get_mir <- function(conn,
+                    mir,
+                    study = NULL,
+                    min_cor = NULL,
+                    max_num = NULL,
                     targets_only = FALSE) {
-    # check db file exist in the current directory
-    if(!file.exists('cRegulome.db')){
-        stop("Database file doesn't exist in the current directory.")
-    }
-
-    # connect to db
-    db <- dbConnect(SQLite(),
-                    'cRegulome.db')
-
-    # # disconnect on exit
-    on.exit(dbDisconnect(db), add = TRUE)
 
     # unpack filters and check types
     table <- 'cor_mir'
@@ -121,7 +123,7 @@ get_mir <- function(mir, study = NULL,
     }
 
     if(is.null(study)) {
-        study <- dbListFields(db, table)[-1:-2]
+        study <- dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
@@ -138,7 +140,7 @@ get_mir <- function(mir, study = NULL,
     }
 
     # get main data by applying filters and tidy
-    dat <- db %>%
+    dat <- conn %>%
         tbl(table) %>%
         select(mirna_base, feature, study) %>%
         filter(mirna_base %in% mir) %>%
@@ -152,13 +154,15 @@ get_mir <- function(mir, study = NULL,
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
-        targets <- db %>%
+        mir <- unique(dat$mirna_base)
+        targets <- conn %>%
             tbl('targets_mir') %>%
             filter(mirna_base %in% mir) %>%
-            collect
+            collect %>%
+            unique
 
         # subset main data to targets only
-        dat <- right_join(dat, targets) %>%
+        dat <- inner_join(dat, targets) %>%
             na.omit
     }
 
@@ -202,34 +206,34 @@ get_mir <- function(mir, study = NULL,
 #'    \code{feature} is the features/genes, \code{cor} is the corresponding
 #'    expression correaltions and \code{study} is TCGA study ID.
 #' @examples
+#' \dontrun{
 #' # downlaod db file
 #' get_db(test = TRUE)
+#' R.utils::gunzip('cRegulome.db.gz')
+#' }
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
-#' # provide only required argument
-#' dat <- get_tf('AFF4')
+#' # provide only required arguments
+#' dat <- get_tf(conn, tf = 'AFF4')
 #'
 #' # optional arguments
-#' dat <- get_tf(c('AFF4', 'ESR1'),
+#' dat <- get_tf(conn,
+#'     tf = c('AFF4', 'ESR1'),
 #'     study = c('ACC', 'BLCA'),
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
+#'
 #' @import DBI RSQLite dplyr tidyr
 #' @export
-get_tf <- function(tf, study = NULL,
-                   min_cor = NULL, max_num = NULL,
+get_tf <- function(conn,
+                   tf,
+                   study = NULL,
+                   min_cor = NULL,
+                   max_num = NULL,
                    targets_only = FALSE) {
-    # check db file exist in the current directory
-    if(!file.exists('cRegulome.db')){
-        stop("Database file doesn't exist in the current directory.")
-    }
-
-    # connect to db
-    db <- dbConnect(SQLite(),
-                    'cRegulome.db')
-
-    # # disconnect on exit
-    on.exit(dbDisconnect(db), add = TRUE)
 
     # unpack filters and check types
     table <- 'cor_tf'
@@ -243,7 +247,7 @@ get_tf <- function(tf, study = NULL,
     }
 
     if(is.null(study)) {
-        studies <- dbListFields(db, table)[-1:-2]
+        study <- dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
@@ -260,7 +264,7 @@ get_tf <- function(tf, study = NULL,
     }
 
     # get main data by applying filters and tidy
-    dat <- db %>%
+    dat <- conn %>%
         tbl(table) %>%
         select(tf, feature, study) %>%
         filter(tf %in% tf_id) %>%
@@ -274,13 +278,14 @@ get_tf <- function(tf, study = NULL,
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
-        targets <- db %>%
+        tf_id <- unique(dat$tf)
+        targets <- conn %>%
             tbl('targets_tf') %>%
             filter(tf %in% tf_id) %>%
             collect
 
         # subset main data to targets only
-        dat <- right_join(dat, targets) %>%
+        dat <- inner_join(dat, targets) %>%
             na.omit
     }
 

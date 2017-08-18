@@ -8,6 +8,24 @@
 #'    \link{get_mir}.
 #'
 #' @return An S3 object of class \code{cmicroRNA}
+#' @examples
+#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
+#' # provide only required argument
+#' dat <- get_mir('hsa-let-7b')
+#'
+#' # optional arguments
+#' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#'     study = c('ACC', 'BLCA'),
+#'     min_cor = .5,
+#'     max_num = 100,
+#'     targets_only = TRUE)
+#'
+#' # convert object
+#' ob <- cmiroRNA(dat)
+#' }
 #' @import dplyr reshape2
 #' @export
 cmicroRNA <- function(dat_mir){
@@ -45,6 +63,23 @@ cmicroRNA <- function(dat_mir){
 #'    \link{get_tf}.
 #'
 #' @return An S3 object of class \code{cTF}
+#' @examples
+#' \dontrun{
+#' # downlaod db file
+#' get_db(test = TRUE)
+#'
+#' # provide only required argument
+#' dat <- get_tf('AFF4')
+#'
+#' # optional arguments
+#' dat <- get_tf(c('AFF4', 'ESR1'),
+#'     study = c('ACC', 'BLCA'),
+#'     min_cor = .5,
+#'     max_num = 100,
+#'     targets_only = TRUE)
+#' # convert to object
+#' ob <- cTF(dat)
+#' }
 #' @import dplyr reshape2
 #' @export
 cTF <- function(dat_tf){

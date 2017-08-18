@@ -7,8 +7,9 @@
 get_db(test = FALSE, ...)
 }
 \arguments{
-\item{test}{A \code{logical}, default \code{FALSE}. When \code{TRUE} downlaods a
-a database file with the same structure with a subset of the data for speed.}
+\item{test}{A \code{logical}, default \code{FALSE}. When \code{TRUE}
+downlaods a database file with the same structure with a subset of
+the data for speed.}
 
 \item{...}{Optional arguments passed to \code{\link[utils]{download.file}}}
 }
@@ -27,11 +28,12 @@ users would run this function once at the first time the use the package
 or to update the database to the latest version.
 }
 \examples{
+\dontrun{
 # downlaod db file
 get_db(test = TRUE)
 
 # check it exits in the current working directory
 # should return TRUE
 file.exists('./cRegulome.db.gz')
-
+}
 }
