@@ -2,15 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{print}
 \alias{print}
-\alias{print.cmicroRNA}
-\alias{print.cTF}
 \title{Print method for \link{cmicroRNA} and \link{cTF} objects}
 \usage{
 print(ob, ...)
-
-\method{print}{cmicroRNA}(ob, ...)
-
-\method{print}{cTF}(ob, ...)
 }
 \arguments{
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
@@ -19,25 +13,25 @@ calling \link{cmicroRNA} or \link{cTF}.}
 \item{...}{Other argument to \code{\link[base]{print}}.}
 }
 \value{
-\code{NULL}
-
-\code{NULL}
+Printed text
 }
 \description{
 Print method for \link{cmicroRNA} and \link{cTF} objects
 }
 \examples{
-\dontrun{
-# downlaod db file
-get_db(test = TRUE)
+# connect to test database file
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # get data for 2 microRNAs in the ACC study
-dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+dat <- get_mir(conn,
+    mir = c('hsa-let-7b', 'hsa-mir-134'),
     study = c('ACC', 'BLCA'),
     min_cor = .5)
+DBI::dbDisconnect(conn)
 
 # convert to cmicroRNA object
 ob <- cmicroRNA(dat)
 print(ob)
-}
+
 }

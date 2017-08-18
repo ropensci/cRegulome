@@ -9,24 +9,22 @@
 #'
 #' @return An S3 object of class \code{cmicroRNA}
 #' @examples
-#' \dontrun{
-#' # downlaod db file
-#' get_db(test = TRUE)
-#'
-#' # provide only required argument
-#' dat <- get_mir('hsa-let-7b')
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # optional arguments
-#' dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+#' dat <- get_mir(conn,
+#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
+#' DBI::dbDisconnect(conn)
 #'
 #' # convert object
-#' ob <- cmiroRNA(dat)
-#' }
-#' @import dplyr reshape2
+#' ob <- cmicroRNA(dat)
+#'
 #' @export
 cmicroRNA <- function(dat_mir){
     microRNA <- unique(dat_mir$mirna_base)
@@ -34,13 +32,13 @@ cmicroRNA <- function(dat_mir){
     studies <- unique(dat_mir$study)
     if(length(studies) == 1) {
         corr <- dat_mir %>%
-            dcast(feature ~ mirna_base, value.var = 'cor')
+            reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
     } else {
         corr <- lapply(unique(dat_mir$study),
                        function(x) {
                            dat_mir %>%
-                               filter(study == x) %>%
-                               dcast(feature ~ mirna_base, value.var = 'cor')
+                               dplyr::filter(study == x) %>%
+                               reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
                        })
         names(corr) <- unique(dat_mir$study)
     }
@@ -64,23 +62,22 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
-#' \dontrun{
-#' # downlaod db file
-#' get_db(test = TRUE)
-#'
-#' # provide only required argument
-#' dat <- get_tf('AFF4')
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # optional arguments
-#' dat <- get_tf(c('AFF4', 'ESR1'),
+#' dat <- get_tf(conn,
+#'     tf = c('AFF4', 'ESR1'),
 #'     study = c('ACC', 'BLCA'),
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
+#' DBI::dbDisconnect(conn)
+#'
 #' # convert to object
 #' ob <- cTF(dat)
-#' }
-#' @import dplyr reshape2
+#'
 #' @export
 cTF <- function(dat_tf){
     TF <- unique(dat_tf$tf)
@@ -88,13 +85,13 @@ cTF <- function(dat_tf){
     studies <- unique(dat_tf$study)
     if(length(studies) == 1) {
         corr <- dat_tf %>%
-            dcast(feature ~ tf, value.var = 'cor')
+            reshape2::dcast(feature ~ tf, value.var = 'cor')
     } else {
         corr <- lapply(unique(dat_tf$study),
                        function(x) {
                            dat_tf %>%
-                               filter(study == x) %>%
-                               dcast(feature ~ tf, value.var = 'cor')
+                               dplyr::filter(study == x) %>%
+                               reshape2::dcast(feature ~ tf, value.var = 'cor')
                        })
         names(corr) <- unique(dat_tf$study)
     }

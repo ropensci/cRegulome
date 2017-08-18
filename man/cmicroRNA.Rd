@@ -19,21 +19,20 @@ Constructs an S3 object called cmicroRNA contains data returned by calling
 microRNA-gene expression correlations.
 }
 \examples{
-\dontrun{
-# downlaod db file
-get_db(test = TRUE)
-
-# provide only required argument
-dat <- get_mir('hsa-let-7b')
+# connect to test database file
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # optional arguments
-dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
+dat <- get_mir(conn,
+    mir = c('hsa-let-7b', 'hsa-mir-134'),
     study = c('ACC', 'BLCA'),
     min_cor = .5,
     max_num = 100,
     targets_only = TRUE)
+DBI::dbDisconnect(conn)
 
 # convert object
-ob <- cmiroRNA(dat)
-}
+ob <- cmicroRNA(dat)
+
 }

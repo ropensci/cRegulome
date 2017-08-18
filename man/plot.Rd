@@ -2,15 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{plot}
 \alias{plot}
-\alias{plot.cmicroRNA}
-\alias{plot.cTF}
 \title{Plot method for \link{cmicroRNA} and \link{cTF} objects}
 \usage{
 plot(ob, study = NULL, ...)
-
-\method{plot}{cmicroRNA}(ob, study = NULL, ...)
-
-\method{plot}{cTF}(ob, study = NULL, ...)
 }
 \arguments{
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
@@ -25,28 +19,9 @@ defult \code{NULL} all available studies will be included.}
 }
 \value{
 A \code{ggplot} object of dot plot.
-
-\code{NULL}
-
-\code{NULL}
 }
 \description{
 A dot plot of microRNA/TF correlation in a single study of TCGA. When the
 object \link{cmicroRNA}/\link{cTF} contains more than one TCGA studies, the
 argument \code{study} is a requirment.
-}
-\examples{
-\dontrun{
-# downlaod db file
-get_db(test = TRUE)
-
-# get data for 2 microRNAs in the ACC study
-dat <- get_mir(c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'),
-    min_cor = .5)
-
-# convert to cmicroRNA object
-ob <- cmicroRNA(dat)
-plot(ob, study = 'ACC')
-}
 }

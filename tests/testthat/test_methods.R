@@ -1,14 +1,10 @@
-# load libraries
-library(RCurl)
-library(R.utils)
-library(cRegulome)
 context('Testing methods output')
 
 # get db file and make object
 get_db(test = TRUE)
-gunzip('cRegulome.db.gz')
+R.utils::gunzip('cRegulome.db.gz')
 
-conn <- dbConnect(SQLite(), 'cRegulome.db')
+conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
 dat <- get_mir(conn,
                mir = 'hsa-let-7b',
                study = 'ACC',
@@ -23,4 +19,5 @@ test_that('tidy output a data.frame identical to output of get_mir', {
     })
 
 # clean up
+DBI::dbDisconnect(conn)
 if(file.exists('cRegulome.db')) unlink('cRegulome.db')

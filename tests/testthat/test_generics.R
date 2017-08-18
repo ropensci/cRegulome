@@ -1,8 +1,3 @@
-# load libraries
-library(RCurl)
-library(R.utils)
-library(RSQLite)
-
 context('Downlaoding database and extracting data')
 
 test_that('get_db downlaods db file succussfully', {
@@ -11,8 +6,8 @@ test_that('get_db downlaods db file succussfully', {
     })
 
 # decompress database file
-gunzip('cRegulome.db.gz')
-conn <- dbConnect(SQLite(), 'cRegulome.db')
+R.utils::gunzip('cRegulome.db.gz')
+conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
 
 test_that('Faulty arguments', {
     expect_error(get_mir(conn,
@@ -55,4 +50,5 @@ test_that('objects cmicroRNA are constructed properly', {
     })
 
 # clean up
+DBI::dbDisconnect(conn)
 if(file.exists('cRegulome.db')) unlink('cRegulome.db')

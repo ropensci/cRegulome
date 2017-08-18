@@ -20,7 +20,8 @@ Imports: DBI,
    dplyr,
    ggplot2,
    tidyr,
-   reshape2
+   reshape2,
+   purrr
 Suggests: knitr,
     rmarkdown,
     testthat

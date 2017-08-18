@@ -25,8 +25,6 @@
 #' # should return TRUE
 #' file.exists('./cRegulome.db.gz')
 #' }
-#' @importFrom RCurl url.exists
-#' @import RSQLite
 #' @export
 get_db <- function(test = FALSE, ...) {
     # db file url
@@ -37,7 +35,7 @@ get_db <- function(test = FALSE, ...) {
     }
 
     # check url exists
-    if(!url.exists(url)) {
+    if(!RCurl::url.exists(url)) {
         stop("URL doesn't exist.")
     }
 
@@ -45,7 +43,7 @@ get_db <- function(test = FALSE, ...) {
     if(file.exists('cRegulome.db')) {
         message('File already exists in the current directory.')
     } else {
-        tryCatch(download.file(url, destfile = 'cRegulome.db.gz'),
+        tryCatch(utils::download.file(url, destfile = 'cRegulome.db.gz'),
                  error = function() {
                      message('File download failed.')
                      return(NA)
@@ -101,8 +99,8 @@ get_db <- function(test = FALSE, ...) {
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
+#' DBI::dbDisconnect(conn)
 #'
-#' @import DBI RSQLite dplyr tidyr
 #' @export
 get_mir <- function(conn,
                     mir,
@@ -123,7 +121,7 @@ get_mir <- function(conn,
     }
 
     if(is.null(study)) {
-        study <- dbListFields(conn, table)[-1:-2]
+        study <- DBI::dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
@@ -141,29 +139,29 @@ get_mir <- function(conn,
 
     # get main data by applying filters and tidy
     dat <- conn %>%
-        tbl(table) %>%
-        select(mirna_base, feature, study) %>%
-        filter(mirna_base %in% mir) %>%
-        collect %>%
-        gather(study, cor, -mirna_base, -feature) %>%
-        mutate(cor = cor/100) %>%
-        filter(abs(cor) > min_cor) %>%
-        arrange(desc(abs(cor))) %>%
-        na.omit
+        dplyr::tbl(table) %>%
+        dplyr::select(mirna_base, feature, study) %>%
+        dplyr::filter(mirna_base %in% mir) %>%
+        dplyr::collect %>%
+        tidyr::gather(study, cor, -mirna_base, -feature) %>%
+        dplyr::mutate(cor = cor/100) %>%
+        dplyr::filter(abs(cor) > min_cor) %>%
+        dplyr::arrange(desc(abs(cor))) %>%
+        stats::na.omit
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
         mir <- unique(dat$mirna_base)
         targets <- conn %>%
-            tbl('targets_mir') %>%
-            filter(mirna_base %in% mir) %>%
-            collect %>%
+            dplyr::tbl('targets_mir') %>%
+            dplyr::filter(mirna_base %in% mir) %>%
+            dplyr::collect %>%
             unique
 
         # subset main data to targets only
-        dat <- inner_join(dat, targets) %>%
-            na.omit
+        dat <- dplyr::inner_join(dat, targets) %>%
+            stats::na.omit
     }
 
     # subset to max_num
@@ -172,8 +170,8 @@ get_mir <- function(conn,
         stop("max_num should be an integer between 1 and Inf.")
     } else {
         dat <- dat %>%
-            group_by(mirna_base, study) %>%
-            slice(1:max_num)
+            dplyr::group_by(mirna_base, study) %>%
+            dplyr::slice(1:max_num)
     }
 
     # return dat
@@ -225,8 +223,8 @@ get_mir <- function(conn,
 #'     min_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
+#' DBI::dbDisconnect(conn)
 #'
-#' @import DBI RSQLite dplyr tidyr
 #' @export
 get_tf <- function(conn,
                    tf,
@@ -247,7 +245,7 @@ get_tf <- function(conn,
     }
 
     if(is.null(study)) {
-        study <- dbListFields(conn, table)[-1:-2]
+        study <- DBI::dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
@@ -265,28 +263,28 @@ get_tf <- function(conn,
 
     # get main data by applying filters and tidy
     dat <- conn %>%
-        tbl(table) %>%
-        select(tf, feature, study) %>%
-        filter(tf %in% tf_id) %>%
-        collect %>%
-        gather(study, cor, -tf, -feature) %>%
-        mutate(cor = cor/100) %>%
-        filter(abs(cor) > min_cor) %>%
-        arrange(desc(abs(cor))) %>%
-        na.omit
+        dplyr::tbl(table) %>%
+        dplyr::select(tf, feature, study) %>%
+        dplyr::filter(tf %in% tf_id) %>%
+        dplyr::collect %>%
+        tidyr::gather(study, cor, -tf, -feature) %>%
+        dplyr::mutate(cor = cor/100) %>%
+        dplyr::filter(abs(cor) > min_cor) %>%
+        dplyr::arrange(desc(abs(cor))) %>%
+        stats::na.omit
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
         tf_id <- unique(dat$tf)
         targets <- conn %>%
-            tbl('targets_tf') %>%
-            filter(tf %in% tf_id) %>%
-            collect
+            dplyr::tbl('targets_tf') %>%
+            dplyr::filter(tf %in% tf_id) %>%
+            dplyr::collect()
 
         # subset main data to targets only
-        dat <- inner_join(dat, targets) %>%
-            na.omit
+        dat <- dplyr::inner_join(dat, targets) %>%
+            stats::na.omit
     }
 
     # subset to max_num
@@ -295,8 +293,8 @@ get_tf <- function(conn,
         stop("max_num should be an integer between 1 and Inf.")
     } else {
         dat <- dat %>%
-            group_by(tf, study) %>%
-            slice(1:max_num)
+            dplyr::group_by(tf, study) %>%
+            dplyr::slice(1:max_num)
     }
 
     # return dat
