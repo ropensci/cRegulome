@@ -114,7 +114,9 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = mirna_base, y = feature, size = abs(cor))) +
+        ggplot2::ggplot(ggplot2::aes(x = mirna_base,
+                                     y = feature,
+                                     size = abs(cor))) +
         ggplot2::geom_point()
     return(gg)
 }
@@ -135,7 +137,9 @@ plot.cTF <- function(ob, study = NULL, ...) {
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = tf, y = feature, size = abs(cor))) +
+        ggplot2::ggplot(ggplot2::aes(x = tf,
+                                     y = feature,
+                                     size = abs(cor))) +
         ggplot2::geom_point()
     return(gg)
 }

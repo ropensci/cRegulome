@@ -42,7 +42,8 @@ cmicroRNA <- function(dat_mir){
                        function(x) {
                            dat_mir %>%
                                dplyr::filter(study == x) %>%
-                               reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
+                               reshape2::dcast(feature ~ mirna_base,
+                                               value.var = 'cor')
                        })
         names(corr) <- unique(dat_mir$study)
     }

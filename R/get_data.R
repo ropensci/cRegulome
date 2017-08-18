@@ -44,12 +44,12 @@ get_db <- function(test = FALSE, ...) {
         message('File already exists in the current directory.')
     } else {
         tryCatch(utils::download.file(url, destfile = 'cRegulome.db.gz'),
-                 error = function() {
-                     message('File download failed.')
+                 error = function(){
+                     message('Downloading file failed')
                      return(NA)
                  })
     }
-}
+    }
 
 #' Get microRNA correlations from cRegulome.db
 #'
