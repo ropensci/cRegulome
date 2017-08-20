@@ -23,7 +23,7 @@ library(RSQLite)
 
 # connect to test database file
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- dbConnect(SQLite(), db_file)
+conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # optional arguments
 dat <- get_tf(conn,
@@ -32,7 +32,7 @@ dat <- get_tf(conn,
     min_cor = .5,
     max_num = 100,
     targets_only = TRUE)
-dbDisconnect(conn)
+DBI::dbDisconnect(conn)
 
 # convert to object
 ob <- cTF(dat)
