@@ -110,13 +110,15 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = mirna_base,
-                                     y = feature,
-                                     size = abs(cor))) +
+        dplyr::mutate(cor = abs(cor)) %>%
+        ggplot2::ggplot(ggplot2::aes_string(x = 'mirna_base',
+                                            y = 'feature',
+                                            size = 'cor')) +
         ggplot2::geom_point()
     return(gg)
 }
@@ -133,13 +135,15 @@ plot.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = tf,
-                                     y = feature,
-                                     size = abs(cor))) +
+        dplyr::mutate(cor = abs(cor)) %>%
+        ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
+                                            y = 'feature',
+                                            size = 'cor')) +
         ggplot2::geom_point()
     return(gg)
 }
@@ -178,6 +182,7 @@ UseMethod('tidy')
 #' @export
 tidy.cmicroRNA <- function(ob) {
     `%>%` <- dplyr::`%>%`
+
     if(length(ob$studies) == 1) {
         dat <- ob$corr %>%
             tidyr::gather(mirna_base, cor, -feature) %>%
@@ -198,6 +203,7 @@ tidy.cmicroRNA <- function(ob) {
 #' @export
 tidy.cTF <- function(ob) {
     `%>%` <- dplyr::`%>%`
+
     if(length(ob$studies) == 1) {
         dat <- ob$corr %>%
             tidyr::gather(tf, cor, -feature) %>%
@@ -257,6 +263,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
@@ -276,6 +283,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
@@ -439,12 +447,13 @@ joy.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = cor,
-                                     y = mirna_base)) +
+        ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
+                                            y = 'mirna_base')) +
         ggjoy::geom_joy()
 
     return(gg)
@@ -461,12 +470,13 @@ joy.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     `%>%` <- dplyr::`%>%`
+
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes(x = cor,
-                                     y = tf)) +
+        ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
+                                            y = 'tf')) +
         ggjoy::geom_joy()
 
     return(gg)
