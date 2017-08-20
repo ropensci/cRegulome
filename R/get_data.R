@@ -139,6 +139,7 @@ get_mir <- function(conn,
 
     # get main data by applying filters and tidy
     `%>%` <- dplyr::`%>%`
+
     dat <- conn %>%
         dplyr::tbl(table) %>%
         dplyr::select(mirna_base, feature, study) %>%
@@ -147,13 +148,12 @@ get_mir <- function(conn,
         tidyr::gather(study, cor, -mirna_base, -feature) %>%
         dplyr::mutate(cor = cor/100) %>%
         dplyr::filter(abs(cor) > min_cor) %>%
-        dplyr::arrange(desc(abs(cor))) %>%
+        dplyr::arrange(dplyr::desc(abs(cor))) %>%
         stats::na.omit()
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
-        mir <- unique(dat$mirna_base)
         targets <- conn %>%
             dplyr::tbl('targets_mir') %>%
             dplyr::filter(mirna_base %in% mir) %>%

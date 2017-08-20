@@ -34,6 +34,7 @@ cmicroRNA <- function(dat_mir){
     studies <- unique(dat_mir$study)
 
     `%>%` <- dplyr::`%>%`
+
     if(length(studies) == 1) {
         corr <- dat_mir %>%
             reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
@@ -92,6 +93,7 @@ cTF <- function(dat_tf){
     studies <- unique(dat_tf$study)
 
     `%>%` <- dplyr::`%>%`
+
     if(length(studies) == 1) {
         corr <- dat_tf %>%
             reshape2::dcast(feature ~ tf, value.var = 'cor')

@@ -101,7 +101,7 @@ plot <- function(ob, study = NULL, ...) {
 #' @export
 plot.cmicroRNA <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User shouls provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -124,7 +124,7 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
 #' @export
 plot.cTF <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User shouls provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -190,7 +190,7 @@ tidy.cmicroRNA <- function(ob) {
                 stats::na.omit()
         }) %>%
             dplyr::bind_rows(.id = 'study') %>%
-            dplyr::select(2:3, study)
+            dplyr::select(2:4, study)
     }
     return(dat)
 }
@@ -210,7 +210,7 @@ tidy.cTF <- function(ob) {
                 stats::na.omit()
         }) %>%
             dplyr::bind_rows(.id = 'study') %>%
-            dplyr::select(2:3, study)
+            dplyr::select(2:4, study)
     }
 }
 
@@ -248,7 +248,7 @@ venn.diagram <- function(ob, study = NULL, ...) {
 #' @export
 venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User shouls provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -267,7 +267,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
 #' @export
 venn.diagram.cTF <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -285,8 +285,8 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 
 #' \code{\link[UpSetR]{upset}} plot of microRNA or tf sets
 #'
-#' \code{\link[UpSetR]{upset}} of sets of microRNAs and their correlated
-#' features in a TCGA study.
+#' \code{\link[UpSetR]{upset}} of sets of microRNAs or transcription
+#' factors and their correlated features in a TCGA study.
 #'
 #' @inheritParams plot
 #' @return An \code{\link[UpSetR]{upset}} plot
@@ -313,7 +313,7 @@ upset <- function(ob, study = NULL, ...) {
 #' @export
 upset.cmicroRNA <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User shouls provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -331,7 +331,7 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
 #' @export
 upset.cTF <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User shouls provide a singl study to plot.')
+        stop('User should provide a single study to plot.')
     }
 
     if(is.data.frame(ob$corr)) {
@@ -345,3 +345,130 @@ upset.cTF <- function(ob, study = NULL, ...) {
                   function(x) x <- ifelse(is.na(x), 0, 1))
     UpSetR::upset(dat, ...)
 }
+
+#' \code{\link{hist}} plot a histogram of microRNA or tf sets
+#'
+#' \code{\link{hist}} of sets of microRNAs or transcription
+#' factors and their correlated features in a TCGA study.
+#'
+#' @inheritParams plot
+#' @return An \code{\link{hist}} plot
+#' @examples
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+#'
+#' # get data for 2 microRNAs in the ACC study
+#' dat <- get_mir(conn,
+#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
+#'     study = c('ACC', 'BLCA'))
+#' DBI::dbDisconnect(conn)
+#'
+#' # convert to cmicroRNA object and plot
+#' ob <- cmicroRNA(dat)
+#' hist(ob, study = 'ACC')
+#'
+#' @export
+hist <- function(ob, study = NULL, ...) {
+    UseMethod('hist')
+}
+
+#' @export
+hist.cmicroRNA <- function(ob, study = NULL, ...) {
+    if(length(ob$studies) > 1 && length(study) != 1) {
+        stop('User should provide a single study to plot')
+    }
+    if(is.data.frame(ob$corr)) {
+        dat <- ob$corr
+    } else {
+        dat <- ob$corr[[study]]
+    }
+    dat <- unlist(dat[, -1])
+    hist(dat, ...)
+}
+
+#' @export
+hist.cTF <- function(ob, study = NULL, ...) {
+    if(length(ob$studies) > 1 && length(study) != 1) {
+        stop('User should provide a single study to plot')
+    }
+    if(is.data.frame(ob$corr)) {
+        dat <- ob$corr
+    } else {
+        dat <- ob$corr[[study]]
+    }
+    dat <- unlist(dat[, -1])
+    hist(dat, ...)
+}
+
+#' \code{\link{ggjoy}} joy plot of microRNA or tf sets
+#'
+#' \code{\link{ggjoy}} joy plot of sets of microRNAs or transcription
+#' factors and their correlated features in a TCGA study.
+#'
+#' @inheritParams plot
+#' @return An \code{\link{ggjoy}} plot object
+#' @examples
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+#'
+#' # get data for 2 microRNAs in the ACC study
+#' dat <- get_mir(conn,
+#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
+#'     study = c('ACC', 'BLCA'))
+#' DBI::dbDisconnect(conn)
+#'
+#' # convert to cmicroRNA object and plot
+#' ob <- cmicroRNA(dat)
+#' joy(ob, study = 'ACC')
+#'
+#' @export
+joy <- function(ob, study = NULL, ...) {
+    UseMethod('joy')
+}
+
+#' @export
+joy.cmicroRNA <- function(ob, study = NULL, ...) {
+    if(length(ob$studies) > 1 && length(study) != 1) {
+        stop('User should provide a single study to plot')
+    }
+    if(is.data.frame(ob$corr)) {
+        dat <- ob$corr
+    } else {
+        dat <- ob$corr[[study]]
+    }
+    `%>%` <- dplyr::`%>%`
+    dat <- dat %>%
+        tidyr::gather(mirna_base, cor, -feature) %>%
+        stats::na.omit()
+    gg <- dat %>%
+        ggplot2::ggplot(ggplot2::aes(x = cor,
+                                     y = mirna_base)) +
+        ggjoy::geom_joy()
+
+    return(gg)
+}
+
+#' @export
+joy.cTF <- function(ob, study = NULL, ...) {
+    if(length(ob$studies) > 1 && length(study) != 1) {
+        stop('User should provide a single study to plot')
+    }
+    if(is.data.frame(ob$corr)) {
+        dat <- ob$corr
+    } else {
+        dat <- ob$corr[[study]]
+    }
+    `%>%` <- dplyr::`%>%`
+    dat <- dat %>%
+        tidyr::gather(tf, cor, -feature) %>%
+        stats::na.omit()
+    gg <- dat %>%
+        ggplot2::ggplot(ggplot2::aes(x = cor,
+                                     y = tf)) +
+        ggjoy::geom_joy()
+
+    return(gg)
+}
+

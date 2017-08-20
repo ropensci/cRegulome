@@ -19,6 +19,7 @@ Imports: DBI,
    VennDiagram,
    dplyr,
    ggplot2,
+   ggjoy,
    tidyr,
    reshape2,
    purrr
