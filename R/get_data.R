@@ -139,16 +139,16 @@ get_mir <- function(conn,
 
     # get main data by applying filters and tidy
     `%>%` <- dplyr::`%>%`
-
+    .data <- rlang::.data
     dat <- conn %>%
         dplyr::tbl(table) %>%
-        dplyr::select(mirna_base, feature, study) %>%
+        dplyr::select(.data$mirna_base, .data$feature, study) %>%
         dplyr::filter(mirna_base %in% mir) %>%
         dplyr::collect() %>%
         tidyr::gather(study, cor, -mirna_base, -feature) %>%
-        dplyr::mutate(cor = cor/100) %>%
-        dplyr::filter(abs(cor) > min_cor) %>%
-        dplyr::arrange(dplyr::desc(abs(cor))) %>%
+        dplyr::mutate(cor = .data$cor/100) %>%
+        dplyr::filter(abs(.data$cor) > min_cor) %>%
+        dplyr::arrange(dplyr::desc(abs(.data$cor))) %>%
         stats::na.omit()
 
     # apply targets only filters when TRUE
@@ -171,7 +171,7 @@ get_mir <- function(conn,
         stop("max_num should be an integer between 1 and Inf.")
     } else {
         dat <- dat %>%
-            dplyr::group_by(mirna_base, study) %>%
+            dplyr::group_by(.data$mirna_base, .data$study) %>%
             dplyr::slice(1:max_num)
     }
 
