@@ -25,9 +25,10 @@ Imports: DBI,
    tidyr,
    reshape2,
    purrr
-Suggests: knitr,
-    rmarkdown,
-    testthat
 VignetteBuilder: knitr
+Suggests: BiocStyle, 
+    knitr, 
+    rmarkdown, 
+    testthat
 biocViews: GeneExpression,
     Transcription
