@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -79,7 +79,7 @@ print.cTF <- function(ob, ...) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -159,7 +159,7 @@ plot.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -231,7 +231,7 @@ tidy.cTF <- function(ob) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -302,7 +302,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -367,7 +367,7 @@ upset.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study
@@ -424,7 +424,7 @@ hist.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @examples
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # get data for 2 microRNAs in the ACC study

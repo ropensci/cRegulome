@@ -50,7 +50,7 @@ get_db(test = TRUE)
 R.utils::gunzip('cRegulome.db.gz')
 }
 # connect to test database file
-db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # provide only required arguments

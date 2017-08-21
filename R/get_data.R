@@ -31,7 +31,7 @@
 #' }
 #'
 #' # load the test db file from shipped with the pacakge
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' file.info(db_file)
 #'
 #' @export
@@ -96,7 +96,7 @@ get_db <- function(test = FALSE, ...) {
 #' gunzip('cRegulome.db.gz')
 #' }
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # provide only required arguments
@@ -221,7 +221,7 @@ get_mir <- function(conn,
 #' R.utils::gunzip('cRegulome.db.gz')
 #' }
 #' # connect to test database file
-#' db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 #'
 #' # provide only required arguments

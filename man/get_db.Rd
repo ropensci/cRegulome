@@ -41,7 +41,7 @@ get_db(test = TRUE)
 }
 
 # load the test db file from shipped with the pacakge
-db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 file.info(db_file)
 
 }

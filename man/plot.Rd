@@ -27,7 +27,7 @@ argument \code{study} is a requirment.
 }
 \examples{
 # connect to test database file
-db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # get data for 2 microRNAs in the ACC study
