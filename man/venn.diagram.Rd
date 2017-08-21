@@ -19,7 +19,7 @@ defult \code{NULL} all available studies will be included.}
 }
 \value{
 A venn diagram with a ciccle or an ellipses for each microRNA and
-   the number of correlated features.
+the number of correlated features.
 }
 \description{
 Count and plot the numbers of microRNA correlated features in

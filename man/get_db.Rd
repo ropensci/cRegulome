@@ -15,9 +15,9 @@ the data for speed.}
 }
 \value{
 Downloads a compressed \code{sqlite} file to the current working
-   directory. The file is named \code{cRegulome.db.gz} by default and it's
-   not advised to change the name to avoid breaking the other functions
-   that calls the database.
+directory. The file is named \code{cRegulome.db.gz} by default and it's
+not advised to change the name to avoid breaking the other functions
+that calls the database.
 }
 \description{
 This function calls \code{\link[utils]{download.file}} to download the

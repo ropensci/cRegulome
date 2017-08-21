@@ -17,7 +17,7 @@ transcription factor.}
 \item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
- defult \code{NULL} all available studies will be included.}
+defult \code{NULL} all available studies will be included.}
 
 \item{min_cor}{A \code{numeric}, an absoute correlation minimmum between 0
 and 1 for each \code{tf}.}
@@ -32,9 +32,9 @@ factors as identified in the Cistrome Cancer,
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{tf} is the official
-   gene symbols of the genes contains the transcription factor,
-   \code{feature} is the features/genes, cor is the corresponding
-   expression correaltions and \code{study} is TCGA study ID.
+gene symbols of the genes contains the transcription factor, \code{feature}
+is the features/genes, cor is the corresponding expression correaltions
+and \code{study} is TCGA study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by

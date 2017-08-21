@@ -12,9 +12,9 @@ calling \link{cmicroRNA} or \link{cTF}.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} or
-   \code{tf}is the microRNA miRBase IDs, \code{feature} is the
-   features/genes, \code{cor} is the corresponding expression
-   correaltions and \code{study} is TCGA study ID.
+\code{tf}is the microRNA miRBase IDs, \code{feature} is the features/genes,
+\code{cor} is the corresponding expression correaltions and \code{study}
+is TCGA study ID.
 }
 \description{
 Tidy \link{cmicroRNA} and \link{cTF} objects

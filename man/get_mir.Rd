@@ -17,7 +17,7 @@ widely used miRBase database, \url{http://www.mirbase.org/}.}
 \item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
- defult \code{NULL} all available studies will be included.}
+defult \code{NULL} all available studies will be included.}
 
 \item{min_cor}{A \code{numeric}, an absoute correlation minimmum between 0
 and 1 for each \code{mir}.}
@@ -31,9 +31,9 @@ the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} is the
-   microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
-   is the corresponding expression correaltions and \code{study} is TCGA
-   study ID.
+microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
+is the corresponding expression correaltions and \code{study} is TCGA
+study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by

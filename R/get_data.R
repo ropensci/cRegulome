@@ -8,14 +8,15 @@
 #' or to update the database to the latest version.
 #'
 #' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE}
-#'    downlaods a database file with the same structure with a subset of
-#'    the data for speed.
+#' downlaods a database file with the same structure with a subset of
+#' the data for speed.
 #' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
 #'
 #' @return Downloads a compressed \code{sqlite} file to the current working
-#'    directory. The file is named \code{cRegulome.db.gz} by default and it's
-#'    not advised to change the name to avoid breaking the other functions
-#'    that calls the database.
+#' directory. The file is named \code{cRegulome.db.gz} by default and it's
+#' not advised to change the name to avoid breaking the other functions
+#' that calls the database.
+#'
 #' @examples
 #' \dontrun{
 #' # downlaod db file
@@ -52,10 +53,10 @@ get_db <- function(test = FALSE, ...) {
         message('File already exists in the current directory.')
     } else {
         tryCatch(utils::download.file(url, destfile = 'cRegulome.db.gz'),
-                 error = function(){
-                     message('Downloading file failed')
-                     return(NA)
-                 })
+                error = function(){
+                    message('Downloading file failed')
+                    return(NA)
+                    })
     }
     }
 
@@ -69,24 +70,25 @@ get_db <- function(test = FALSE, ...) {
 #'
 #' @param conn A connection to the database file by \code{\link[DBI]{dbConnect}}
 #' @param mir A required \code{character} vector of the microRNAs of interest.
-#'    These are the miRBase ID which are the official identifiers of the
-#'    widely used miRBase database, \url{http://www.mirbase.org/}.
+#' These are the miRBase ID which are the official identifiers of the
+#' widely used miRBase database, \url{http://www.mirbase.org/}.
 #' @param study A \code{character} vector of The Cancer Genome Atlase (TCGA)
-#'    study identifiers. To view the available studies in TCGA project,
-#'    \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-#'     defult \code{NULL} all available studies will be included.
+#' study identifiers. To view the available studies in TCGA project,
+#' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+#' defult \code{NULL} all available studies will be included.
 #' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0
-#'     and 1 for each \code{mir}.
+#' and 1 for each \code{mir}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
-#'     for each \code{mir} in each \code{study}.
+#' for each \code{mir} in each \code{study}.
 #' @param targets_only A \code{logical}, default \code{FALSE}. When
-#'    \code{TRUE}, \code{features} will be the microRNA targets as defined in
-#'    the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.
+#' \code{TRUE}, \code{features} will be the microRNA targets as defined in
+#' the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the
-#'    microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
-#'    is the corresponding expression correaltions and \code{study} is TCGA
-#'    study ID.
+#' microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
+#' is the corresponding expression correaltions and \code{study} is TCGA
+#' study ID.
+#'
 #' @examples
 #' \dontrun{
 #' # downlaod db file
@@ -195,22 +197,23 @@ get_mir <- function(conn,
 #' items of interest.
 #'
 #' @param tf A required \code{character} vector of the transcription factor of
-#'    interest. These are the official gene symbols of the genes contains the
-#'    transcription factor.
+#' interest. These are the official gene symbols of the genes contains the
+#' transcription factor.
 #' @inheritParams get_mir
 #' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0
-#'    and 1 for each \code{tf}.
+#' and 1 for each \code{tf}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
-#'    for each \code{tf} in each \code{study}.
+#' for each \code{tf} in each \code{study}.
 #' @param targets_only A \code{logical}, default \code{FALSE}. When
-#'    \code{TRUE}, \code{features} will be the targets of the transcription
-#'    factors as identified in the Cistrome Cancer,
-#'    \url{http://cistrome.org/CistromeCancer/}
+#' \code{TRUE}, \code{features} will be the targets of the transcription
+#' factors as identified in the Cistrome Cancer,
+#' \url{http://cistrome.org/CistromeCancer/}
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{tf} is the official
-#'    gene symbols of the genes contains the transcription factor,
-#'    \code{feature} is the features/genes, cor is the corresponding
-#'    expression correaltions and \code{study} is TCGA study ID.
+#' gene symbols of the genes contains the transcription factor, \code{feature}
+#' is the features/genes, cor is the corresponding expression correaltions
+#' and \code{study} is TCGA study ID.
+#'
 #' @examples
 #' \dontrun{
 #' # downlaod db file
@@ -235,11 +238,11 @@ get_mir <- function(conn,
 #'
 #' @export
 get_tf <- function(conn,
-                   tf,
-                   study = NULL,
-                   min_cor = NULL,
-                   max_num = NULL,
-                   targets_only = FALSE) {
+                    tf,
+                    study = NULL,
+                    min_cor = NULL,
+                    max_num = NULL,
+                    targets_only = FALSE) {
 
     # unpack filters and check types
     table <- 'cor_tf'

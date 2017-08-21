@@ -5,9 +5,10 @@
 #' microRNA-gene expression correlations.
 #'
 #' @param dat_mir A \code{data.frame} such as this returned by calling
-#'    \link{get_mir}.
+#' \link{get_mir}.
 #'
 #' @return An S3 object of class \code{cmicroRNA}
+#'
 #' @examples
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
@@ -38,12 +39,12 @@ cmicroRNA <- function(dat_mir){
             reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
     } else {
         corr <- lapply(unique(dat_mir$study),
-                       function(x) {
-                           dat_mir %>%
-                               dplyr::filter(study == x) %>%
-                               reshape2::dcast(feature ~ mirna_base,
-                                               value.var = 'cor')
-                       })
+                    function(x) {
+                        dat_mir %>%
+                            dplyr::filter(study == x) %>%
+                            reshape2::dcast(feature ~ mirna_base,
+                                            value.var = 'cor')
+                        })
         names(corr) <- unique(dat_mir$study)
     }
     structure(list(
@@ -62,7 +63,7 @@ cmicroRNA <- function(dat_mir){
 #' transcription factors-gene expression correlations.
 #'
 #' @param dat_tf A \code{data.frame} such as this returned by calling
-#'    \link{get_tf}.
+#' \link{get_tf}.
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
@@ -95,11 +96,11 @@ cTF <- function(dat_tf){
             reshape2::dcast(feature ~ tf, value.var = 'cor')
     } else {
         corr <- lapply(unique(dat_tf$study),
-                       function(x) {
-                           dat_tf %>%
-                               dplyr::filter(study == x) %>%
-                               reshape2::dcast(feature ~ tf, value.var = 'cor')
-                       })
+                    function(x) {
+                        dat_tf %>%
+                            dplyr::filter(study == x) %>%
+                            reshape2::dcast(feature ~ tf, value.var = 'cor')
+                        })
         names(corr) <- unique(dat_tf$study)
     }
     structure(list(

@@ -1,7 +1,7 @@
 #' Print method for \link{cmicroRNA} and \link{cTF} objects
 #'
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
-#'    calling \link{cmicroRNA} or \link{cTF}.
+#' calling \link{cmicroRNA} or \link{cTF}.
 #' @param ... Other argument to \code{\link[base]{print}}.
 #'
 #' @return Printed text
@@ -24,40 +24,40 @@
 #'
 #' @export
 print <- function(ob, ...) {
-  UseMethod('print')
+    UseMethod('print')
 }
 
 #' @export
 print.cmicroRNA <- function(ob, ...) {
-    p <- paste('A cmicroRNA object: microRNA expression correlations
-             in Cancer\n',
-               'Contains:\n',
-               length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
-                                                              collapse = ' '),
-               '\n',
-               length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA[1:5],
-                                                         collapse = ' '),
-               '\n',
-               length(ob$features), 'features:', paste(ob$features[1:5],
-                                                       collapse = ' '),
-               '\n')
+    p <- paste(
+        'A cmicroRNA object: microRNA-gene correlations in Cancer\n',
+        'Contains:\n',
+        length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
+                                                    collapse = ' '),
+        '\n',
+        length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA[1:5],
+                                                collapse = ' '),
+        '\n',
+        length(ob$features), 'features:', paste(ob$features[1:5],
+                                                collapse = ' '),
+        '\n')
     cat(p)
 }
 
 #' @export
 print.cTF <- function(ob, ...) {
-    p <- paste('A cTF object: transcription factor expression correlations
-             in Cancer\n',
-               'Contains:\n',
-               length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
-                                                              collapse = ' '),
-               '\n',
-               length(ob$tf), 'Transcription factor/s:', paste(ob$TF[1:5],
-                                                               collapse = ' '),
-               '\n',
-               length(ob$features), 'features:', paste(ob$features[1:5],
-                                                       collapse = ' '),
-               '\n')
+    p <- paste(
+        'A cTF object: transcription factor-gene correlations in Cancer\n',
+        'Contains:\n',
+        length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
+                                                        collapse = ' '),
+        '\n',
+        length(ob$tf), 'Transcription factor/s:', paste(ob$TF[1:5],
+                                                        collapse = ' '),
+        '\n',
+        length(ob$features), 'features:', paste(ob$features[1:5],
+                                                collapse = ' '),
+        '\n')
     cat(p)
 }
 
@@ -68,11 +68,11 @@ print.cTF <- function(ob, ...) {
 #' argument \code{study} is a requirment.
 #'
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
-#'    calling \link{cmicroRNA} or \link{cTF}.
+#' calling \link{cmicroRNA} or \link{cTF}.
 #' @param study A \code{character} vector of The Cancer Genome Atlase (TCGA)
-#'    study identifiers. To view the available studies in TCGA project,
-#'    \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-#'    defult \code{NULL} all available studies will be included.
+#' study identifiers. To view the available studies in TCGA project,
+#' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+#' defult \code{NULL} all available studies will be included.
 #' @param ... Other options
 #'
 #' @return A \code{ggplot} object of dot plot.
@@ -95,7 +95,7 @@ print.cTF <- function(ob, ...) {
 #'
 #' @export
 plot <- function(ob, study = NULL, ...) {
-  UseMethod('plot')
+    UseMethod('plot')
 }
 
 #' @export
@@ -153,9 +153,9 @@ plot.cTF <- function(ob, study = NULL, ...) {
 #' @inheritParams plot
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} or
-#'    \code{tf}is the microRNA miRBase IDs, \code{feature} is the
-#'    features/genes, \code{cor} is the corresponding expression
-#'    correaltions and \code{study} is TCGA study ID.
+#' \code{tf}is the microRNA miRBase IDs, \code{feature} is the features/genes,
+#' \code{cor} is the corresponding expression correaltions and \code{study}
+#' is TCGA study ID.
 #'
 #' @examples
 #' # connect to test database file
@@ -227,7 +227,7 @@ tidy.cTF <- function(ob) {
 #'
 #' @inheritParams plot
 #' @return A venn diagram with a ciccle or an ellipses for each microRNA and
-#'    the number of correlated features.
+#' the number of correlated features.
 #'
 #' @examples
 #' # connect to test database file
@@ -297,7 +297,9 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' factors and their correlated features in a TCGA study.
 #'
 #' @inheritParams plot
+#'
 #' @return An \code{\link[UpSetR]{upset}} plot
+#'
 #' @examples
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
@@ -332,7 +334,7 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
     `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                  function(x) x <- ifelse(is.na(x), 0, 1))
+                        function(x) x <- ifelse(is.na(x), 0, 1))
     UpSetR::upset(dat, ...)
 }
 
@@ -350,7 +352,7 @@ upset.cTF <- function(ob, study = NULL, ...) {
     `%>%` <- dplyr::`%>%`
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                  function(x) x <- ifelse(is.na(x), 0, 1))
+                        function(x) x <- ifelse(is.na(x), 0, 1))
     UpSetR::upset(dat, ...)
 }
 
@@ -360,7 +362,9 @@ upset.cTF <- function(ob, study = NULL, ...) {
 #' factors and their correlated features in a TCGA study.
 #'
 #' @inheritParams plot
+#'
 #' @return An \code{\link{hist}} plot
+#'
 #' @examples
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
@@ -415,7 +419,9 @@ hist.cTF <- function(ob, study = NULL, ...) {
 #' factors and their correlated features in a TCGA study.
 #'
 #' @inheritParams plot
+#'
 #' @return An \code{\link{ggjoy}} plot object
+#'
 #' @examples
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
