@@ -16,4 +16,5 @@ bioc_required: true
 bioc_use_devel: true
 after_success:
   - Rscript -e 'library(covr); codecov()'
-
+os:
+  - osx
