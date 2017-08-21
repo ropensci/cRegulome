@@ -22,7 +22,7 @@ transcription factors-gene expression correlations.
 # connect to test database file
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-
+DBI::dbListTables(conn)
 # optional arguments
 dat <- get_tf(conn,
     tf = c('AFF4', 'ESR1'),
@@ -31,7 +31,7 @@ dat <- get_tf(conn,
     max_num = 100,
     targets_only = TRUE)
 DBI::dbDisconnect(conn)
-DBI::dbListTables(conn)
+
 # convert to object
 ob <- cTF(dat)
 
