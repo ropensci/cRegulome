@@ -66,8 +66,6 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
-#' library(RSQLite)
-#'
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
