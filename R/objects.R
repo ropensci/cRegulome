@@ -67,7 +67,6 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @return An S3 object of class \code{cTF}
 #' @examples
-#' \dontrun{
 #' # connect to test database file
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
@@ -83,7 +82,6 @@ cmicroRNA <- function(dat_mir){
 #'
 #' # convert to object
 #' ob <- cTF(dat)
-#' }
 #'
 #' @export
 cTF <- function(dat_tf){

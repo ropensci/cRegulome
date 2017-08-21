@@ -19,7 +19,6 @@ Constructs an S3 object called cTF contains data returned by calling
 transcription factors-gene expression correlations.
 }
 \examples{
-\dontrun{
 # connect to test database file
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
@@ -35,6 +34,5 @@ DBI::dbDisconnect(conn)
 
 # convert to object
 ob <- cTF(dat)
-}
 
 }

@@ -6,6 +6,9 @@ sudo: false
 cache: packages
 r_packages:
   - covr
+env:
+  global:
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual --timings"
 warnings_are_errors: false
 bioc_required: true
 bioc_use_devel: true
