@@ -79,7 +79,7 @@ cmicroRNA <- function(dat_mir){
 #'     max_num = 100,
 #'     targets_only = TRUE)
 #' DBI::dbDisconnect(conn)
-#'
+#' DBI::dbListTables(conn)
 #' # convert to object
 #' ob <- cTF(dat)
 #'
