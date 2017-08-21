@@ -20,7 +20,7 @@ microRNA-gene expression correlations.
 }
 \examples{
 # connect to test database file
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+db_file <- devtools::system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 
 # optional arguments
