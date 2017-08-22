@@ -32,10 +32,10 @@ print.cmicroRNA <- function(ob, ...) {
     p <- paste(
         'A cmicroRNA object: microRNA-gene correlations in Cancer\n',
         'Contains:\n',
-        length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
+        length(ob$studies), 'Cancer study/ies:', paste(ob$studies,
                                                     collapse = ' '),
         '\n',
-        length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA[1:5],
+        length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA,
                                                 collapse = ' '),
         '\n',
         length(ob$features), 'features:', paste(ob$features[1:5],
@@ -49,10 +49,10 @@ print.cTF <- function(ob, ...) {
     p <- paste(
         'A cTF object: transcription factor-gene correlations in Cancer\n',
         'Contains:\n',
-        length(ob$studies), 'Cancer study/ies:', paste(ob$studies[1:5],
+        length(ob$studies), 'Cancer study/ies:', paste(ob$studies,
                                                         collapse = ' '),
         '\n',
-        length(ob$tf), 'Transcription factor/s:', paste(ob$TF[1:5],
+        length(ob$tf), 'Transcription factor/s:', paste(ob$TF,
                                                         collapse = ' '),
         '\n',
         length(ob$features), 'features:', paste(ob$features[1:5],
@@ -115,11 +115,14 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        dplyr::mutate(cor = abs(cor)) %>%
+        dplyr::mutate(Correlation = abs(cor),
+                      Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'mirna_base',
                                             y = 'feature',
-                                            size = 'cor')) +
-        ggplot2::geom_point()
+                                            size = 'Correlation',
+                                            color = 'Direction')) +
+        ggplot2::geom_point() +
+        ggplot2::theme_light()
     return(gg)
 }
 
@@ -140,11 +143,14 @@ plot.cTF <- function(ob, study = NULL, ...) {
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     gg <- dat %>%
-        dplyr::mutate(cor = abs(cor)) %>%
-        ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
-                                            y = 'feature',
-                                            size = 'cor')) +
-        ggplot2::geom_point()
+      dplyr::mutate(Correlation = abs(cor),
+                    Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
+      ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
+                                          y = 'feature',
+                                          size = 'Correlation',
+                                          color = 'Direction')) +
+      ggplot2::geom_point() +
+      ggplot2::theme_light()
     return(gg)
 }
 
@@ -243,7 +249,7 @@ tidy.cTF <- function(ob) {
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
-#' venn.diagram(ob, study = 'ACC', filename = 'mir.tiff')
+#' venn.diagram(ob, study = 'ACC')
 #'
 #' @export
 venn.diagram <- function(ob, study = NULL, ...) {
@@ -268,7 +274,8 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     dat <- with(dat, split(feature, mirna_base))
-    VennDiagram::venn.diagram(dat, ...)
+    pp <- VennDiagram::venn.diagram(dat, imagetype = 'png', filename = NULL, ...)
+    grid::grid.draw(pp)
 }
 
 #' @export
@@ -288,7 +295,8 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     dat <- with(dat, split(feature, tf))
-    VennDiagram::venn.diagram(dat, ...)
+    pp <- VennDiagram::venn.diagram(dat, imagetype = 'png', filename = NULL, ...)
+    grid::grid.draw(pp)
 }
 
 #' \code{\link[UpSetR]{upset}} plot of microRNA or tf sets
@@ -460,7 +468,8 @@ joy.cmicroRNA <- function(ob, study = NULL, ...) {
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'mirna_base')) +
-        ggjoy::geom_joy()
+        ggjoy::geom_joy() +
+        ggplot2::theme_light()
 
     return(gg)
 }
@@ -483,7 +492,8 @@ joy.cTF <- function(ob, study = NULL, ...) {
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'tf')) +
-        ggjoy::geom_joy()
+        ggjoy::geom_joy() +
+        ggplot2::theme_light()
 
     return(gg)
 }

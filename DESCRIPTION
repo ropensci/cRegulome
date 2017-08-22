@@ -2,7 +2,7 @@ Package: cRegulome
 Type: Package
 Title: Obtain and visualize regulome (micorRNA/transcription factors)-gene
   correlations in cancer
-Version: 0.1.0
+Version: 0.99.0
 Author: Mahmoud Ahmed
 Maintainer: Mahmoud Ahmed <mahmoud.s.fahmy@students.kasralainy.edu.eg>
 Description: This package obtain a database of pre-calculated microRNA and
@@ -24,7 +24,8 @@ Imports: DBI,
    ggjoy,
    tidyr,
    reshape2,
-   purrr
+   purrr,
+   grid
 VignetteBuilder: knitr
 Suggests: BiocStyle, 
     knitr, 
