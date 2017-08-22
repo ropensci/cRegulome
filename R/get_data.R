@@ -52,7 +52,8 @@ get_db <- function(test = FALSE, ...) {
     if(file.exists('cRegulome.db')) {
         message('File already exists in the current directory.')
     } else {
-        tryCatch(utils::download.file(url, destfile = 'cRegulome.db.gz'),
+        tryCatch(utils::download.file(url, destfile = 'cRegulome.db.gz',
+                                      mode = 'wb'),
                 error = function(){
                     message('Downloading file failed')
                     return(NA)
