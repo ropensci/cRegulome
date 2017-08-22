@@ -29,6 +29,7 @@ VignetteBuilder: knitr
 Suggests: BiocStyle, 
     knitr, 
     rmarkdown, 
-    testthat
+    testthat,
+    covr
 biocViews: GeneExpression,
     Transcription
