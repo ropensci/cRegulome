@@ -78,11 +78,11 @@ plot(ob, study = 'ACC')
 The two main sources of data used by this package are cistrome cancer and
 miRCancer databases. Cistrome Cancer is based on an integrative analysis of
 The Cancer Genome Atlas (TCGA) and public ChIP-seq data. It provides
-calculated correlations of (n=) transcription factors and their target
-genes in (n=) cancer study. In addition, cistrome cancer provides the
+calculated correlations of (n = 320) transcription factors and their target
+genes in (n = 29) cancer study. In addition, cistrome cancer provides the
 transcription factors regulatory potential to target and non-target genes.
 miRCancer uses TCGA data and TargetScan annotations to correlate known
-microRNAs (n =) and target and non-target genes in (n = ) cancer studies.  
+microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.  
 
 ## Database file  
 cRegulome obtains a pre-build sqlite database file of the cistrome cancer
@@ -230,8 +230,11 @@ upset(ob_tf, study = 'ACC')
 ```
 
 # Contributions  
+Comments, issues and contributions are welcomed at:
+[https://github.com/MahShaaban/cRegulome](https://github.com/MahShaaban/cRegulome)  
+
 # Citations  
-# References  
+Please cite:  
 
 ```{r clean, echo=FALSE}
 dbDisconnect(conn)
