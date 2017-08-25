@@ -274,7 +274,9 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
     dat <- with(dat, split(feature, mirna_base))
-    pp <- VennDiagram::venn.diagram(dat, imagetype = 'png', filename = NULL, ...)
+    pp <- VennDiagram::venn.diagram(dat,
+                                    imagetype = 'png', 
+                                    filename = NULL, ...)
     grid::grid.draw(pp)
 }
 
@@ -295,7 +297,9 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
     dat <- with(dat, split(feature, tf))
-    pp <- VennDiagram::venn.diagram(dat, imagetype = 'png', filename = NULL, ...)
+    pp <- VennDiagram::venn.diagram(dat,
+                                    imagetype = 'png', 
+                                    filename = NULL, ...)
     grid::grid.draw(pp)
 }
 

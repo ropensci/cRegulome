@@ -1,17 +1,12 @@
 
 ```{r, echo=FALSE}
-## The following redefinitions are only for printing the verbatim header below  
-doc_date = function() "`r doc_date()`"  
-pkg_ver = function(name) sprintf("`r pkg_ver('%s')`", name)  
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
 ```
 
 ---
 title: "Using cRegulome"
 author: "Mahmoud Ahmed"
-date: "`r doc_date()`"
-package: "`r pkg_ver('BiocStyle')`"
-abstract: >
-    Vignette Abstract
+date: "August 22, 2017"
 vignette: >
     %\VignetteIndexEntry{Using cRegulome}
     %\VignetteEngine{knitr::rmarkdown}
@@ -19,3 +14,228 @@ vignette: >
 output: 
     BiocStyle::pdf_document
 ---
+
+# Overview  
+Transcription factors and microRNAs are importing for regulating the gene
+expression in normal physiology and pathological conditions. Many
+bioinformatics tools were built to predict and identify transcription
+factors and microRNA targets and their role in development of diseases
+including cancers. The availability of public access high-throughput data
+allowed for data-driven validations and discoveries of these predictions.
+Here, we build on that kind of tools and integrative analysis to provide a
+tool to access, manage and visualize data from open source databases.
+cRegulome provides a programmatic access to the regulome (microRNA and
+transcription factor) correlations with target genes in cancer. The package
+obtains a local instance of Cistrome Cancer and miRCancer databases and
+provides objects and methods to interact with and visualize the correlation
+data.  
+
+# Getting started  
+To get starting with cRegulome we show a very quick example. We first start
+by downloading a small test database file, make a simple query and convert
+the output to a cRegulome object to print and visualize.  
+
+```{r load_libraries}
+library(cRegulome)
+library(R.utils)
+library(DBI)
+library(RSQLite)
+library(dplyr)
+library(dbplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r prepare database file}
+if(!file.exists('cRegulome.db')) {
+    get_db(test = TRUE)
+    gunzip('cRegulome.db.gz')
+}
+conn <- dbConnect(SQLite(), 'cRegulome.db')
+```
+
+```{r simple_query}
+dat <- get_mir(conn,
+               mir = c('hsa-let-7b', 'hsa-mir-134'),
+               study = c('ACC', 'BLCA'),
+               min_cor = .3,
+               targets_only = TRUE)
+ob <- cmicroRNA(dat)
+dbDisconnect(conn)
+```
+
+```{r print_object}
+print(ob)
+```
+
+```{r plot_object}
+plot(ob, study = 'ACC')
+```
+
+
+# Package Discription  
+## Data sources  
+The two main sources of data used by this package are cistrome cancer and
+miRCancer databases. Cistrome Cancer is based on an integrative analysis of
+The Cancer Genome Atlas (TCGA) and public ChIP-seq data. It provides
+calculated correlations of (n=) transcription factors and their target
+genes in (n=) cancer study. In addition, cistrome cancer provides the
+transcription factors regulatory potential to target and non-target genes.
+miRCancer uses TCGA data and TargetScan annotations to correlate known
+microRNAs (n =) and target and non-target genes in (n = ) cancer studies.  
+
+## Database file  
+cRegulome obtains a pre-build sqlite database file of the cistrome cancer
+and miRCancer databases. The details of this build is provided at
+(cRegulomedb) in addition to the scripts used to pull, formate and deposit
+the data at an on-line repository. Briefly, the sqlite database consist of
+4 tables `cor_mir` and `cor_tf` for correlation values; and `targets_mir`
+and `targets_tf` for microRNA miRBase ID and transcription factors symbols
+to genes mappings.  Two indecies are created to facilitate the database
+search using the miRBase IDs and transcription factors symbols. The
+database file can be downloaded using the function `get_db`.  
+
+To show details of the database file, the following code looks at the file
+information of the file we downloaded in the previous example, connect to
+the database and show the names of tables and fields in each of them.  
+
+```{r database_file}
+# display file informations
+file.info('cRegulome.db')
+
+# table names
+conn <- dbConnect(SQLite(), 'cRegulome.db')
+tabs <- dbListTables(conn)
+print(tabs)
+
+# fields/columns in the tables
+for(i in seq_along(tabs)) {
+  print(dbListFields(conn, tabs[i]))
+}
+```
+
+## Database query  
+To query the database using cRegulome, we provide to main functions;
+`get_mir` and `get_tf` for querying microRNA and transcription factors
+correlations respectively. Users need to provide the proper IDs for
+microRNA, transcription factor symbols and/or TCGA study identifiers.
+microRNAs are referred to by the official miRBase IDs, transcription
+factors by their corresponding official gene symbols and TCGA studies with
+their common identifiers. In either cases, the output of calling the these
+functions is a tidy data.frame of 4 columns; `mirna_base` or `tf`,
+`feature`, `cor` and `study` These correspond to the miRBase IDs or
+transcription factors symbol, gene symbol, correlation value and the TCGA
+study identifier.  
+
+Here we show an example of such a query. Then, we illusterat how this qeury
+excuted on the database using basic `RSQLite` and `dbplyr` which is what
+the `get_*` functions are doing.  
+
+```{r database_query}
+dat_mir <- get_mir(conn,
+               mir = c('hsa-let-7b', 'hsa-mir-134'),
+               study = c('ACC', 'BLCA'),
+               min_cor = .3,
+               targets_only = TRUE)  
+dat_tf <- get_tf(conn,
+                 tf = c('AFF4', 'AR'),
+                 study = c('ACC', 'BLCA'),
+                 min_cor = .3)
+head(dat_mir); head(dat_tf)
+```
+
+
+```{r}
+dat_mir2 <- tbl(conn, 'cor_mir') %>%
+    select(mirna_base, feature, ACC, BLCA) %>%
+    filter(mirna_base %in% c('hsa-let-7b', 'hsa-mir-134')) %>%
+    collect() %>%
+    gather(study, cor, -mirna_base, -feature) %>%
+    mutate(cor = cor/100) %>%
+    filter(abs(cor) > .3) %>%
+    arrange(desc(abs(cor))) %>%
+    na.omit()
+```
+
+```{r check_query}
+all(dat_mir2$mirna_base %in% dat_mir$mirna_base)
+all(dat_mir2$study %in% dat_mir$study)
+```
+
+## Objects  
+Two S3 objects are provided by cRegulome to store and dispatch methods on
+the correlation data. cmicroRNA and cTF for microRNA and transcription
+factors respectively. The structure of these objects is very similar.
+Basically, as all S3 objects, it’s a list of 4 items; microRNA or TF for
+the reglome element, features for the gene hits, studies for the TCGA
+studies and finally corr is either a `data.frame` when the object has data
+from a single TCGA study or a named list of data.frame when it has data
+from multiple studies.  Each of these data.frames has the regulome element
+(microRNAs or transcription factors) in columns and features/genes in rows.  
+To construct these objects, users need to call a construct function with
+the corresponding names on the data.frame output form `get_*`. The reverse
+is possible by calling the function tidy on the object to get back the tidy
+`data.frame`.  
+
+```{r cmicroRNA_object}
+ob_mir <- cmicroRNA(dat_mir)
+class(ob_mir)
+str(ob_mir)
+```
+
+```{r cTF_object}
+ob_tf <- cTF(dat_tf)
+class(ob_tf)
+str(ob_tf)
+```
+
+## Methods
+cRegulome provides S3 methods to interact a visualize the correlations data
+in the cmicroRNA and cTF objects. Table 1 provides an over view of these
+functions. These methods dispatch directly on the objects and could be
+customized and manipulated in the same way as their generics.  
+
+```{r methods_cmicroRNA}
+methods(class = 'cmicroRNA')
+```
+
+```{r methods_cTF}
+methods(class = 'cTF')
+```
+
+```{r tidy_method}
+tidy_dat <- tidy(ob_tf)
+equals(dat_tf, tidy_dat)
+```
+
+```{r hist_method}
+hist(ob_tf, study = 'ACC',
+     breaks = 100,
+     main = '', xlab = 'Correlation')
+```
+
+
+```{r joy_method}
+joy(ob_tf, study = 'ACC') +
+    labs(x = 'Correlation', y = '')
+```
+
+```{r venn.daigram_method}
+venn.diagram(ob_tf, study = 'ACC', 
+             cat.default.pos = 'text')
+```
+
+```{r upset_method}
+upset(ob_tf, study = 'ACC')
+```
+
+# Contributions  
+# Citations  
+# References  
+
+```{r clean, echo=FALSE}
+dbDisconnect(conn)
+unlink('./cRegulome.db')
+unlink('./Venn*')
+```
+
