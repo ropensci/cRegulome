@@ -1,31 +1,49 @@
-library(cRegulome)
-library(R.utils)
-library(DBI)
-library(RSQLite)
-library(ggplot2)
+---
+title: "Manuscript code"
+subtitle: "A reproducible code to generate data and figures in cRegulome manuscript"
+author: "Mahmoud Shaaban"
+date: "8/31/2017"
+output: pdf_document
+---
 
-# only in final script
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE, eval = FALSE)
+```
+
+# Overview
+
+```{r required_libraries}
 # get_db()
 # gunzip('cRegulome.db.gz')
 # conn <- dbConnect(SQLite(), 'cRegulome.db')
+```
 
+```{r connect_db}
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+```
 
+```{r get_data}
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
                targets_only = TRUE)
 
 dbDisconnect(conn)
-
 ob <- cmicroRNA(dat)
+```
+
+```{r method_tidy}
 dat <- tidy(ob)
 dat <- subset(dat, abs(dat$cor) > .3)
 sub_ob <- cmicroRNA(dat)
+```
 
-print(sub_ob)
+```{r method_print}
+print(ob)
+```
 
+```{r method_plot}
 plot(sub_ob, study = 'ACC') +
   labs(x = '', y = '') +
   theme(legend.position = 'top',
@@ -33,22 +51,33 @@ plot(sub_ob, study = 'ACC') +
 ggsave(filename = '~/microRNA/cRegulome_manuscript/figures/fig1a.png',
        dpi = 600, width = 4, height = 8, units = 'in')
   
+```
+
+```{r method_hist}
 png(filename = '~/microRNA/cRegulome_manuscript/figures/fig1b.png',
     res = 300, width = 4, height = 4, units = 'in', pointsize = 10)
 hist(ob, study = 'ACC', breaks = 100, main = '', xlab = 'Correlation')
 dev.off()
+```
 
+```{r method_joy}
 joy(ob, study = 'ACC') +
   labs(x = 'Correlation', y = '')
 ggsave(filename = '~/microRNA/cRegulome_manuscript/figures/fig1c.png',
        dpi = 600, width = 4, height = 4, units = 'in')  
+```
 
+```{r method_venn.diagram}
 png(filename = '~/microRNA/cRegulome_manuscript/figures/fig2a.png',
     res = 300, width = 4, height = 4, units = 'in', pointsize = 10)
 venn.diagram(ob, study = 'ACC', cat.default.pos = 'text')
 dev.off()
+```
 
+```{r method_upset}
 png(filename = '~/microRNA/cRegulome_manuscript/figures/fig2b.png',
     res = 300, width = 4, height = 4, units = 'in', pointsize = 10)
 upset(ob, study = 'ACC')
 dev.off()
+```
+
