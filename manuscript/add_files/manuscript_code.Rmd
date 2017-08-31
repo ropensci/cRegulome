@@ -13,6 +13,15 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE, eval = FALSE)
 # Overview
 
 ```{r required_libraries}
+library(cRegulome)
+library(R.utils)
+library(DBI)
+library(RSQLite)
+library(ggplot2)
+library(xtable)
+```
+
+```{r get_db}
 # get_db()
 # gunzip('cRegulome.db.gz')
 # conn <- dbConnect(SQLite(), 'cRegulome.db')
@@ -35,8 +44,15 @@ ob <- cmicroRNA(dat)
 
 ```{r method_tidy}
 dat <- tidy(ob)
-dat <- subset(dat, abs(dat$cor) > .3)
-sub_ob <- cmicroRNA(dat)
+sub_dat <- subset(dat, abs(dat$cor) > .3)
+sub_ob <- cmicroRNA(sub_dat)
+```
+
+```{r table2}
+print.xtable(xtable(sub_dat,
+                    caption = "Tidy data.frame from the object sub\\_dat.",
+                    label = 'table2'),
+      include.rownames = FALSE, file = 'table2.tex')
 ```
 
 ```{r method_print}
