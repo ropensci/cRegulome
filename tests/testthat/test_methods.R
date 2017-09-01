@@ -18,6 +18,19 @@ test_that('tidy output a data.frame identical to output of get_mir', {
     expect_equal(dat, tidy_cmir)
     })
 
+dat <- get_tf(conn,
+               tf = 'AFF4',
+               study = 'ACC',
+               min_cor = .3,
+               max_num = 5)
+
+ctf <- cTF(dat)
+tidy_tf <- tidy(ctf)
+
+test_that('tidy output a data.frame identical to output of get_tf', {
+  expect_equal(dat, tidy_tf)
+})
+
 # clean up
 DBI::dbDisconnect(conn)
 if(file.exists('cRegulome.db')) unlink('cRegulome.db')
