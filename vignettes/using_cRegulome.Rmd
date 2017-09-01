@@ -26,7 +26,7 @@ Here, we build on that kind of tools and integrative analysis to provide a
 tool to access, manage and visualize data from open source databases.
 cRegulome provides a programmatic access to the regulome (microRNA and
 transcription factor) correlations with target genes in cancer. The package
-obtains a local instance of Cistrome Cancer and miRCancer databases and
+obtains a local instance of Cistrome Cancer and miRCancerdb databases and
 provides objects and methods to interact with and visualize the correlation
 data.  
 
@@ -76,17 +76,17 @@ cRegulome::plot(ob, study = 'ACC')
 # Package Discription  
 ## Data sources  
 The two main sources of data used by this package are cistrome cancer and
-miRCancer databases. Cistrome Cancer is based on an integrative analysis of
+miRCancerdb databases. Cistrome Cancer is based on an integrative analysis of
 The Cancer Genome Atlas (TCGA) and public ChIP-seq data. It provides
 calculated correlations of (n = 320) transcription factors and their target
 genes in (n = 29) cancer study. In addition, cistrome cancer provides the
 transcription factors regulatory potential to target and non-target genes.
-miRCancer uses TCGA data and TargetScan annotations to correlate known
+miRCancerdb uses TCGA data and TargetScan annotations to correlate known
 microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.
   
 ## Database file  
 cRegulome obtains a pre-build sqlite database file of the cistrome cancer
-and miRCancer databases. The details of this build is provided at
+and miRCancerdb databases. The details of this build is provided at
 (cRegulomedb) in addition to the scripts used to pull, formate and deposit
 the data at an on-line repository. Briefly, the sqlite database consist of
 4 tables `cor_mir` and `cor_tf` for correlation values; and `targets_mir`

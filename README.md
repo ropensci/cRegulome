@@ -14,7 +14,9 @@ Here, we build on that kind of tools and integrative analysis to provide a
 tool to access, manage and visualize data from open source databases.
 cRegulome provides a programmatic access to the regulome (microRNA and
 transcription factor) correlations with target genes in cancer. The package
-obtains a local instance of Cistrome Cancer and miRCancer databases and
+obtains a local instance of 
+[Cistrome Cancer](http://cistrome.org/CistromeCancer/) and 
+[miRCancerdb](https://mahshaaban.shinyapps.io/miRCancerdb/) databases and
 provides objects and methods to interact with and visualize the correlation
 data.  
 
