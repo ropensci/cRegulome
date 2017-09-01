@@ -36,7 +36,6 @@ by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
 ```{r load_libraries}
-library(cRegulome)
 library(R.utils)
 library(DBI)
 library(RSQLite)
@@ -44,6 +43,7 @@ library(dplyr)
 library(dbplyr)
 library(tidyr)
 library(ggplot2)
+library(cRegulome)
 ```
 
 ```{r prepare database file}
@@ -69,7 +69,7 @@ print(ob)
 ```
 
 ```{r plot_object}
-plot(ob, study = 'ACC')
+cRegulome::plot(ob, study = 'ACC')
 ```
 
 
@@ -82,8 +82,8 @@ calculated correlations of (n = 320) transcription factors and their target
 genes in (n = 29) cancer study. In addition, cistrome cancer provides the
 transcription factors regulatory potential to target and non-target genes.
 miRCancer uses TCGA data and TargetScan annotations to correlate known
-microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.  
-
+microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.
+  
 ## Database file  
 cRegulome obtains a pre-build sqlite database file of the cistrome cancer
 and miRCancer databases. The details of this build is provided at
@@ -147,7 +147,7 @@ head(dat_mir); head(dat_tf)
 
 ```{r}
 dat_mir2 <- tbl(conn, 'cor_mir') %>%
-    select(mirna_base, feature, ACC, BLCA) %>%
+    dplyr::select(mirna_base, feature, ACC, BLCA) %>%
     filter(mirna_base %in% c('hsa-let-7b', 'hsa-mir-134')) %>%
     collect() %>%
     gather(study, cor, -mirna_base, -feature) %>%
