@@ -27,6 +27,7 @@ the output to a cRegulome object to print and visualize.
 
 
 ```
+# install package from github
 devtools::install_github('MahShaaban/cRegulome')
 ```
 ```r
@@ -64,11 +65,11 @@ ob <- cmicroRNA(dat)
 dbDisconnect(conn)
 ```
 
-```
+```r
 print(ob)
 ```
 
-```
+```r
 plot(ob, study = 'ACC')
 ```
 ## More
