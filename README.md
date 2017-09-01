@@ -29,7 +29,8 @@ the output to a cRegulome object to print and visualize.
 ```
 devtools::install_github('MahShaaban/cRegulome')
 ```
-```
+```r
+# load required libraries
 library(cRegulome)
 library(R.utils)
 library(DBI)
@@ -40,20 +41,25 @@ library(tidyr)
 library(ggplot2)
 ```
 
-```
+```r
+#  download and decompress the database file
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
     gunzip('cRegulome.db.gz')
 }
+# connect to the database file
 conn <- dbConnect(SQLite(), 'cRegulome.db')
 ```
 
-```
+```r
+# query the database
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
                min_cor = .3,
                targets_only = TRUE)
+
+# make a cmicroRNA object               
 ob <- cmicroRNA(dat)
 dbDisconnect(conn)
 ```
