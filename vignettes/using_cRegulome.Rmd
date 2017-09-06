@@ -36,6 +36,7 @@ by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
 ```{r load_libraries}
+# load required libraries
 library(R.utils)
 library(DBI)
 library(RSQLite)
@@ -47,29 +48,39 @@ library(cRegulome)
 ```
 
 ```{r prepare database file}
+# download the db file when using it for the first time
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
     gunzip('cRegulome.db.gz')
 }
+
+# connect to the db file
 conn <- dbConnect(SQLite(), 'cRegulome.db')
 ```
 
 ```{r simple_query}
+# query the db for two microRNAs
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
                min_cor = .3,
                targets_only = TRUE)
+
+# make a cmicroRNA object
 ob <- cmicroRNA(dat)
+
+# disconnect the db
 dbDisconnect(conn)
 ```
 
 ```{r print_object}
+# print object
 print(ob)
 ```
 
 ```{r plot_object}
-cRegulome::plot(ob, study = 'ACC')
+# plot object for the ACC study
+plot(ob, study = 'ACC')
 ```
 
 
@@ -87,11 +98,11 @@ microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.
 ## Database file  
 cRegulome obtains a pre-build sqlite database file of the cistrome cancer
 and miRCancerdb databases. The details of this build is provided at
-(cRegulomedb) in addition to the scripts used to pull, formate and deposit
+(cRegulomedb) in addition to the scripts used to pull, format and deposit
 the data at an on-line repository. Briefly, the sqlite database consist of
 4 tables `cor_mir` and `cor_tf` for correlation values; and `targets_mir`
 and `targets_tf` for microRNA miRBase ID and transcription factors symbols
-to genes mappings.  Two indecies are created to facilitate the database
+to genes mappings.  Two indices are created to facilitate the database
 search using the miRBase IDs and transcription factors symbols. The
 database file can be downloaded using the function `get_db`.  
 
@@ -127,25 +138,31 @@ functions is a tidy data.frame of 4 columns; `mirna_base` or `tf`,
 transcription factors symbol, gene symbol, correlation value and the TCGA
 study identifier.  
 
-Here we show an example of such a query. Then, we illusterat how this qeury
-excuted on the database using basic `RSQLite` and `dbplyr` which is what
+Here we show an example of such a query. Then, we illustrate how this query
+is executed on the database using basic `RSQLite` and `dbplyr` which is what
 the `get_*` functions are doing.  
 
 ```{r database_query}
+# query the db for two microRNAs
 dat_mir <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
                min_cor = .3,
-               targets_only = TRUE)  
+               targets_only = TRUE)
+
+# query the db for two transcription factors
 dat_tf <- get_tf(conn,
                  tf = c('AFF4', 'AR'),
                  study = c('ACC', 'BLCA'),
                  min_cor = .3)
+
+# show first 6 line of each of the data.frames
 head(dat_mir); head(dat_tf)
 ```
 
 
-```{r}
+```{r equal_query}
+# equal query to the get_* functions
 dat_mir2 <- tbl(conn, 'cor_mir') %>%
     dplyr::select(mirna_base, feature, ACC, BLCA) %>%
     filter(mirna_base %in% c('hsa-let-7b', 'hsa-mir-134')) %>%
@@ -158,6 +175,7 @@ dat_mir2 <- tbl(conn, 'cor_mir') %>%
 ```
 
 ```{r check_query}
+# check output
 all(dat_mir2$mirna_base %in% dat_mir$mirna_base)
 all(dat_mir2$study %in% dat_mir$study)
 ```
@@ -167,7 +185,7 @@ Two S3 objects are provided by cRegulome to store and dispatch methods on
 the correlation data. cmicroRNA and cTF for microRNA and transcription
 factors respectively. The structure of these objects is very similar.
 Basically, as all S3 objects, it’s a list of 4 items; microRNA or TF for
-the reglome element, features for the gene hits, studies for the TCGA
+the regulome element, features for the gene hits, studies for the TCGA
 studies and finally corr is either a `data.frame` when the object has data
 from a single TCGA study or a named list of data.frame when it has data
 from multiple studies.  Each of these data.frames has the regulome element
@@ -178,12 +196,14 @@ is possible by calling the function tidy on the object to get back the tidy
 `data.frame`.  
 
 ```{r cmicroRNA_object}
+# explore the cmicroRNA object
 ob_mir <- cmicroRNA(dat_mir)
 class(ob_mir)
 str(ob_mir)
 ```
 
 ```{r cTF_object}
+# explore the cTF object
 ob_tf <- cTF(dat_tf)
 class(ob_tf)
 str(ob_tf)
@@ -196,19 +216,23 @@ functions. These methods dispatch directly on the objects and could be
 customized and manipulated in the same way as their generics.  
 
 ```{r methods_cmicroRNA}
+# cmicroRNA object methods
 methods(class = 'cmicroRNA')
 ```
 
 ```{r methods_cTF}
+# cTF object methods
 methods(class = 'cTF')
 ```
 
 ```{r tidy_method}
+# tidy method
 tidy_dat <- tidy(ob_tf)
 equals(dat_tf, tidy_dat)
 ```
 
 ```{r hist_method}
+# hist method
 hist(ob_tf, study = 'ACC',
      breaks = 100,
      main = '', xlab = 'Correlation')
@@ -216,16 +240,19 @@ hist(ob_tf, study = 'ACC',
 
 
 ```{r joy_method}
+# joy method
 joy(ob_tf, study = 'ACC') +
     labs(x = 'Correlation', y = '')
 ```
 
 ```{r venn.daigram_method}
+# venn.diagram method
 venn.diagram(ob_tf, study = 'ACC', 
              cat.default.pos = 'text')
 ```
 
 ```{r upset_method}
+# upset method
 upset(ob_tf, study = 'ACC')
 ```
 
