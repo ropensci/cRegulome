@@ -26,7 +26,7 @@ by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
 
-```
+```r
 # install package from github
 devtools::install_github('MahShaaban/cRegulome')
 ```
