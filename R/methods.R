@@ -256,7 +256,6 @@ venn.diagram <- function(ob, study = NULL, ...) {
     UseMethod('venn.diagram')
 }
 
-#' @rdname venn.daigram
 #' @export
 venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     if(length(ob$studies) > 1 && length(study) != 1) {

@@ -44,7 +44,7 @@ get_db <- function(test = FALSE, ...) {
     }
 
     # check url exists
-    if(!RCurl::url.exists(url)) {
+    if(httr::http_error(url)) {
         stop("URL doesn't exist.")
     }
 

@@ -4,20 +4,20 @@
 
 # cRegulome
 ## Overview  
-Transcription factors and microRNAs are importing for regulating the gene
+Transcription factors and microRNAs are important for regulating the gene
 expression in normal physiology and pathological conditions. Many
 bioinformatics tools were built to predict and identify transcription
 factors and microRNA targets and their role in development of diseases
 including cancers. The availability of public access high-throughput data
-allowed for data-driven validations and discoveries of these predictions.
-Here, we build on that kind of tools and integrative analysis to provide a
+allowed for data-driven predictions and discoveries.
+Here, we build on some of these tools and integrative analyses and provide a
 tool to access, manage and visualize data from open source databases.
 cRegulome provides a programmatic access to the regulome (microRNA and
 transcription factor) correlations with target genes in cancer. The package
 obtains a local instance of 
 [Cistrome Cancer](http://cistrome.org/CistromeCancer/) and 
 [miRCancerdb](https://mahshaaban.shinyapps.io/miRCancerdb/) databases and
-provides objects and methods to interact with and visualize the correlation
+provides classes and methods to interact with and visualize the correlation
 data.  
 
 ## Getting started  
@@ -43,7 +43,7 @@ library(ggplot2)
 ```
 
 ```r
-#  download and decompress the database file
+# download and decompress the database file
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
     gunzip('cRegulome.db.gz')

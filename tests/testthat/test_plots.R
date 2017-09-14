@@ -2,14 +2,13 @@
 get_db(test = TRUE)
 R.utils::gunzip('cRegulome.db.gz')
 conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
-
-conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = 'ACC',
                min_cor = .3)
 
 cmir <- cmicroRNA(dat)
+DBI::dbDisconnect(conn)
 
 test_that('plot cmicroRNA objects', {
   gg <- plot(cmir)  
@@ -36,13 +35,14 @@ test_that('upset cmicroRNA objects', {
                                height = 'density'))
 })
 
-
+conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
 dat <- get_tf(conn,
                tf = c('AFF4', 'AR'),
                study = 'ACC',
                min_cor = .3)
 
 ctf <- cTF(dat)
+DBI::dbDisconnect(conn)
 
 test_that('plot cTF objects', {
   gg <- plot(ctf)  
@@ -70,6 +70,5 @@ test_that('upset cTF objects', {
 })
 
 # clean up
-DBI::dbDisconnect(conn)
 if(file.exists('cRegulome.db')) unlink('cRegulome.db')
 
