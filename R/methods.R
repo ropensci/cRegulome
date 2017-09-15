@@ -100,8 +100,10 @@ plot <- function(ob, study = NULL, ...) {
 
 #' @export
 plot.cmicroRNA <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+          stop('User should provide a single study to plot.')
+        }
     }
 
     if(is.data.frame(ob$corr)) {

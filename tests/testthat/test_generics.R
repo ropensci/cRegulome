@@ -1,5 +1,6 @@
 context('Downlaoding database and extracting data')
 
+
 test_that('get_db downlaods db file succussfully', {
     get_db(test = TRUE)
     expect_true(file.exists('cRegulome.db.gz'))
@@ -7,14 +8,21 @@ test_that('get_db downlaods db file succussfully', {
 
 # decompress database file
 R.utils::gunzip('cRegulome.db.gz')
+
+test_that('get_db stop when db file exist in the current directory', {
+    expect_error(get_db(test = TRUE))
+})
+
+# connect to the db file
 conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
 
 test_that('get_mir Faulty arguments', {
-    expect_error(get_mir(conn,
-                         study = 'ACC'))
-    expect_error(get_mir(conn,
-                         mir = 'hsa-let-7b',
-                         min_cor = -1))
+    expect_error(get_mir(conn, mir = NULL))
+    expect_error(get_mir(conn, mir = list('hsa-let-7b')))
+    expect_error(get_mir(conn, study = 'ACC'))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', study = 11))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', min_cor = -1))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', max_num = -1))
     })
 
 # get_mir with and without targets_only
@@ -62,11 +70,12 @@ test_that('object cmicroRNA with multiple studies', {
 })
 
 test_that('get_tf Faulty arguments', {
-  expect_error(get_tf(conn,
-                       study = 'ACC'))
-  expect_error(get_tf(conn,
-                       tf = 'AFF4',
-                       min_cor = -1))
+  expect_error(get_tf(conn, tf = NULL))
+  expect_error(get_tf(conn, tf = list('AFF4')))
+  expect_error(get_tf(conn, study = 'ACC'))
+  expect_error(get_tf(conn, tf = 'AFF4', study = 11))
+  expect_error(get_tf(conn, tf = 'AFF4', min_cor = -1))
+  expect_error(get_tf(conn, tf = 'AFF4', max_num = -1))
 })
 
 # get_tf with and without targets_only

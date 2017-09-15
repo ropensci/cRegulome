@@ -50,7 +50,7 @@ get_db <- function(test = FALSE, ...) {
 
     # download file
     if(file.exists('cRegulome.db')) {
-        message('File already exists in the current directory.')
+        stop('File already exists in the current directory.')
     } else {
         tryCatch(utils::download.file(url,                                     
                                       destfile = 'cRegulome.db.gz',
@@ -250,7 +250,7 @@ get_tf <- function(conn,
     table <- 'cor_tf'
 
     if(is.null(tf)) {
-        stop("User should provide at least one microRNA ID")
+        stop("User should provide at least one TF ID")
     } else if(!is.character(tf)) {
         stop("tf should be a character vector")
     } else {
