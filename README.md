@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/MahShaaban/cRegulome.svg?branch=master)](https://travis-ci.org/MahShaaban/cRegulome)
 [![Coverage Status](https://img.shields.io/codecov/c/github/MahShaaban/cRegulome/master.svg)](https://codecov.io/github/MahShaaban/cRegulome?branch=master)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MahShaaban/cRegulome?branch=master&svg=true)](https://ci.appveyor.com/project/MahShaaban/cRegulome)
+[![](https://badges.ropensci.org/149_status.svg)](https://github.com/ropensci/onboarding/issues/149)  
 
 # cRegulome
 ## Overview  
