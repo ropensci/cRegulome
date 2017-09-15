@@ -100,22 +100,31 @@ plot <- function(ob, study = NULL, ...) {
 
 #' @export
 plot.cmicroRNA <- function(ob, study = NULL, ...) {
+    # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
           stop('User should provide a single study to plot.')
         }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+  
     `%>%` <- dplyr::`%>%`
-
+    
+    # convet back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
+    
+    # create correlation and direction variables
+    # plot 
     gg <- dat %>%
         dplyr::mutate(Correlation = abs(cor),
                       Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
@@ -125,34 +134,48 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
                                             color = 'Direction')) +
         ggplot2::geom_point() +
         ggplot2::theme_light()
+    
     return(gg)
 }
 
 #' @export
 plot.cTF <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
 
+    # convet back to tidy format
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
+    
+    # create correlation and direction variables
+    # plot 
     gg <- dat %>%
-      dplyr::mutate(Correlation = abs(cor),
-                    Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
-      ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
-                                          y = 'feature',
-                                          size = 'Correlation',
-                                          color = 'Direction')) +
-      ggplot2::geom_point() +
-      ggplot2::theme_light()
+        dplyr::mutate(Correlation = abs(cor),
+                      Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
+        ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
+                                            y = 'feature',
+                                            size = 'Correlation',
+                                            color = 'Direction')) +
+        ggplot2::geom_point() +
+        ggplot2::theme_light()
+      
+    
     return(gg)
 }
 
@@ -190,13 +213,16 @@ UseMethod('tidy')
 #' @export
 tidy.cmicroRNA <- function(ob) {
     `%>%` <- dplyr::`%>%`
-
+    
+    # convet back to tidy format
     if(length(ob$studies) == 1) {
+        # object contains a single study
         dat <- ob$corr %>%
             tidyr::gather(mirna_base, cor, -feature) %>%
             stats::na.omit() %>%
             dplyr::mutate(study = ob$studies)
     } else {
+        # object with multiple studies
         dat <- purrr::map(ob$corr, function(x) {
             x %>%
                 tidyr::gather(mirna_base, cor, -feature) %>%
@@ -205,19 +231,23 @@ tidy.cmicroRNA <- function(ob) {
             dplyr::bind_rows(.id = 'study') %>%
             dplyr::select(2:4, study)
     }
+    
     return(dat)
 }
 
 #' @export
 tidy.cTF <- function(ob) {
     `%>%` <- dplyr::`%>%`
-
+    
+    # convet back to tidy format
     if(length(ob$studies) == 1) {
+        # object contains a single study
         dat <- ob$corr %>%
             tidyr::gather(tf, cor, -feature) %>%
             stats::na.omit() %>%
             dplyr::mutate(study = ob$studies)
     } else {
+        # object with multiple studies
         dat <- purrr::map(ob$corr, function(x) {
             x %>%
                 tidyr::gather(tf, cor, -feature) %>%
@@ -260,21 +290,33 @@ venn.diagram <- function(ob, study = NULL, ...) {
 
 #' @export
 venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
 
+    # convert back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
+    
+    # make a named list of features
     dat <- with(dat, split(feature, mirna_base))
+    
+    # generate plot
     pp <- VennDiagram::venn.diagram(dat,
                                     imagetype = 'png', 
                                     filename = NULL, ...)
@@ -283,21 +325,33 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
 
 #' @export
 venn.diagram.cTF <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
-
+    
+    # convert back to tidy format
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
+    
+    # make a named list of features
     dat <- with(dat, split(feature, tf))
+    
+    # generate plot
     pp <- VennDiagram::venn.diagram(dat,
                                     imagetype = 'png', 
                                     filename = NULL, ...)
@@ -335,37 +389,59 @@ upset <- function(ob, study = NULL, ...) {
 
 #' @export
 upset.cmicroRNA <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
+    
+    # make a binary data.frame
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
                         function(x) x <- ifelse(is.na(x), 0, 1))
+    
+    # generate plot
     UpSetR::upset(dat, ...)
 }
 
 #' @export
 upset.cTF <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot.')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
-
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
+    
+    # make a binary data.frame
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
                         function(x) x <- ifelse(is.na(x), 0, 1))
+    
+    # generate plot
     UpSetR::upset(dat, ...)
 }
 
@@ -400,28 +476,46 @@ hist <- function(ob, study = NULL, ...) {
 
 #' @export
 hist.cmicroRNA <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
+    # generate plot
     dat <- unlist(dat[, -1])
     hist(dat, ...)
 }
 
 #' @export
 hist.cTF <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
+    # generate plot
     dat <- unlist(dat[, -1])
     hist(dat, ...)
 }
@@ -457,19 +551,30 @@ joy <- function(ob, study = NULL, ...) {
 
 #' @export
 joy.cmicroRNA <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
-
+    
+    # convert back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
         stats::na.omit()
+    
+    # generate plot
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'mirna_base')) +
@@ -481,19 +586,30 @@ joy.cmicroRNA <- function(ob, study = NULL, ...) {
 
 #' @export
 joy.cTF <- function(ob, study = NULL, ...) {
-    if(length(ob$studies) > 1 && length(study) != 1) {
-        stop('User should provide a single study to plot')
+    # check the validity of the input study
+    if(length(ob$studies) > 1) {
+        if(is.null(study) || length(study) > 1) {
+            stop('User should provide a single study to plot.')
+        }
     }
+    
+    # subset the data to the input study
     if(is.data.frame(ob$corr)) {
+        # object contains a single study
         dat <- ob$corr
     } else {
+        # object contains multiple studies
         dat <- ob$corr[[study]]
     }
+    
     `%>%` <- dplyr::`%>%`
-
+    
+    # convert back to tidy format
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
         stats::na.omit()
+    
+    # generate plot
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'tf')) +
@@ -502,4 +618,3 @@ joy.cTF <- function(ob, study = NULL, ...) {
 
     return(gg)
 }
-

@@ -28,16 +28,22 @@
 #'
 #' @export
 cmicroRNA <- function(dat_mir){
+    # extract items of the list from the data.frame
     microRNA <- unique(dat_mir$mirna_base)
     features <- unique(dat_mir$feature)
     studies <- unique(dat_mir$study)
 
     `%>%` <- dplyr::`%>%`
-
+    
+    # reshape the data.frame/s 
+    # microRNA in columns and feature in rows
+    # object contains a single study
     if(length(studies) == 1) {
         corr <- dat_mir %>%
             reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
     } else {
+        # object with multiple studies
+        # returns a list of data.frames
         corr <- lapply(unique(dat_mir$study),
                     function(x) {
                         dat_mir %>%
@@ -47,6 +53,8 @@ cmicroRNA <- function(dat_mir){
                         })
         names(corr) <- unique(dat_mir$study)
     }
+    
+    # object structure and class name
     structure(list(
         microRNA = microRNA,
         features = features,
@@ -85,16 +93,22 @@ cmicroRNA <- function(dat_mir){
 #'
 #' @export
 cTF <- function(dat_tf){
+    # extract items of the list from the data.frame
     TF <- unique(dat_tf$tf)
     features <- unique(dat_tf$feature)
     studies <- unique(dat_tf$study)
 
     `%>%` <- dplyr::`%>%`
-
+    
+    # reshape the data.frame/s 
+    # tf in columns and feature in rows
+    # object contains a single study
     if(length(studies) == 1) {
         corr <- dat_tf %>%
             reshape2::dcast(feature ~ tf, value.var = 'cor')
     } else {
+        # object with multiple studies
+        # returns a list of data.frames
         corr <- lapply(unique(dat_tf$study),
                     function(x) {
                         dat_tf %>%
@@ -103,6 +117,7 @@ cTF <- function(dat_tf){
                         })
         names(corr) <- unique(dat_tf$study)
     }
+    # object structure and class name
     structure(list(
         TF = TF,
         features = features,

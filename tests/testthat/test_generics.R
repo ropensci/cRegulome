@@ -49,7 +49,7 @@ dat <- get_mir(conn,
 cmir <- cmicroRNA(dat)
 
 test_that('objects cmicroRNA are constructed properly', {
-    expect_identical(class(cmir), 'cmicroRNA')
+    expect_s3_class(cmir, 'cmicroRNA')
     expect_identical(names(cmir), c("microRNA", "features", "studies", "corr"))
     expect_identical(cmir$microRNA, 'hsa-let-7b')
     expect_identical(cmir$studies, 'ACC')
@@ -64,7 +64,7 @@ dat <- get_mir(conn,
 cmir <- cmicroRNA(dat)
 
 test_that('object cmicroRNA with multiple studies', {
-  expect_identical(class(cmir), 'cmicroRNA')
+  expect_s3_class(cmir, 'cmicroRNA')
   expect_identical(names(cmir), c("microRNA", "features", "studies", "corr"))
   expect_identical(cmir$studies, c('ACC', 'BLCA'))
 })
@@ -102,7 +102,7 @@ dat <- get_tf(conn,
 ctf <- cTF(dat)
 
 test_that('objects cTF are constructed properly', {
-  expect_identical(class(ctf), 'cTF')
+  expect_s3_class(ctf, 'cTF')
   expect_identical(names(ctf), c("TF", "features", "studies", "corr"))
   expect_identical(ctf$TF, 'AFF4')
   expect_identical(ctf$studies, 'ACC')
@@ -117,7 +117,7 @@ dat <- get_tf(conn,
 ctf <- cTF(dat)
 
 test_that('object cTF with multiple studies', {
-  expect_identical(class(ctf), 'cTF')
+  expect_s3_class(ctf, 'cTF')
   expect_identical(names(ctf), c("TF", "features", "studies", "corr"))
   expect_identical(ctf$studies, c('ACC', 'BLCA'))
 })
