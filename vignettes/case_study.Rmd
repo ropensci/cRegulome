@@ -1,0 +1,358 @@
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
+```
+
+---
+title: "Case Study"
+subtitle: "Transcription factors and microRNAs in Gastric cancer"
+author: "Mahmoud Ahmed"
+date: "August 22, 2017"
+vignette: >
+    %\VignetteIndexEntry{Case Study}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+output: 
+    BiocStyle::pdf_document
+---
+
+# Overview   
+In this brief study, we attempted to answer questions raised by Shi and colleagues in a paper published in PLOS in 2015. The aim of this case study is to illustrate the use of `cRegulome` to obtain data based on queries of interest. Secondly, to integrate the package in a useful and meaningful workflow and give a context to the kind of information one can get from such databases. Finlly, to compare the output from `cRegulome` with that from Cistrome Cancer and miRCancerdb.  
+
+# Motivation  
+Shi et al. studied the transcription factors and microRNA co-regulated genes in gastric cancer to revieal the signaling pathways the drive the development of the disease (Shi et al., 2015). Briefly, they used the previous literature and microarrys chips to identify the differentially expressed transcription factors (TF) and microRNAs in gastric cancer tissues compared to the normal ones. Then, The identified their target genes using annotation databases and constructed a TF-microRNA gene regulatory network. Finally, they identified hub-genes and performed a functional analysis namely KEGG pathways enrichment to find which signalling pathways they belong to.  
+Here, we tried tackling the same question using cRegulme data. We started from the same point like the PLOS paper by using the lists of differentially expressed TF and microRNAs, then used cRegulome data to find driving genes and pathways in Stomach and esophogeal cancer (STES). We didn't attempt to replicate the same findings but nevertheless we arrived at similar conclustions.  
+
+
+# PLOS paper data  
+## Interesting transcription factors and microRNAs  
+We started by obtaining the lists of differentiall expressed TFs and microRNAs which were compiled from previous literature and microarrays profiling respectively.  
+
+```{r load_libraries}
+library(readxl)
+library(tidyverse)
+library(stringr)
+library(RSQLite)
+library(R.utils)
+library(cRegulome)
+library(purrr)
+library(igraph)
+library(reshape2)
+library(org.Hs.eg.db)
+library(clusterProfiler)
+```
+
+```{r paper_data}
+if(!file.exists('tf.xls')) 
+    download.file('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4393113/bin/pone.0122882.s001.xlsx',
+                  destfile = 'tf.xlsx')
+tf <- read_excel('tf.xlsx', skip = 1)
+
+if(!file.exists('mir.xls')) 
+    download.file('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4393113/bin/pone.0122882.s003.xls',
+                  destfile = 'mir.xls')
+mir <- read_excel('mir.xls', skip = 1)
+```
+
+Here are the numbers and the first few entries from the lists:  
+
+```{r first_few}
+length(unique(tf$SOURCE)); head(unique(tf$SOURCE), 3) # TFs
+length(unique(mir$AccID)); head(unique(mir$AccID), 3) # microRNAs
+```
+
+## Transcription factor correlation from Cistrome Cancer  
+Next, we truned to the Cistrome Cancer databse to get the TF-gene correlation data. Cistrom Cancer is based on integrative analysis of The Cancer Genome Atlas (TCGA) and public ChIP-seq data. The data comes in text files, one for each TF, each file contains the calculated pearson's correlation between the TF ana all genes in each of the TCGA studies.  
+
+```{r cistrome_data}
+# make cistrom cancer file urls
+url <- paste('http://cistrome.org/CistromeCancer/CancerTarget/examples/',
+             unique(tf$SOURCE), '.all.cor.csv', sep = '')
+fls <- paste(unique(tf$SOURCE), '.all.cor.csv', sep = '')
+
+# download files
+if(!file.exists(fls[1])) download.file(url[1], destfile = fls[1])
+if(!file.exists(fls[2])) download.file(url[2], destfile = fls[2])
+
+# get file paths
+fls <- list.files(pattern = 'all.cor.csv', full.names = TRUE)
+names(fls) <- str_split(fls, '/|\\.', simplify = TRUE)[, 3]
+
+# read files
+fls <- lapply(fls, read.csv)
+cistromec <- bind_rows(fls, .id = 'tf') %>%
+  dplyr::select(tf, X, STES.) %>%
+  setNames(c('tf', 'feature', 'cor'))
+```
+
+Here, is the intersection of the TFs found in the previous list and the ones available on Cistrome Cancer.  
+
+```{r cistrom_intersect}
+intersect(cistromec$tf, tf$SOURCE)
+```
+
+## microRNA correlations from miRCancerdb  
+Similarly, we used the microRNA IDs in the previous list to construct a query to miRCancerdb to get the microRNA-gene expression correlations in different types of cancer. miRCancerdb is based on an integrative analysis of RNA-seq data from TCGA and the TargetScan annotations. The miRCancerdb data comes in a tidy table with a single raw for each microRNA-gene association in each of TCGA cancer study. In this particular instance we are only interested in stomach and esophogeal cancer (STES), so we added this to the query.  
+
+```{r miRCancerdb_data}
+write(paste(tolower(unique(mir$AccID)), collapse = ', '),
+      file = 'miRCancer_query.txt')
+
+if(!file.exists('mircancer.csv')) {
+    download.file('https://www.dropbox.com/s/89hr8t8mcpcec39/mircancer.csv?raw=1',
+                  destfile = 'mircancer.csv')
+}
+mirCancer <- read_csv('mircancer.csv')
+```
+
+Here is the intersection of the microRNAs found in both the previous list and the miRCancerdb output.  
+
+```{r miRCancerdb_intersect}
+intersect(mirCancer$mirna_base, tolower(mir$AccID))
+```
+
+## Use cRegulome to access correlation data
+In the previous section, we showed the code for obtaining the TF/microRNA-gene expression correlation in stomach and esophogeal cancer using Cistrome and miRCancerdb for comparison purpose. Here, we show the straight forward way of obtaining similar data using the pacakge `cRegulome`. This is only two simple steps. First, download the database if you are using the package for the first time. And make a query using the TF/microRNAs of interest.  
+
+```{r cRegulome_data}
+# obtain and connect the database
+if(!file.exists('cRegulome.db')) {
+    get_db()
+    gunzip('cRegulome.db.gz')
+}
+
+conn <- dbConnect(SQLite(), 'cRegulome.db')
+
+# query the database
+creg_tf <- get_tf(conn,
+                  tf = unique(tf$SOURCE),
+                  study = 'STES*')
+
+creg_mir <- get_mir(conn,
+                    mir = tolower(unique(mir$AccID)),
+                    study = 'STES')
+```
+
+## Compare correlation distribution
+Ideally, we would like to get identical output from different databses addressing the same type of query. However, for effectiency purposes and different formating, cRegulome would provid slighlty different amount and format of the same query using cistrome cancer or miRCancerdb without affecting its reliability.   
+
+Here is a comparison of the numbers found in the TF/microRNAs previous lists and the qeury output. 
+
+```{r compare_numbers}
+length(unique(creg_mir$mirna_base) %in% unique(tolower(mir$AccID)))
+length(unique(creg_tf$tf) %in% unique(tf$SOURCE))
+```
+
+Finally, this is a comparison of the distribution of the correlation values of the same TF and microRNA queries from cistrome cancer and miRCancerdb respectively and these from cRegulome.  
+
+```{r compare_distripution, fig.width=10}
+par(mfrow=c(1,2))
+plot(density(round(cistromec$cor, 2)),
+     type = 'l',
+     col = 'blue',
+     xlab = "Pearson's Correlation",
+     ylab = 'Density',
+     main = 'TF correlation')
+lines(density(creg_tf$cor), col = 'red')
+legend('topright',
+       legend = c('Cistrom Cancer', 'cRegulome'),
+       pch = '--',
+       col = c('blue', 'red'))
+
+plot(density(round(mirCancer$cor, 2)),
+     type = 'l',
+     col = 'blue',
+     xlab = "Pearson's Correlation",
+     ylab = 'Density',
+     main = 'microRNA correaltions')
+lines(density(creg_mir$cor), col = 'red')
+legend('topright',
+       legend = c('miRCancer', 'cRegulome'),
+       pch = '--',
+       col = c('blue', 'red'))
+```
+
+# TCGA stomach and esophogeal cancer study  
+
+## Transcrition factors  
+To answer these questions, we first construct a query in cRegulome to get the TF-gene correlations in the STES cancer study. We then look at the numbers of targets, denseties and intersections using methods from cRegulome package.  
+
+```{r stes_tf}
+# query TF-gene correlations
+creg_tf <- get_tf(conn,
+                  tf = unique(tf$SOURCE),
+                  study = 'STES*',
+                  targets_only = TRUE)
+# numbers of targets 
+table(creg_tf$tf)
+```
+
+```{r TF_summary}
+# construct a cTF object and plot
+ob_tf <- cTF(creg_tf)
+joy(ob_tf)
+upset(ob_tf)
+```
+
+## microRNA   
+Similarly, we construct a query for microRNA-gene correlations in the STES study and summarize the numbers, densities and intersections using cRegulome.  
+```{r stes_microRNA}
+# query microRNA-gene correlations
+creg_mir <- get_mir(conn,
+                    mir = tolower(unique(mir$AccID)),
+                    study = 'STES',
+                    targets_only = TRUE)
+# numbers of targets 
+table(creg_mir$mirna_base)
+```
+
+```{r microRNA_summary}
+# construct a cmicroRNA object and plot
+ob_mir <- cmicroRNA(creg_mir)
+joy(ob_mir)
+upset(ob_mir)
+```
+
+## Network construction  
+For the purpose of constructing the network, we decided to limit the nodes to the TFs/microRNAs and gene targets with high correlation (absolute pearson's correlation > 0.3). We first return to the `cRegulome` to qeury the database and tweak the output to be used with the `igraph` package to build the network.  
+
+```{r custom_query}
+# query cRegulome to get high correlated targets
+creg_tf <- get_tf(conn,
+                  tf = unique(tf$SOURCE),
+                  study = 'STES*',
+                  min_cor = .3,
+                  targets_only = TRUE)
+creg_mir <- get_mir(conn,
+                    mir = tolower(unique(mir$AccID)),
+                    study = 'STES',
+                    min_cor = .3,
+                    targets_only = TRUE)
+```
+
+```{r edges}
+# make a list of data.frames
+edgs <- list(microRNA = creg_mir[, -3],
+            TF = creg_tf[, -3])
+names(edgs$microRNA) <- c('from', 'to', 'cor')
+names(edgs$TF) <- c('from', 'to', 'cor')
+
+# bind rows and remove duplicates
+edgs <- bind_rows(edgs, .id = 'type') %>%
+    filter(!to %in% unique(from)) %>%
+    mutate(weight = abs(cor)) %>%
+    dplyr::select(from, to, everything())
+```
+
+```{r verticies}
+# make a list of uniques nodes/verticies
+vrtcs <- with(edgs, split(from, type))
+vrtcs$gene <- edgs$to
+vrtcs <- lapply(vrtcs, unique)
+
+# melt list and make labels
+vrtcs <- melt(vrtcs) %>%
+    setNames(c('id', 'type')) %>%
+    mutate(id = as.character(id),
+           label = ifelse(type == 'gene', '', id))
+```
+
+```{r graph}
+p <- graph_from_data_frame(edgs, vertices = vrtcs, directed = FALSE)
+```
+
+We then calculated the node `degrees` to identify the ones with few edges and remove them from the network. Here, we show the density of distribution of the degrees of the nodes in the original graph and only genes in the new graph after deleting nodes with few edges.  
+
+```{r degrees, fig.width=10}
+par(mfrow=c(1,2))
+# degrees of original graph
+deg <- degree(p, mode = 'all')
+plot(density(deg, na.rm = TRUE),
+     main = 'Original Graph',
+     xlab = 'Node Degrees',
+     ylab = 'Density')
+
+# degress target genes after removing lower degrees
+new_p <- delete.vertices(p, names(deg)[deg == 1])
+gene_deg <- degree(new_p)[V(new_p)$type == 'gene']
+plot(density(gene_deg, na.rm = TRUE),
+     main = 'New Graph',
+     xlab = 'Gene Degrees',
+     ylab = 'Density')
+```
+
+Genes with the highest number of edges (degrees):  
+
+```{r high_degrees}
+names(gene_deg)[gene_deg > 4]
+```
+
+Finally, a plot of the new network with different colors representing different elements and nodes (only genes) scaled by the size of the degrees attached to them.  
+
+```{r plot, fig.height=12, fig.width=12}
+# set size and color
+V(new_p)$size <- ifelse(V(new_p)$type != 'gene', 5, gene_deg)
+V(new_p)$color <- c('lightgreen', 'blue', 'red')[factor(V(new_p)$type)]
+
+# plot igraph
+set.seed(1234)
+plot(new_p,
+     vertex.label.dist = .3,
+     vertex.label.cex	= .8,
+     vertx.label = V(new_p)$label,
+     edge.arrow.size = 0)
+legend('bottom',
+       legend = unique(V(new_p)$type),
+       col = unique(V(new_p)$color),
+       pch = 19)
+```
+
+## Finding clusters  
+Here, we tried to find substructures in the network using the fast greedy algorithm. Three clusters were found and are shown in the dendrogram.  
+
+```{r clusters, fig.width=12, fig.height=8}
+cfg <- cluster_fast_greedy(new_p, weights = E(p)$weight)
+plot_dendrogram(cfg,
+                labels = V(new_p)$label,
+                mode = 'hclust',
+                cex = .5)
+```
+
+This is the number of nodes in each cluster.  
+
+```{r numbers_clusters}
+clusters <- split(names(membership(cfg)),
+                  as.numeric(membership(cfg)))
+lengths(clusters)
+```
+
+## Pathway enrichment analysis  
+The KEGG pathways enrichment analysis was applied to the three clusters separatly. Clusters 1 and 3 resulted in the enrichment of 13 and 7 KEGG pathways respectively.  
+
+```{r kegg_enrichment}
+# prepare entrez ids
+entrez <- lapply(clusters, function(x) {
+    ei <- AnnotationDbi::select(org.Hs.eg.db, x, 'ENTREZID', 'SYMBOL')$ENTREZID
+    na.omit(ei)
+})
+
+# run kegg enrichment
+comp_path <- compareCluster(entrez, fun = 'enrichKEGG', organism = 'hsa')
+comp_path@compareClusterResult %>%
+    ggplot(aes(x = Description, y = Count)) +
+    geom_col() +
+    facet_wrap(~Cluster, scales = 'free_y', ncol = 1) +
+    coord_flip() +
+    labs(x = '')
+```
+
+# Remarks  
++ In the PLOS paper, the authors used annotation databases to identify the genes co-coregulated by TFs and microRNAs and to construct the network. In our analysis, we used a different approach to identify these targets. For TFs, the `targets_only` argument in the call to `get_tf` is based on a ChIP-seq data-driven analysis. For microRNAs, `targets_only` is based on the TargetScan annotations. For both cases, only highly correlated genes (absolute pearson's correlation > 0.3) were choosen to contiune the analysis with.  
+
++ In the publishe study, the authors used the high `degrees` of the nodes in the networks to define the hubs/or the genes with many outgoing edges to identify the ones which are co-regulated by the TFs and microRNAs of interest. However, we used the `degrees` of the nodes in the network to exclude the genes with few edges. Then, used a clustering algorithm to find highly correlated nodes, then perfomed the KEGG enrichment analysis on them as separated groups.  
+
++ To sum, we constructed a co-regulation network of TF and microRNA gene targets in stomach and esophogeal cancer. We identified a number of genes that are likely to be regulated by these TFs and microRNAs. These genes were clustered in 4 groups. The KEGG pathways enrichment analysis showed a high enrichment of ECM-receptor interactions and cell adhesion by one of these clusters (a similar finding in the PLOS paper). Finally, another cluster showed high enrichment of a number of pathways related to DNA synthesis and repair.  
+ 
+
+# References  
+Shi Y, Wang J, Xin Z, Duan Z, Wang G, Li F. Transcription Factors and microRNA-Co-Regulated Genes in Gastric Cancer Invasion in Ex Vivo. Zhao J-J, editor. PLoS One [Internet]. Public Library of Science; 2015 [cited 2017 Sep 1]; 10: e0122882. doi: 10.1371/journal.pone.0122882.  

@@ -40,7 +40,7 @@ get_db <- function(test = FALSE, ...) {
     if(test == TRUE) {
         url <- 'https://www.dropbox.com/s/t8ga5j8o81jkcuv/test.db.gz?raw=1'
     } else {
-        url <- 'https://www.dropbox.com/s/t8ga5j8o81jkcuv/cRegulome.db.gz?raw=1'
+        url <- 'https://www.dropbox.com/s/unaj94rnk0n4fl5/cRegulome.db.gz?raw=1'
     }
 
     # check url exists
@@ -49,8 +49,8 @@ get_db <- function(test = FALSE, ...) {
     }
 
     # download file
-    if(file.exists('cRegulome.db')) {
-        stop('File already exists in the current directory.')
+    if(file.exists('cRegulome.db') | file.exists('cRegulome.db.gz')) {
+        message('File already exists in the current directory.')
     } else {
         tryCatch(utils::download.file(url,                                     
                                       destfile = 'cRegulome.db.gz',

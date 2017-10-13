@@ -10,7 +10,7 @@ test_that('get_db downlaods db file succussfully', {
 R.utils::gunzip('cRegulome.db.gz')
 
 test_that('get_db stop when db file exist in the current directory', {
-    expect_error(get_db(test = TRUE))
+    expect_message(get_db(test = TRUE))
 })
 
 # connect to the db file

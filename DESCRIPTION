@@ -1,13 +1,14 @@
 Package: cRegulome
 Type: Package
+Version: 0.0.0.9000
 Title: Obtain and Visualize regulome-gene Expression Correlations in Cancer
-Version: 0.99.0
-Author: Mahmoud Ahmed
-Maintainer: Mahmoud Ahmed <mahmoud.s.fahmy@students.kasralainy.edu.eg>
 Description: Obtains a database of pre-calculated microRNA and
   transcription facor-gene correlations in cancer. In addition, the package
   defines methods for handling and visualizing the data.
 License: GPL-2
+Authors@R: person("Mahmoud", "Ahmed",
+    email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
+    role = c("aut", "cre"))
 URL: https://github.com/MahShaaban/cRegulome
 BugReports: https://github.com/MahShaaban/cRegulome/issues
 Encoding: UTF-8
