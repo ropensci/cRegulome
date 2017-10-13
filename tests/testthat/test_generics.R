@@ -21,8 +21,10 @@ test_that('get_mir Faulty arguments', {
     expect_error(get_mir(conn, mir = list('hsa-let-7b')))
     expect_error(get_mir(conn, study = 'ACC'))
     expect_error(get_mir(conn, mir = 'hsa-let-7b', study = 11))
-    expect_error(get_mir(conn, mir = 'hsa-let-7b', min_cor = -1))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', min_abs_cor = -1))
     expect_error(get_mir(conn, mir = 'hsa-let-7b', max_num = -1))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', max_num = 0))
+    expect_error(get_mir(conn, mir = 'hsa-let-7b', max_num = .5))
     })
 
 # get_mir with and without targets_only
@@ -44,7 +46,7 @@ test_that('get_mir extracts data properly', {
 dat <- get_mir(conn,
                mir = 'hsa-let-7b',
                study = 'ACC',
-               min_cor = .3,
+               min_abs_cor = .3,
                max_num = 5)
 cmir <- cmicroRNA(dat)
 
@@ -60,7 +62,7 @@ test_that('objects cmicroRNA are constructed properly', {
 dat <- get_mir(conn,
                mir = 'hsa-let-7b',
                study = c('ACC', 'BLCA'),
-               min_cor = .3)
+               min_abs_cor = .3)
 cmir <- cmicroRNA(dat)
 
 test_that('object cmicroRNA with multiple studies', {
@@ -74,8 +76,10 @@ test_that('get_tf Faulty arguments', {
   expect_error(get_tf(conn, tf = list('AFF4')))
   expect_error(get_tf(conn, study = 'ACC'))
   expect_error(get_tf(conn, tf = 'AFF4', study = 11))
-  expect_error(get_tf(conn, tf = 'AFF4', min_cor = -1))
+  expect_error(get_tf(conn, tf = 'AFF4', min_abs_cor = -1))
   expect_error(get_tf(conn, tf = 'AFF4', max_num = -1))
+  expect_error(get_tf(conn, tf = 'AFF4', max_num = 0))
+  expect_error(get_tf(conn, tf = 'AFF4', max_num = .5))
 })
 
 # get_tf with and without targets_only
@@ -97,7 +101,7 @@ test_that('get_tf extracts data properly', {
 dat <- get_tf(conn,
                tf = 'AFF4',
                study = 'ACC',
-               min_cor = .3,
+               min_abs_cor = .3,
                max_num = 5)
 ctf <- cTF(dat)
 
@@ -113,7 +117,7 @@ test_that('objects cTF are constructed properly', {
 dat <- get_tf(conn,
               tf = c('AFF4', 'AR'),
               study = c('ACC', 'BLCA'),
-              min_cor = .3)
+              min_abs_cor = .3)
 ctf <- cTF(dat)
 
 test_that('object cTF with multiple studies', {

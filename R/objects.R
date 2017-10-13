@@ -18,14 +18,16 @@
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5,
+#'     min_abs_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert object
 #' ob <- cmicroRNA(dat)
-#'
+#' 
+#' @importFrom magrittr %>%
+#' 
 #' @export
 cmicroRNA <- function(dat_mir){
     # extract items of the list from the data.frame
@@ -33,8 +35,8 @@ cmicroRNA <- function(dat_mir){
     features <- unique(dat_mir$feature)
     studies <- unique(dat_mir$study)
 
-    `%>%` <- dplyr::`%>%`
-    
+
+        
     # reshape the data.frame/s 
     # microRNA in columns and feature in rows
     # object contains a single study
@@ -83,7 +85,7 @@ cmicroRNA <- function(dat_mir){
 #' dat <- get_tf(conn,
 #'     tf = c('AFF4', 'ESR1'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5,
+#'     min_abs_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
 #' DBI::dbDisconnect(conn)
@@ -91,6 +93,8 @@ cmicroRNA <- function(dat_mir){
 #' # convert to object
 #' ob <- cTF(dat)
 #'
+#' @importFrom magrittr %>%
+#' 
 #' @export
 cTF <- function(dat_tf){
     # extract items of the list from the data.frame
@@ -98,8 +102,8 @@ cTF <- function(dat_tf){
     features <- unique(dat_tf$feature)
     studies <- unique(dat_tf$study)
 
-    `%>%` <- dplyr::`%>%`
-    
+
+        
     # reshape the data.frame/s 
     # tf in columns and feature in rows
     # object contains a single study

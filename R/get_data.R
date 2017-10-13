@@ -65,10 +65,10 @@ get_db <- function(test = FALSE, ...) {
 #' Get microRNA correlations from cRegulome.db
 #'
 #' This function access the \code{sqlite} database file which is obtained by
-#' running \link{get_db}.The function returns an error if the uncompressd
-#' database file \code{cRegulome.db} is not in the working directory.
-#' Basically, the function provides fileters to subset the large tables to
-#' the items of interest.
+#' running \link{get_db}. Basically, the function provides ways to query the 
+#' databas to the correlation data of the microRNAs of interst. The function 
+#' returns an error if the uncompressd database file \code{cRegulome.db} is 
+#' not in the working directory.
 #'
 #' @param conn A connection to the database file by \code{\link[DBI]{dbConnect}}
 #' @param mir A required \code{character} vector of the microRNAs of interest.
@@ -78,7 +78,7 @@ get_db <- function(test = FALSE, ...) {
 #' study identifiers. To view the available studies in TCGA project,
 #' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
 #' defult \code{NULL} all available studies will be included.
-#' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0
+#' @param min_abs_cor A \code{numeric}, an absoute correlation minimmum between 0
 #' and 1 for each \code{mir}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
 #' for each \code{mir} in each \code{study}.
@@ -108,16 +108,18 @@ get_db <- function(test = FALSE, ...) {
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5,
+#'     min_abs_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
 #' DBI::dbDisconnect(conn)
-#'
+#' 
+#' @importFrom magrittr %>%
+#' 
 #' @export
 get_mir <- function(conn,
                     mir,
                     study = NULL,
-                    min_cor = NULL,
+                    min_abs_cor = NULL,
                     max_num = NULL,
                     targets_only = FALSE) {
 
@@ -140,17 +142,17 @@ get_mir <- function(conn,
         study <- as.character(study)
     }
 
-    if(is.null(min_cor)) {
-        min_cor <- 0
-    } else if(!is.numeric(min_cor) || min_cor > 1 || min_cor < 0) {
-        stop("min_cor should be a numeric between 0 and 1.")
+    if(is.null(min_abs_cor)) {
+        min_abs_cor <- 0
+    } else if(!is.numeric(min_abs_cor) || min_abs_cor > 1 || min_abs_cor < 0) {
+        stop("min_abs_cor should be a numeric between 0 and 1.")
     }
     else {
-        min_cor <- as.numeric(min_cor)
+        min_abs_cor <- as.numeric(min_abs_cor)
     }
 
     # get main data by applying filters and tidy
-    `%>%` <- dplyr::`%>%`
+    
     dat <- conn %>%
         dplyr::tbl(table) %>%
         dplyr::select(mirna_base, feature, study) %>%
@@ -158,7 +160,7 @@ get_mir <- function(conn,
         dplyr::collect() %>%
         tidyr::gather(study, cor, -mirna_base, -feature) %>%
         dplyr::mutate(cor = cor/100) %>%
-        dplyr::filter(abs(cor) > min_cor) %>%
+        dplyr::filter(abs(cor) > min_abs_cor) %>%
         dplyr::arrange(dplyr::desc(abs(cor))) %>%
         stats::na.omit()
 
@@ -178,8 +180,8 @@ get_mir <- function(conn,
 
     # subset to max_num
     if(is.null(max_num)) {
-    } else if(is.integer(max_num) || max_num < 0) {
-        stop("max_num should be an integer between 1 and Inf.")
+    } else if(max_num %% 1 != 0 || max_num <= 0) {
+        stop("max_num should be a positive integer.")
     } else {
         dat <- dat %>%
             dplyr::group_by(mirna_base, study) %>%
@@ -193,17 +195,17 @@ get_mir <- function(conn,
 #' Get transcription factor correlations from cRegulome.db
 #'
 #' This function access the \code{sqlite} database file which is obtained by
-#' running \link{get_db}. The function returns an error if the uncompressd
-#' database file \code{cRegulome.db} is not in the working directory.
-#' Basically, the function provides fileters to subset the large tables to the
-#' items of interest.
+#' running \link{get_db}. Basically, the function provides ways to query the 
+#' databas to the correlation data of the transcription factors of interst. 
+#' The function returns an error if the uncompressd database file 
+#' \code{cRegulome.db} is not in the working directory.
 #'
 #' @param tf A required \code{character} vector of the transcription factor of
-#' interest. These are the official gene symbols of the genes contains the
+#' interest. These are the HUGO official gene symbols of the genes contains the
 #' transcription factor.
 #' @inheritParams get_mir
-#' @param min_cor A \code{numeric}, an absoute correlation minimmum between 0
-#' and 1 for each \code{tf}.
+#' @param min_abs_cor A \code{numeric}, an absoute correlation minimmum between
+#'  0 and 1 for each \code{tf}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
 #' for each \code{tf} in each \code{study}.
 #' @param targets_only A \code{logical}, default \code{FALSE}. When
@@ -233,16 +235,18 @@ get_mir <- function(conn,
 #' dat <- get_tf(conn,
 #'     tf = c('AFF4', 'ESR1'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5,
+#'     min_abs_cor = .5,
 #'     max_num = 100,
 #'     targets_only = TRUE)
 #' DBI::dbDisconnect(conn)
 #'
+#' @importFrom magrittr %>%
+#' 
 #' @export
 get_tf <- function(conn,
                     tf,
                     study = NULL,
-                    min_cor = NULL,
+                    min_abs_cor = NULL,
                     max_num = NULL,
                     targets_only = FALSE) {
 
@@ -265,17 +269,17 @@ get_tf <- function(conn,
         study <- as.character(study)
     }
 
-    if(is.null(min_cor)) {
-        min_cor <- 0
-    } else if(!is.numeric(min_cor) || min_cor > 1 || min_cor < 0) {
-        stop("min_cor should be a numeric between 0 and 1.")
+    if(is.null(min_abs_cor)) {
+        min_abs_cor <- 0
+    } else if(!is.numeric(min_abs_cor) || min_abs_cor > 1 || min_abs_cor < 0) {
+        stop("min_abs_cor should be a numeric between 0 and 1.")
     }
     else {
-        min_cor <- as.numeric(min_cor)
+        min_abs_cor <- as.numeric(min_abs_cor)
     }
 
     # get main data by applying filters and tidy
-    `%>%` <- dplyr::`%>%`
+    
     dat <- conn %>%
         dplyr::tbl(table) %>%
         dplyr::select(tf, feature, study) %>%
@@ -283,7 +287,7 @@ get_tf <- function(conn,
         dplyr::collect() %>%
         tidyr::gather(study, cor, -tf, -feature) %>%
         dplyr::mutate(cor = cor/100) %>%
-        dplyr::filter(abs(cor) > min_cor) %>%
+        dplyr::filter(abs(cor) > min_abs_cor) %>%
         dplyr::arrange(dplyr::desc(abs(cor))) %>%
         stats::na.omit()
 
@@ -303,8 +307,8 @@ get_tf <- function(conn,
 
     # subset to max_num
     if(is.null(max_num)) {
-    } else if(is.integer(max_num) || max_num < 0) {
-        stop("max_num should be an integer between 1 and Inf.")
+    } else if(max_num %% 1 != 0 | max_num <= 0) {
+        stop("max_num should be a positive integer.")
     } else {
         dat <- dat %>%
             dplyr::group_by(tf, study) %>%

@@ -190,8 +190,8 @@ table(creg_tf$tf)
 ```{r TF_summary}
 # construct a cTF object and plot
 ob_tf <- cTF(creg_tf)
-joy(ob_tf)
-upset(ob_tf)
+cor_joy(ob_tf)
+cor_upset(ob_tf)
 ```
 
 ## microRNA   
@@ -209,8 +209,8 @@ table(creg_mir$mirna_base)
 ```{r microRNA_summary}
 # construct a cmicroRNA object and plot
 ob_mir <- cmicroRNA(creg_mir)
-joy(ob_mir)
-upset(ob_mir)
+cor_joy(ob_mir)
+cor_upset(ob_mir)
 ```
 
 ## Network construction  
@@ -221,12 +221,12 @@ For the purpose of constructing the network, we decided to limit the nodes to th
 creg_tf <- get_tf(conn,
                   tf = unique(tf$SOURCE),
                   study = 'STES*',
-                  min_cor = .3,
+                  min_abs_cor = .3,
                   targets_only = TRUE)
 creg_mir <- get_mir(conn,
                     mir = tolower(unique(mir$AccID)),
                     study = 'STES',
-                    min_cor = .3,
+                    min_abs_cor = .3,
                     targets_only = TRUE)
 ```
 

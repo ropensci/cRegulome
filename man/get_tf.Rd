@@ -4,14 +4,14 @@
 \alias{get_tf}
 \title{Get transcription factor correlations from cRegulome.db}
 \usage{
-get_tf(conn, tf, study = NULL, min_cor = NULL, max_num = NULL,
+get_tf(conn, tf, study = NULL, min_abs_cor = NULL, max_num = NULL,
   targets_only = FALSE)
 }
 \arguments{
 \item{conn}{A connection to the database file by \code{\link[DBI]{dbConnect}}}
 
 \item{tf}{A required \code{character} vector of the transcription factor of
-interest. These are the official gene symbols of the genes contains the
+interest. These are the HUGO official gene symbols of the genes contains the
 transcription factor.}
 
 \item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
@@ -19,8 +19,8 @@ study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
 defult \code{NULL} all available studies will be included.}
 
-\item{min_cor}{A \code{numeric}, an absoute correlation minimmum between 0
-and 1 for each \code{tf}.}
+\item{min_abs_cor}{A \code{numeric}, an absoute correlation minimmum between
+0 and 1 for each \code{tf}.}
 
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
 for each \code{tf} in each \code{study}.}
@@ -38,10 +38,10 @@ and \code{study} is TCGA study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by
-running \link{get_db}. The function returns an error if the uncompressd
-database file \code{cRegulome.db} is not in the working directory.
-Basically, the function provides fileters to subset the large tables to the
-items of interest.
+running \link{get_db}. Basically, the function provides ways to query the 
+databas to the correlation data of the transcription factors of interst. 
+The function returns an error if the uncompressd database file 
+\code{cRegulome.db} is not in the working directory.
 }
 \examples{
 \dontrun{
@@ -60,7 +60,7 @@ dat <- get_tf(conn, tf = 'AFF4')
 dat <- get_tf(conn,
     tf = c('AFF4', 'ESR1'),
     study = c('ACC', 'BLCA'),
-    min_cor = .5,
+    min_abs_cor = .5,
     max_num = 100,
     targets_only = TRUE)
 DBI::dbDisconnect(conn)

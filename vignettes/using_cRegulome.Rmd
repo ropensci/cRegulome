@@ -63,7 +63,7 @@ conn <- dbConnect(SQLite(), 'cRegulome.db')
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
-               min_cor = .3,
+               min_abs_cor = .3,
                targets_only = TRUE)
 
 # make a cmicroRNA object
@@ -80,7 +80,7 @@ print(ob)
 
 ```{r plot_object}
 # plot object for the ACC study
-plot(ob, study = 'ACC')
+cor_plot(ob, study = 'ACC')
 ```
 
 
@@ -147,14 +147,14 @@ the `get_*` functions are doing.
 dat_mir <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
-               min_cor = .3,
+               min_abs_cor = .3,
                targets_only = TRUE)
 
 # query the db for two transcription factors
 dat_tf <- get_tf(conn,
                  tf = c('AFF4', 'AR'),
                  study = c('ACC', 'BLCA'),
-                 min_cor = .3)
+                 min_abs_cor = .3)
 
 # show first 6 line of each of the data.frames
 head(dat_mir); head(dat_tf)
@@ -231,17 +231,17 @@ tidy_dat <- tidy(ob_tf)
 equals(dat_tf, tidy_dat)
 ```
 
-```{r hist_method}
-# hist method
-hist(ob_tf, study = 'ACC',
+```{r cor_hist_method}
+# cor_hist method
+cor_hist(ob_tf, study = 'ACC',
      breaks = 100,
      main = '', xlab = 'Correlation')
 ```
 
 
-```{r joy_method}
-# joy method
-joy(ob_tf, study = 'ACC') +
+```{r cor_joy_method}
+# cor_joy method
+cor_joy(ob_tf, study = 'ACC') +
     labs(x = 'Correlation', y = '')
 ```
 
@@ -251,9 +251,9 @@ venn.diagram(ob_tf, study = 'ACC',
              cat.default.pos = 'text')
 ```
 
-```{r upset_method}
-# upset method
-upset(ob_tf, study = 'ACC')
+```{r cor_upset_method}
+# cor_upset method
+cor_upset(ob_tf, study = 'ACC')
 ```
 
 # Contributions  

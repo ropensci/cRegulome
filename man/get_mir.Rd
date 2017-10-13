@@ -4,7 +4,7 @@
 \alias{get_mir}
 \title{Get microRNA correlations from cRegulome.db}
 \usage{
-get_mir(conn, mir, study = NULL, min_cor = NULL, max_num = NULL,
+get_mir(conn, mir, study = NULL, min_abs_cor = NULL, max_num = NULL,
   targets_only = FALSE)
 }
 \arguments{
@@ -19,7 +19,7 @@ study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
 defult \code{NULL} all available studies will be included.}
 
-\item{min_cor}{A \code{numeric}, an absoute correlation minimmum between 0
+\item{min_abs_cor}{A \code{numeric}, an absoute correlation minimmum between 0
 and 1 for each \code{mir}.}
 
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
@@ -37,10 +37,10 @@ study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by
-running \link{get_db}.The function returns an error if the uncompressd
-database file \code{cRegulome.db} is not in the working directory.
-Basically, the function provides fileters to subset the large tables to
-the items of interest.
+running \link{get_db}. Basically, the function provides ways to query the 
+databas to the correlation data of the microRNAs of interst. The function 
+returns an error if the uncompressd database file \code{cRegulome.db} is 
+not in the working directory.
 }
 \examples{
 \dontrun{
@@ -59,7 +59,7 @@ dat <- get_mir(conn, mir = 'hsa-let-7b')
 dat <- get_mir(conn,
     mir = c('hsa-let-7b', 'hsa-mir-134'),
     study = c('ACC', 'BLCA'),
-    min_cor = .5,
+    min_abs_cor = .5,
     max_num = 100,
     targets_only = TRUE)
 DBI::dbDisconnect(conn)

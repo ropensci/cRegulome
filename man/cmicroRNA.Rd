@@ -27,7 +27,7 @@ conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
 dat <- get_mir(conn,
     mir = c('hsa-let-7b', 'hsa-mir-134'),
     study = c('ACC', 'BLCA'),
-    min_cor = .5,
+    min_abs_cor = .5,
     max_num = 100,
     targets_only = TRUE)
 DBI::dbDisconnect(conn)

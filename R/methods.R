@@ -15,7 +15,7 @@
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5)
+#'     min_abs_cor = .5)
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert to cmicroRNA object
@@ -75,7 +75,8 @@ print.cTF <- function(ob, ...) {
 #' defult \code{NULL} all available studies will be included.
 #' @param ... Other options
 #'
-#' @return A \code{ggplot} object of dot plot.
+#' @return A \code{ggplot} object of a dot plot of the correlation values 
+#' between genes and microRNAs or transcription factors in a TCGA study.
 #'
 #' @examples
 #' # connect to test database file
@@ -86,20 +87,22 @@ print.cTF <- function(ob, ...) {
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5)
+#'     min_abs_cor = .5)
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' plot(ob, study = 'ACC')
-#'
+#' cor_plot(ob, study = 'ACC')
+#' 
+#' @importFrom magrittr %>%
+#' 
 #' @export
-plot <- function(ob, study = NULL, ...) {
-    UseMethod('plot')
+cor_plot <- function(ob, study = NULL, ...) {
+    UseMethod('cor_plot')
 }
 
 #' @export
-plot.cmicroRNA <- function(ob, study = NULL, ...) {
+cor_plot.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -116,8 +119,8 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
   
-    `%>%` <- dplyr::`%>%`
-    
+
+        
     # convet back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
@@ -139,7 +142,7 @@ plot.cmicroRNA <- function(ob, study = NULL, ...) {
 }
 
 #' @export
-plot.cTF <- function(ob, study = NULL, ...) {
+cor_plot.cTF <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -156,7 +159,7 @@ plot.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
 
     # convet back to tidy format
     dat <- dat %>%
@@ -181,7 +184,7 @@ plot.cTF <- function(ob, study = NULL, ...) {
 
 #' Tidy \link{cmicroRNA} and \link{cTF} objects
 #'
-#' @inheritParams plot
+#' @inheritParams cor_plot
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} or
 #' \code{tf}is the microRNA miRBase IDs, \code{feature} is the features/genes,
@@ -197,13 +200,15 @@ plot.cTF <- function(ob, study = NULL, ...) {
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5)
+#'     min_abs_cor = .5)
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
 #' dat <- tidy(ob)
 #' dat[1:5,]
+#'
+#' @importFrom magrittr %>%
 #'
 #' @export
 tidy <- function(ob) {
@@ -212,7 +217,7 @@ UseMethod('tidy')
 
 #' @export
 tidy.cmicroRNA <- function(ob) {
-    `%>%` <- dplyr::`%>%`
+    
     
     # convet back to tidy format
     if(length(ob$studies) == 1) {
@@ -237,7 +242,7 @@ tidy.cmicroRNA <- function(ob) {
 
 #' @export
 tidy.cTF <- function(ob) {
-    `%>%` <- dplyr::`%>%`
+    
     
     # convet back to tidy format
     if(length(ob$studies) == 1) {
@@ -263,7 +268,7 @@ tidy.cTF <- function(ob) {
 #' Count and plot the numbers of microRNA correlated features in
 #' \code{cmicroRNA} object.
 #'
-#' @inheritParams plot
+#' @inheritParams cor_plot
 #' @return A venn diagram with a ciccle or an ellipses for each microRNA and
 #' the number of correlated features.
 #'
@@ -276,13 +281,15 @@ tidy.cTF <- function(ob) {
 #' dat <- get_mir(conn,
 #'     mir = c('hsa-let-7b', 'hsa-mir-134'),
 #'     study = c('ACC', 'BLCA'),
-#'     min_cor = .5)
+#'     min_abs_cor = .5)
 #' DBI::dbDisconnect(conn)
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
 #' venn.diagram(ob, study = 'ACC')
-#'
+#' 
+#' @importFrom magrittr %>%
+#' 
 #' @export
 venn.diagram <- function(ob, study = NULL, ...) {
     UseMethod('venn.diagram')
@@ -306,7 +313,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
 
     # convert back to tidy format
     dat <- dat %>%
@@ -341,7 +348,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
     
     # convert back to tidy format
     dat <- dat %>%
@@ -363,7 +370,7 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' \code{\link[UpSetR]{upset}} of sets of microRNAs or transcription
 #' factors and their correlated features in a TCGA study.
 #'
-#' @inheritParams plot
+#' @inheritParams cor_plot
 #'
 #' @return An \code{\link[UpSetR]{upset}} plot
 #'
@@ -380,15 +387,17 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
-#' upset(ob, study = 'ACC')
+#' cor_upset(ob, study = 'ACC')
 #'
+#' @importFrom magrittr %>%
+#' 
 #' @export
-upset <- function(ob, study = NULL, ...) {
-    UseMethod('upset')
+cor_upset <- function(ob, study = NULL, ...) {
+    UseMethod('cor_upset')
 }
 
 #' @export
-upset.cmicroRNA <- function(ob, study = NULL, ...) {
+cor_upset.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -405,7 +414,7 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
     
     # make a binary data.frame
     dat <- dat %>%
@@ -417,7 +426,7 @@ upset.cmicroRNA <- function(ob, study = NULL, ...) {
 }
 
 #' @export
-upset.cTF <- function(ob, study = NULL, ...) {
+cor_upset.cTF <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -434,7 +443,7 @@ upset.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
     
     # make a binary data.frame
     dat <- dat %>%
@@ -445,14 +454,15 @@ upset.cTF <- function(ob, study = NULL, ...) {
     UpSetR::upset(dat, ...)
 }
 
-#' \code{\link{hist}} plot a histogram of microRNA or tf sets
+#' A histogram of the correlations of microRNA or tf sets
 #'
-#' \code{\link{hist}} of sets of microRNAs or transcription
-#' factors and their correlated features in a TCGA study.
+#' Plot a \code{\link[graphics]{hist}} of sets of microRNAs or transcription
+#' factors-gene correlations in a TCGA study.
 #'
-#' @inheritParams plot
+#' @inheritParams cor_plot
 #'
-#' @return An \code{\link{hist}} plot
+#' @return An \code{\link[graphics]{hist}} plot of the correlations values 
+#' bewteen genes a microRNA or a transcription factor in a TCGA study
 #'
 #' @examples
 #' # connect to test database file
@@ -467,15 +477,15 @@ upset.cTF <- function(ob, study = NULL, ...) {
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
-#' hist(ob, study = 'ACC')
+#' cor_hist(ob, study = 'ACC')
 #'
 #' @export
-hist <- function(ob, study = NULL, ...) {
-    UseMethod('hist')
+cor_hist <- function(ob, study = NULL, ...) {
+    UseMethod('cor_hist')
 }
 
 #' @export
-hist.cmicroRNA <- function(ob, study = NULL, ...) {
+cor_hist.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -494,11 +504,11 @@ hist.cmicroRNA <- function(ob, study = NULL, ...) {
     
     # generate plot
     dat <- unlist(dat[, -1])
-    hist(dat, ...)
+    graphics::hist(dat, ...)
 }
 
 #' @export
-hist.cTF <- function(ob, study = NULL, ...) {
+cor_hist.cTF <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -517,17 +527,17 @@ hist.cTF <- function(ob, study = NULL, ...) {
     
     # generate plot
     dat <- unlist(dat[, -1])
-    hist(dat, ...)
+    graphics::hist(dat, ...)
 }
 
-#' \code{\link{ggjoy}} joy plot of microRNA or tf sets
+#' A joy plot of correlation of microRNA or tf sets
 #'
-#' \code{\link{ggjoy}} joy plot of sets of microRNAs or transcription
-#' factors and their correlated features in a TCGA study.
+#' A \code{\link{ggridges}} joy plot of sets of microRNAs or transcription
+#' factors-gene correlations in a TCGA study.
 #'
-#' @inheritParams plot
+#' @inheritParams cor_plot
 #'
-#' @return An \code{\link{ggjoy}} plot object
+#' @return An \code{\link{ggridges}} plot object
 #'
 #' @examples
 #' # connect to test database file
@@ -542,15 +552,17 @@ hist.cTF <- function(ob, study = NULL, ...) {
 #'
 #' # convert to cmicroRNA object and plot
 #' ob <- cmicroRNA(dat)
-#' joy(ob, study = 'ACC')
-#'
+#' cor_joy(ob, study = 'ACC')
+#' 
+#' @importFrom magrittr %>%
+#' 
 #' @export
-joy <- function(ob, study = NULL, ...) {
-    UseMethod('joy')
+cor_joy <- function(ob, study = NULL, ...) {
+    UseMethod('cor_joy')
 }
 
 #' @export
-joy.cmicroRNA <- function(ob, study = NULL, ...) {
+cor_joy.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -567,7 +579,7 @@ joy.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
     
     # convert back to tidy format
     dat <- dat %>%
@@ -578,14 +590,14 @@ joy.cmicroRNA <- function(ob, study = NULL, ...) {
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'mirna_base')) +
-        ggjoy::geom_joy() +
+        ggridges::geom_density_ridges() +
         ggplot2::theme_light()
 
     return(gg)
 }
 
 #' @export
-joy.cTF <- function(ob, study = NULL, ...) {
+cor_joy.cTF <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -602,7 +614,7 @@ joy.cTF <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    `%>%` <- dplyr::`%>%`
+    
     
     # convert back to tidy format
     dat <- dat %>%
@@ -613,7 +625,7 @@ joy.cTF <- function(ob, study = NULL, ...) {
     gg <- dat %>%
         ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
                                             y = 'tf')) +
-        ggjoy::geom_joy() +
+        ggridges::geom_density_ridges() +
         ggplot2::theme_light()
 
     return(gg)

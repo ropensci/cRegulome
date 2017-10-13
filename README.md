@@ -3,7 +3,7 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MahShaaban/cRegulome?branch=master&svg=true)](https://ci.appveyor.com/project/MahShaaban/cRegulome)
 [![](https://badges.ropensci.org/149_status.svg)](https://github.com/ropensci/onboarding/issues/149)  
 
-# cRegulome
+# cRegulome  
 ## Overview  
 Transcription factors and microRNAs are important for regulating the gene
 expression in normal physiology and pathological conditions. Many
@@ -21,6 +21,23 @@ obtains a local instance of
 provides classes and methods to interact with and visualize the correlation
 data.  
 
+## What is cRegulome used for?  
+cRegulome provieds programmtic access to regulome-gene correlation data in 
+cancer from different data sources. Researches who are interested in studying 
+the role of microRNAs and transcription factors in cancer can use this package 
+to construct a small or large scale queries to answer different questions:
+
+    - Which micorRNAs and/or transcription factors are associated with a 
+    particular set of genes?
+    - What different regulation patterns a microRNA or a transcription factor 
+    can take in different types of cancer?
+    - For a given set of regulatory elements, which genes are likely to be 
+    regulated by these elements in a cetain type of cancer?  
+
+In addition, cRegulome can be used with other R packages like `igraph` to 
+study the co-regulation networks in different types of cancer.
+    
+
 ## Getting started  
 To get starting with cRegulome we show a very quick example. We first start
 by downloading a small test database file, make a simple query and convert
@@ -28,7 +45,7 @@ the output to a cRegulome object to print and visualize.
 
 
 ```r
-# install package from github
+# install package from github (under development)
 devtools::install_github('MahShaaban/cRegulome')
 ```
 ```r
@@ -58,7 +75,7 @@ conn <- dbConnect(SQLite(), 'cRegulome.db')
 dat <- get_mir(conn,
                mir = c('hsa-let-7b', 'hsa-mir-134'),
                study = c('ACC', 'BLCA'),
-               min_cor = .3,
+               min_abs_cor = .3,
                targets_only = TRUE)
 
 # make a cmicroRNA object               
@@ -74,8 +91,13 @@ print(ob)
 plot(ob, study = 'ACC')
 ```
 ## More
-Using cRegulome
-Case study
+
+```r
+browseVignettes("cRegulome")
+```
 
 ## Citation  
-Please cite: 
+
+```r
+citation("cRegulome")
+```
