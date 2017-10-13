@@ -6,6 +6,6 @@
 \alias{cRegulome-package}
 \title{\code{cRegulome} package}
 \description{
-Downlaod, access and visualize Regulome (microRNA and transcription factors)
+Download, access and visualize Regulome (microRNA and transcription factors)
 data from miRCancer and Cistrome cancer
 }

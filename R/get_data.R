@@ -8,7 +8,7 @@
 #' or to update the database to the latest version.
 #'
 #' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE}
-#' downlaods a database file with the same structure with a subset of
+#' downloads a database file with the same structure with a subset of
 #' the data for speed.
 #' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
 #'
@@ -66,19 +66,19 @@ get_db <- function(test = FALSE, ...) {
 #'
 #' This function access the \code{sqlite} database file which is obtained by
 #' running \link{get_db}. Basically, the function provides ways to query the 
-#' databas to the correlation data of the microRNAs of interst. The function 
-#' returns an error if the uncompressd database file \code{cRegulome.db} is 
-#' not in the working directory.
+#' database to the correlation data of the microRNAs of interest. The function 
+#' returns an error if the database file \code{cRegulome.db} is not in the 
+#' working directory.
 #'
 #' @param conn A connection to the database file by \code{\link[DBI]{dbConnect}}
 #' @param mir A required \code{character} vector of the microRNAs of interest.
 #' These are the miRBase ID which are the official identifiers of the
 #' widely used miRBase database, \url{http://www.mirbase.org/}.
-#' @param study A \code{character} vector of The Cancer Genome Atlase (TCGA)
+#' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
 #' study identifiers. To view the available studies in TCGA project,
 #' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-#' defult \code{NULL} all available studies will be included.
-#' @param min_abs_cor A \code{numeric}, an absoute correlation minimmum between 0
+#' default \code{NULL} all available studies will be included.
+#' @param min_abs_cor A \code{numeric}, an absolute correlation minimum between 0
 #' and 1 for each \code{mir}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
 #' for each \code{mir} in each \code{study}.
@@ -88,7 +88,7 @@ get_db <- function(test = FALSE, ...) {
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the
 #' microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
-#' is the corresponding expression correaltions and \code{study} is TCGA
+#' is the corresponding expression correlations and \code{study} is TCGA
 #' study ID.
 #'
 #' @examples
@@ -196,15 +196,15 @@ get_mir <- function(conn,
 #'
 #' This function access the \code{sqlite} database file which is obtained by
 #' running \link{get_db}. Basically, the function provides ways to query the 
-#' databas to the correlation data of the transcription factors of interst. 
-#' The function returns an error if the uncompressd database file 
-#' \code{cRegulome.db} is not in the working directory.
+#' database to the correlation data of the transcription factors of interest. 
+#' The function returns an error if the database file \code{cRegulome.db} is 
+#' not in the working directory.
 #'
 #' @param tf A required \code{character} vector of the transcription factor of
 #' interest. These are the HUGO official gene symbols of the genes contains the
 #' transcription factor.
 #' @inheritParams get_mir
-#' @param min_abs_cor A \code{numeric}, an absoute correlation minimmum between
+#' @param min_abs_cor A \code{numeric}, an absolute correlation minimum between
 #'  0 and 1 for each \code{tf}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
 #' for each \code{tf} in each \code{study}.
@@ -215,7 +215,7 @@ get_mir <- function(conn,
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{tf} is the official
 #' gene symbols of the genes contains the transcription factor, \code{feature}
-#' is the features/genes, cor is the corresponding expression correaltions
+#' is the features/genes, cor is the corresponding expression correlations
 #' and \code{study} is TCGA study ID.
 #'
 #' @examples

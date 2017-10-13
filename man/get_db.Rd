@@ -8,7 +8,7 @@ get_db(test = FALSE, ...)
 }
 \arguments{
 \item{test}{A \code{logical}, default \code{FALSE}. When \code{TRUE}
-downlaods a database file with the same structure with a subset of
+downloads a database file with the same structure with a subset of
 the data for speed.}
 
 \item{...}{Optional arguments passed to \code{\link[utils]{download.file}}}

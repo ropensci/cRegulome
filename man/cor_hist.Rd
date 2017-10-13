@@ -10,16 +10,16 @@ cor_hist(ob, study = NULL, ...)
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+\item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
+default \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
 \value{
 An \code{\link[graphics]{hist}} plot of the correlations values 
-bewteen genes a microRNA or a transcription factor in a TCGA study
+between genes a microRNA or a transcription factor in a TCGA study
 }
 \description{
 Plot a \code{\link[graphics]{hist}} of sets of microRNAs or transcription

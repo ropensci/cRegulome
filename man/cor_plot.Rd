@@ -10,10 +10,10 @@ cor_plot(ob, study = NULL, ...)
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+\item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
+default \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
@@ -24,7 +24,7 @@ between genes and microRNAs or transcription factors in a TCGA study.
 \description{
 A dot plot of microRNA/TF correlation in a single study of TCGA. When the
 object \link{cmicroRNA}/\link{cTF} contains more than one TCGA studies, the
-argument \code{study} is a requirment.
+argument \code{study} is a requirement.
 }
 \examples{
 # connect to test database file

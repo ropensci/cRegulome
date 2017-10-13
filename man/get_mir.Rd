@@ -14,12 +14,12 @@ get_mir(conn, mir, study = NULL, min_abs_cor = NULL, max_num = NULL,
 These are the miRBase ID which are the official identifiers of the
 widely used miRBase database, \url{http://www.mirbase.org/}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+\item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
+default \code{NULL} all available studies will be included.}
 
-\item{min_abs_cor}{A \code{numeric}, an absoute correlation minimmum between 0
+\item{min_abs_cor}{A \code{numeric}, an absolute correlation minimum between 0
 and 1 for each \code{mir}.}
 
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
@@ -32,15 +32,15 @@ the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.}
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} is the
 microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
-is the corresponding expression correaltions and \code{study} is TCGA
+is the corresponding expression correlations and \code{study} is TCGA
 study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by
 running \link{get_db}. Basically, the function provides ways to query the 
-databas to the correlation data of the microRNAs of interst. The function 
-returns an error if the uncompressd database file \code{cRegulome.db} is 
-not in the working directory.
+database to the correlation data of the microRNAs of interest. The function 
+returns an error if the database file \code{cRegulome.db} is not in the 
+working directory.
 }
 \examples{
 \dontrun{

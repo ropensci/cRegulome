@@ -14,12 +14,12 @@ get_tf(conn, tf, study = NULL, min_abs_cor = NULL, max_num = NULL,
 interest. These are the HUGO official gene symbols of the genes contains the
 transcription factor.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+\item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
+default \code{NULL} all available studies will be included.}
 
-\item{min_abs_cor}{A \code{numeric}, an absoute correlation minimmum between
+\item{min_abs_cor}{A \code{numeric}, an absolute correlation minimum between
 0 and 1 for each \code{tf}.}
 
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
@@ -33,15 +33,15 @@ factors as identified in the Cistrome Cancer,
 \value{
 A tidy \code{data.frame} of four columns. \code{tf} is the official
 gene symbols of the genes contains the transcription factor, \code{feature}
-is the features/genes, cor is the corresponding expression correaltions
+is the features/genes, cor is the corresponding expression correlations
 and \code{study} is TCGA study ID.
 }
 \description{
 This function access the \code{sqlite} database file which is obtained by
 running \link{get_db}. Basically, the function provides ways to query the 
-databas to the correlation data of the transcription factors of interst. 
-The function returns an error if the uncompressd database file 
-\code{cRegulome.db} is not in the working directory.
+database to the correlation data of the transcription factors of interest. 
+The function returns an error if the database file \code{cRegulome.db} is 
+not in the working directory.
 }
 \examples{
 \dontrun{

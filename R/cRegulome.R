@@ -1,6 +1,6 @@
 #' \code{cRegulome} package
 #'
-#' Downlaod, access and visualize Regulome (microRNA and transcription factors)
+#' Download, access and visualize Regulome (microRNA and transcription factors)
 #' data from miRCancer and Cistrome cancer
 #'
 #' @docType package

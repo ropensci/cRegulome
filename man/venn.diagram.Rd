@@ -10,15 +10,15 @@ venn.diagram(ob, study = NULL, ...)
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{study}{A \code{character} vector of The Cancer Genome Atlase (TCGA)
+\item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-defult \code{NULL} all available studies will be included.}
+default \code{NULL} all available studies will be included.}
 
 \item{...}{Other options}
 }
 \value{
-A venn diagram with a ciccle or an ellipses for each microRNA and
+A venn diagram with a circle or an ellipses for each microRNA and
 the number of correlated features.
 }
 \description{

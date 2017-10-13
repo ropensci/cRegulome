@@ -65,14 +65,14 @@ print.cTF <- function(ob, ...) {
 #'
 #' A dot plot of microRNA/TF correlation in a single study of TCGA. When the
 #' object \link{cmicroRNA}/\link{cTF} contains more than one TCGA studies, the
-#' argument \code{study} is a requirment.
+#' argument \code{study} is a requirement.
 #'
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
 #' calling \link{cmicroRNA} or \link{cTF}.
-#' @param study A \code{character} vector of The Cancer Genome Atlase (TCGA)
+#' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
 #' study identifiers. To view the available studies in TCGA project,
 #' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-#' defult \code{NULL} all available studies will be included.
+#' default \code{NULL} all available studies will be included.
 #' @param ... Other options
 #'
 #' @return A \code{ggplot} object of a dot plot of the correlation values 
@@ -188,7 +188,7 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} or
 #' \code{tf}is the microRNA miRBase IDs, \code{feature} is the features/genes,
-#' \code{cor} is the corresponding expression correaltions and \code{study}
+#' \code{cor} is the corresponding expression correlations and \code{study}
 #' is TCGA study ID.
 #'
 #' @examples
@@ -269,7 +269,7 @@ tidy.cTF <- function(ob) {
 #' \code{cmicroRNA} object.
 #'
 #' @inheritParams cor_plot
-#' @return A venn diagram with a ciccle or an ellipses for each microRNA and
+#' @return A venn diagram with a circle or an ellipses for each microRNA and
 #' the number of correlated features.
 #'
 #' @examples
@@ -462,7 +462,7 @@ cor_upset.cTF <- function(ob, study = NULL, ...) {
 #' @inheritParams cor_plot
 #'
 #' @return An \code{\link[graphics]{hist}} plot of the correlations values 
-#' bewteen genes a microRNA or a transcription factor in a TCGA study
+#' between genes a microRNA or a transcription factor in a TCGA study
 #'
 #' @examples
 #' # connect to test database file
