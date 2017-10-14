@@ -4,6 +4,4 @@
 ~.travis.yml$
 ^\.travis\.yml$
 ^codecov\.yml$
-^vignettes/case_study\.Rmd$
-^manuscript/$
 ^CONTRIBUTING\.md$

@@ -355,4 +355,14 @@ comp_path@compareClusterResult %>%
  
 
 # References  
-Shi Y, Wang J, Xin Z, Duan Z, Wang G, Li F. Transcription Factors and microRNA-Co-Regulated Genes in Gastric Cancer Invasion in Ex Vivo. Zhao J-J, editor. PLoS One [Internet]. Public Library of Science; 2015 [cited 2017 Sep 1]; 10: e0122882. doi: 10.1371/journal.pone.0122882.  
+Shi Y, Wang J, Xin Z, Duan Z, Wang G, Li F. Transcription Factors and microRNA-Co-Regulated Genes in Gastric Cancer Invasion in Ex Vivo. Zhao J-J, editor. PLoS One [Internet]. Public Library of Science; 2015 [cited 2017 Sep 1]; 10: e0122882. doi: 10.1371/journal.pone.0122882.
+
+```{r clean}
+dbDisconnect(conn)
+unlink('cRegulome')
+unlink('*.xls*')
+unlink('*.csv')
+unlink('*.txt')
+devtools::clean_vignettes()
+```
+

@@ -263,6 +263,10 @@ Comments, issues and contributions are welcomed at:
 # Citations  
 Please cite:  
 
+```{r citation}
+citation('cRegulome')
+```
+
 ```{r clean, echo=FALSE}
 dbDisconnect(conn)
 unlink('./cRegulome.db')
