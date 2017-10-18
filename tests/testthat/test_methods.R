@@ -12,7 +12,7 @@ dat1 <- get_mir(conn,
                max_num = 5)
 
 cmir1 <- cmicroRNA(dat1)
-tidy_cmir1 <- tidy(cmir1)
+tidy_cmir1 <- cor_tidy(cmir1)
 
 dat2 <- get_mir(conn,
                 mir = 'hsa-let-7b',
@@ -21,9 +21,9 @@ dat2 <- get_mir(conn,
                 max_num = 5)
 
 cmir2 <- cmicroRNA(dat2)
-tidy_cmir2 <- tidy(cmir2)
+tidy_cmir2 <- cor_tidy(cmir2)
 
-test_that('tidy output a data.frame identical to output of get_mir', {
+test_that('cor_tidy output a data.frame identical to output of get_mir', {
   expect_equal(dat1, tidy_cmir1)
   expect_equal(dat2, tidy_cmir2)
 })
@@ -36,7 +36,7 @@ dat1 <- get_tf(conn,
                max_num = 5)
 
 ctf1 <- cTF(dat1)
-tidy_tf1 <- tidy(ctf1)
+tidy_tf1 <- cor_tidy(ctf1)
 
 dat2 <- get_tf(conn,
                tf = 'AFF4',
@@ -45,7 +45,7 @@ dat2 <- get_tf(conn,
                max_num = 5)
 
 ctf2 <- cTF(dat2)
-tidy_tf2 <- tidy(ctf2)
+tidy_tf2 <- cor_tidy(ctf2)
 
 test_that('tidy output a data.frame identical to output of get_tf', {
   expect_equal(dat1, tidy_tf1)

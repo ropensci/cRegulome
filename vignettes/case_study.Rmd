@@ -1,8 +1,3 @@
-
-```{r, echo=FALSE}
-knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
-```
-
 ---
 title: "Case Study"
 subtitle: "Transcription factors and microRNAs in Gastric cancer"
@@ -13,8 +8,12 @@ vignette: >
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 output: 
-    BiocStyle::pdf_document
+    BiocStyle::html_document
 ---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
+```
 
 # Overview   
 In this brief study, we attempted to answer questions raised by Shi and colleagues in a paper published in PLOS in 2015. The aim of this case study is to illustrate the use of `cRegulome` to obtain data based on queries of interest. Secondly, to integrate the package in a useful and meaningful workflow and give a context to the kind of information one can get from such databases. Finlly, to compare the output from `cRegulome` with that from Cistrome Cancer and miRCancerdb.  
@@ -30,7 +29,8 @@ We started by obtaining the lists of differentiall expressed TFs and microRNAs w
 
 ```{r load_libraries}
 library(readxl)
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 library(stringr)
 library(RSQLite)
 library(R.utils)
@@ -38,12 +38,13 @@ library(cRegulome)
 library(purrr)
 library(igraph)
 library(reshape2)
+library(AnnotationDbi)
 library(org.Hs.eg.db)
 library(clusterProfiler)
 ```
 
-```{r paper_data}
-if(!file.exists('tf.xls')) 
+```{r paper_data, eval=FALSE}
+if(!file.exists('tf.xlsx')) 
     download.file('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4393113/bin/pone.0122882.s001.xlsx',
                   destfile = 'tf.xlsx')
 tf <- read_excel('tf.xlsx', skip = 1)
@@ -57,25 +58,26 @@ mir <- read_excel('mir.xls', skip = 1)
 Here are the numbers and the first few entries from the lists:  
 
 ```{r first_few}
-length(unique(tf$SOURCE)); head(unique(tf$SOURCE), 3) # TFs
-length(unique(mir$AccID)); head(unique(mir$AccID), 3) # microRNAs
+length(unique(tf$SOURCE)); unique(tf$SOURCE) # TFs
+length(unique(mir$AccID)); head(unique(mir$AccID), 5) # microRNAs
 ```
 
 ## Transcription factor correlation from Cistrome Cancer  
 Next, we truned to the Cistrome Cancer databse to get the TF-gene correlation data. Cistrom Cancer is based on integrative analysis of The Cancer Genome Atlas (TCGA) and public ChIP-seq data. The data comes in text files, one for each TF, each file contains the calculated pearson's correlation between the TF ana all genes in each of the TCGA studies.  
 
-```{r cistrome_data}
+```{r cistrome_data, eval=FALSE}
 # make cistrom cancer file urls
 url <- paste('http://cistrome.org/CistromeCancer/CancerTarget/examples/',
-             unique(tf$SOURCE), '.all.cor.csv', sep = '')
-fls <- paste(unique(tf$SOURCE), '.all.cor.csv', sep = '')
+             unique(tf$SOURCE), '.cor.csv', sep = '')
+fls <- paste(unique(tf$SOURCE), '.cor.csv', sep = '')
 
 # download files
-if(!file.exists(fls[1])) download.file(url[1], destfile = fls[1])
-if(!file.exists(fls[2])) download.file(url[2], destfile = fls[2])
+for (i in seq_along(fls)) {
+  if(!file.exists(fls[i])) download.file(url[i], destfile = fls[i])
+}
 
 # get file paths
-fls <- list.files(pattern = 'all.cor.csv', full.names = TRUE)
+fls <- list.files(pattern = '.cor.csv', full.names = TRUE)
 names(fls) <- str_split(fls, '/|\\.', simplify = TRUE)[, 3]
 
 # read files
@@ -94,7 +96,7 @@ intersect(cistromec$tf, tf$SOURCE)
 ## microRNA correlations from miRCancerdb  
 Similarly, we used the microRNA IDs in the previous list to construct a query to miRCancerdb to get the microRNA-gene expression correlations in different types of cancer. miRCancerdb is based on an integrative analysis of RNA-seq data from TCGA and the TargetScan annotations. The miRCancerdb data comes in a tidy table with a single raw for each microRNA-gene association in each of TCGA cancer study. In this particular instance we are only interested in stomach and esophogeal cancer (STES), so we added this to the query.  
 
-```{r miRCancerdb_data}
+```{r miRCancerdb_data, eval=FALSE}
 write(paste(tolower(unique(mir$AccID)), collapse = ', '),
       file = 'miRCancer_query.txt')
 
@@ -112,25 +114,28 @@ intersect(mirCancer$mirna_base, tolower(mir$AccID))
 ```
 
 ## Use cRegulome to access correlation data
-In the previous section, we showed the code for obtaining the TF/microRNA-gene expression correlation in stomach and esophogeal cancer using Cistrome and miRCancerdb for comparison purpose. Here, we show the straight forward way of obtaining similar data using the pacakge `cRegulome`. This is only two simple steps. First, download the database if you are using the package for the first time. And make a query using the TF/microRNAs of interest.  
+In the previous section, we showed the code for obtaining the TF/microRNA-gene expression correlation in stomach and esophogeal cancer using Cistrome and miRCancerdb for comparison purpose. Here, we show the straight forward way of obtaining similar data using the pacakge `cRegulome`. This is only two simple steps. First, download the database if you are using the package for the first time. And make a query using the TF/microRNAs of interest and limit the 
+output to their known targets.  
 
-```{r cRegulome_data}
+```{r cRegulome_data, eval=FALSE}
 # obtain and connect the database
 if(!file.exists('cRegulome.db')) {
     get_db()
     gunzip('cRegulome.db.gz')
 }
 
-conn <- dbConnect(SQLite(), 'cRegulome.db')
+conn <- dbConnect(SQLite(), '~/Archive/cRegulome.db')
 
 # query the database
 creg_tf <- get_tf(conn,
-                  tf = unique(tf$SOURCE),
-                  study = 'STES*')
+                  tf = unique(cistromec$tf),
+                  study = 'STES*',
+                  targets_only = TRUE)
 
 creg_mir <- get_mir(conn,
                     mir = tolower(unique(mir$AccID)),
-                    study = 'STES')
+                    study = 'STES',
+                    targets_only = TRUE)
 ```
 
 ## Compare correlation distribution
@@ -153,7 +158,7 @@ plot(density(round(cistromec$cor, 2)),
      xlab = "Pearson's Correlation",
      ylab = 'Density',
      main = 'TF correlation')
-lines(density(creg_tf$cor), col = 'red')
+lines(density(creg_tf$cor, na.rm = TRUE), col = 'red')
 legend('topright',
        legend = c('Cistrom Cancer', 'cRegulome'),
        pch = '--',
@@ -178,11 +183,6 @@ legend('topright',
 To answer these questions, we first construct a query in cRegulome to get the TF-gene correlations in the STES cancer study. We then look at the numbers of targets, denseties and intersections using methods from cRegulome package.  
 
 ```{r stes_tf}
-# query TF-gene correlations
-creg_tf <- get_tf(conn,
-                  tf = unique(tf$SOURCE),
-                  study = 'STES*',
-                  targets_only = TRUE)
 # numbers of targets 
 table(creg_tf$tf)
 ```
@@ -195,13 +195,9 @@ cor_upset(ob_tf)
 ```
 
 ## microRNA   
-Similarly, we construct a query for microRNA-gene correlations in the STES study and summarize the numbers, densities and intersections using cRegulome.  
+Similarly, we use the output dataframe of microRNA-gene correlations in the STES study and summarize the numbers, densities and intersections using cRegulome.  
+
 ```{r stes_microRNA}
-# query microRNA-gene correlations
-creg_mir <- get_mir(conn,
-                    mir = tolower(unique(mir$AccID)),
-                    study = 'STES',
-                    targets_only = TRUE)
 # numbers of targets 
 table(creg_mir$mirna_base)
 ```
@@ -216,7 +212,7 @@ cor_upset(ob_mir)
 ## Network construction  
 For the purpose of constructing the network, we decided to limit the nodes to the TFs/microRNAs and gene targets with high correlation (absolute pearson's correlation > 0.3). We first return to the `cRegulome` to qeury the database and tweak the output to be used with the `igraph` package to build the network.  
 
-```{r custom_query}
+```{r custom_query, eval=FALSE}
 # query cRegulome to get high correlated targets
 creg_tf <- get_tf(conn,
                   tf = unique(tf$SOURCE),
@@ -228,6 +224,11 @@ creg_mir <- get_mir(conn,
                     study = 'STES',
                     min_abs_cor = .3,
                     targets_only = TRUE)
+```
+
+```{r subset_loaded_data, echo=FALSE}
+creg_tf <- filter(creg_tf, abs(cor) >= .3)
+creg_mir <- filter(creg_mir, abs(cor) >= .3)
 ```
 
 ```{r edges}
@@ -357,12 +358,8 @@ comp_path@compareClusterResult %>%
 # References  
 Shi Y, Wang J, Xin Z, Duan Z, Wang G, Li F. Transcription Factors and microRNA-Co-Regulated Genes in Gastric Cancer Invasion in Ex Vivo. Zhao J-J, editor. PLoS One [Internet]. Public Library of Science; 2015 [cited 2017 Sep 1]; 10: e0122882. doi: 10.1371/journal.pone.0122882.
 
-```{r clean}
+```{r clean, eval=FALSE}
 dbDisconnect(conn)
-unlink('cRegulome')
-unlink('*.xls*')
-unlink('*.csv')
-unlink('*.txt')
 devtools::clean_vignettes()
 ```
 

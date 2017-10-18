@@ -5,7 +5,7 @@ Title: Obtain and Visualize regulome-gene Expression Correlations in Cancer
 Description: Obtains a database of pre-calculated microRNA and
   transcription factor-gene correlations in cancer. In addition, the package
   defines methods for handling and visualizing the data.
-License: GPL-2
+License: GPL-3
 Authors@R: person("Mahmoud", "Ahmed",
     email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
     role = c("aut", "cre"))
@@ -14,16 +14,15 @@ BugReports: https://github.com/MahShaaban/cRegulome/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Depends: R(>= 2.10.0)
 Imports: DBI,
    graphics,
    httr,
    RSQLite,
-   R.utils,
    UpSetR,
    VennDiagram,
    magrittr,
    dplyr,
-   dbplyr,
    ggplot2,
    ggridges,
    tidyr,
@@ -35,6 +34,14 @@ Suggests: BiocStyle,
     knitr, 
     rmarkdown, 
     testthat,
-    covr
+    covr,
+    dbplyr,
+    R.utils,
+    clusterProfiler,
+    igraph,
+    org.Hs.eg.db,
+    readxl,
+    stringr,
+    AnnotationDbi
 biocViews: GeneExpression,
     Transcription

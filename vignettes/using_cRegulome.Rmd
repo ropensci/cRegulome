@@ -1,8 +1,3 @@
-
-```{r, echo=FALSE}
-knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
-```
-
 ---
 title: "Using cRegulome"
 author: "Mahmoud Ahmed"
@@ -12,8 +7,12 @@ vignette: >
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 output: 
-    BiocStyle::pdf_document
+    BiocStyle::html_document
 ---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
+```
 
 # Overview  
 Transcription factors and microRNAs are importing for regulating the gene
@@ -75,7 +74,7 @@ dbDisconnect(conn)
 
 ```{r print_object}
 # print object
-print(ob)
+cor_print(ob)
 ```
 
 ```{r plot_object}
@@ -126,7 +125,7 @@ for(i in seq_along(tabs)) {
 ```
 
 ## Database query  
-To query the database using cRegulome, we provide to main functions;
+To query the database using cRegulome, we provide two main functions;
 `get_mir` and `get_tf` for querying microRNA and transcription factors
 correlations respectively. Users need to provide the proper IDs for
 microRNA, transcription factor symbols and/or TCGA study identifiers.
@@ -192,7 +191,7 @@ from multiple studies.  Each of these data.frames has the regulome element
 (microRNAs or transcription factors) in columns and features/genes in rows.  
 To construct these objects, users need to call a construct function with
 the corresponding names on the data.frame output form `get_*`. The reverse
-is possible by calling the function tidy on the object to get back the tidy
+is possible by calling the function `cor_tidy` on the object to get back the tidy
 `data.frame`.  
 
 ```{r cmicroRNA_object}
@@ -227,7 +226,7 @@ methods(class = 'cTF')
 
 ```{r tidy_method}
 # tidy method
-tidy_dat <- tidy(ob_tf)
+tidy_dat <- cor_tidy(ob_tf)
 equals(dat_tf, tidy_dat)
 ```
 
@@ -236,6 +235,7 @@ equals(dat_tf, tidy_dat)
 cor_hist(ob_tf, study = 'ACC',
      breaks = 100,
      main = '', xlab = 'Correlation')
+dev.off()
 ```
 
 
@@ -243,17 +243,20 @@ cor_hist(ob_tf, study = 'ACC',
 # cor_joy method
 cor_joy(ob_tf, study = 'ACC') +
     labs(x = 'Correlation', y = '')
+dev.off()
 ```
 
 ```{r venn.daigram_method}
 # venn.diagram method
 venn.diagram(ob_tf, study = 'ACC', 
              cat.default.pos = 'text')
+dev.off()
 ```
 
 ```{r cor_upset_method}
 # cor_upset method
 cor_upset(ob_tf, study = 'ACC')
+dev.off()
 ```
 
 # Contributions  

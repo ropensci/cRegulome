@@ -1,5 +1,21 @@
 # All contributions are most welcomed
 
 I'd be glad to recieve any comments or ideas to help the package forward.
-Please, use the github **issue**s and **pull** requests and I will get back to 
-you as soon as possible.  
+
+## Bugs  
+
+    - To report a bug please use the [issue](https://github.com/MahShaaban/cRegulome/issues) page on github
+
+## Code contributions  
+
+    - Fork this repo to your github account  
+    
+    - Clone the repo to your machine and make changes  
+    
+    - Push to your account  
+    
+    - Submit a [pull](https://github.com/MahShaaban/cRegulome/pulls) request at this repo  
+    
+## Email: [mahmoud.s.fahmy@students.kasralainy.egu.eg](mahmoud.s.fahmy@students.kasralainy.egu.eg)  
+
+## Thank you for contributing!  

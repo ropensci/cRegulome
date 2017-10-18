@@ -20,15 +20,15 @@
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' print(ob)
+#' cor_print(ob)
 #'
 #' @export
-print <- function(ob, ...) {
-    UseMethod('print')
+cor_print <- function(ob, ...) {
+    UseMethod('cor_print')
 }
 
 #' @export
-print.cmicroRNA <- function(ob, ...) {
+cor_print.cmicroRNA <- function(ob, ...) {
     p <- paste(
         'A cmicroRNA object: microRNA-gene correlations in Cancer\n',
         'Contains:\n',
@@ -45,7 +45,7 @@ print.cmicroRNA <- function(ob, ...) {
 }
 
 #' @export
-print.cTF <- function(ob, ...) {
+cor_print.cTF <- function(ob, ...) {
     p <- paste(
         'A cTF object: transcription factor-gene correlations in Cancer\n',
         'Contains:\n',
@@ -205,18 +205,18 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
 #'
 #' # convert to cmicroRNA object
 #' ob <- cmicroRNA(dat)
-#' dat <- tidy(ob)
+#' dat <- cor_tidy(ob)
 #' dat[1:5,]
 #'
 #' @importFrom magrittr %>%
 #'
 #' @export
-tidy <- function(ob) {
-UseMethod('tidy')
+cor_tidy <- function(ob) {
+UseMethod('cor_tidy')
 }
 
 #' @export
-tidy.cmicroRNA <- function(ob) {
+cor_tidy.cmicroRNA <- function(ob) {
     
     
     # convet back to tidy format
@@ -241,7 +241,7 @@ tidy.cmicroRNA <- function(ob) {
 }
 
 #' @export
-tidy.cTF <- function(ob) {
+cor_tidy.cTF <- function(ob) {
     
     
     # convet back to tidy format

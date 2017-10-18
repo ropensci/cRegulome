@@ -38,9 +38,9 @@
 get_db <- function(test = FALSE, ...) {
     # db file url
     if(test == TRUE) {
-        url <- 'https://www.dropbox.com/s/t8ga5j8o81jkcuv/test.db.gz?raw=1'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9525052/test.db.gz'
     } else {
-        url <- 'https://www.dropbox.com/s/unaj94rnk0n4fl5/cRegulome.db.gz?raw=1'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9525022/cRegulome.db.gz'
     }
 
     # check url exists

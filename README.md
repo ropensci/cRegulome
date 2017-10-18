@@ -27,14 +27,14 @@ cancer from different data sources. Researches who are interested in studying
 the role of microRNAs and transcription factors in cancer can use this package 
 to construct a small or large scale queries to answer different questions:  
 
-+ Which micorRNAs and/or transcription factors are associated with a particular
-set of genes?  
+    + Which micorRNAs and/or transcription factors are associated with a 
+    particular set of genes?  
     
-+ What different regulation patterns a microRNA or a transcription factor can 
-take in different types of cancer?  
+    + What different regulation patterns a microRNA or a transcription factor 
+    can take in different types of cancer?  
 
-+ For a given set of regulatory elements, which genes are likely to be 
-regulated by these elements in a cetain type of cancer?  
+    + For a given set of regulatory elements, which genes are likely to be 
+    regulated by these elements in a cetain type of cancer?  
 
 In addition, cRegulome can be used with other R packages like `igraph` to 
 study the co-regulation networks in different types of cancer.
@@ -94,9 +94,12 @@ plot(ob, study = 'ACC')
 ```
 ## More
 
+More information and examples of using **cRegulome**  
 ```r
 browseVignettes("cRegulome")
-```
+```  
+
+More about the database file [here](https://github.com/MahShaaban/cRegulomedb)  
 
 ## Citation  
 
