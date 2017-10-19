@@ -1,10 +1,8 @@
 context('Testing methods output')
 
-# get db file and make object
-get_db(test = TRUE)
-R.utils::gunzip('cRegulome.db.gz')
-
+# connect to db and make objects
 conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
+
 dat1 <- get_mir(conn,
                mir = 'hsa-let-7b',
                study = 'ACC',
@@ -52,6 +50,11 @@ test_that('tidy output a data.frame identical to output of get_tf', {
   expect_equal(dat2, tidy_tf2)
 })
 
+
+test_that("cor_igraph retruns a the proper object", {
+    g <- cor_igraph(cmir1)
+    expect_s3_class(g, 'igraph')
+})
+
 # clean up
 DBI::dbDisconnect(conn)
-if(file.exists('cRegulome.db')) unlink('cRegulome.db')

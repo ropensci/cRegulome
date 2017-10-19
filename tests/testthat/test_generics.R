@@ -1,5 +1,6 @@
 context('Downlaoding database and extracting data')
 
+if(file.exists('cRegulome.db')) unlink('cRegulome.db')
 
 test_that('get_db downlaods db file succussfully', {
     get_db(test = TRUE)
@@ -128,4 +129,3 @@ test_that('object cTF with multiple studies', {
 
 # clean up
 DBI::dbDisconnect(conn)
-if(file.exists('cRegulome.db')) unlink('cRegulome.db')

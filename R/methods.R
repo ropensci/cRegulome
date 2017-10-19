@@ -630,3 +630,85 @@ cor_joy.cTF <- function(ob, study = NULL, ...) {
 
     return(gg)
 }
+
+#' Make an igraph object
+#' 
+#' An \code{igraph} object of from \link{cmicroRNA} or \link{cTF} 
+#' objects. 
+#' 
+#' @inheritParams cor_plot
+#'
+#' @return An \code{igraph} object 
+#' 
+#' @examples
+#' # connect to test database file
+#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+#'
+#' # get data for 2 microRNAs in the ACC study
+#' dat <- get_mir(conn,
+#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
+#'     study = c('ACC', 'BLCA'))
+#' DBI::dbDisconnect(conn)
+#'
+#' # convert to cmicroRNA object and plot
+#' ob <- cmicroRNA(dat)
+#' g <- cor_igraph(ob)
+#' 
+#' @export
+cor_igraph <- function(ob) {
+    UseMethod('cor_igraph')
+}
+
+#' @export
+cor_igraph.cmicroRNA <- function(ob) {
+    # get a tidy data.frame of the object
+    dat <- cor_tidy(ob)
+    
+    # make edges
+    edgs <- data.frame(
+        from = dat$mirna_base,
+        to = dat$feature,
+        weight = abs(dat$cor)
+    )
+    
+    # make vertices
+    vrtcs <- list(microRNA = unique(edgs$from),
+                  gene = unique(edgs$to))
+    vrtcs <- reshape2::melt(vrtcs)
+    names(vrtcs) <- c('id', 'type')
+    
+    # make graph
+    g <- igraph::graph_from_data_frame(d = edgs,
+                                       directed = FALSE,
+                                       vrtcs)
+    # return graph
+    return(g)
+}
+
+#' @export
+cor_igraph.cTF <- function(ob) {
+    # get a tidy data.frame of the object
+    dat <- cor_tidy(ob)
+    
+    # make edges
+    edgs <- data.frame(
+        from = dat$tf,
+        to = dat$feature,
+        weight = abs(dat$cor)
+    )
+    
+    # make vertices
+    vrtcs <- list(TF = unique(edgs$from),
+                  gene = unique(edgs$to))
+    vrtcs <- unique(reshape2::melt(vrtcs))
+    names(vrtcs) <- c('id', 'type')
+    
+    # make graph
+    g <- igraph::graph_from_data_frame(d = edgs,
+                                       directed = FALSE,
+                                       vrtcs)
+    
+    # return graph
+    return(g)
+}

@@ -4,7 +4,7 @@
 \name{mirCancer}
 \alias{mirCancer}
 \title{miRCancerdb query for 49 microRNAs}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 8527 rows and 5 columns.}
+\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 299324 rows and 4 columns.}
 \usage{
 mirCancer
 }

@@ -1,7 +1,8 @@
+context("Testing plots")
+
 # decompress database file
-get_db(test = TRUE)
-R.utils::gunzip('cRegulome.db.gz')
 conn <- DBI::dbConnect(RSQLite::SQLite(), 'cRegulome.db')
+
 dat1 <- get_mir(conn,
                 mir = c('hsa-let-7b', 'hsa-mir-134'),
                 study = 'ACC',
@@ -94,5 +95,6 @@ test_that('cor_joy cTF objects', {
 })
 
 # clean up
+DBI::dbDisconnect(conn)
 if(file.exists('cRegulome.db')) unlink('cRegulome.db')
 

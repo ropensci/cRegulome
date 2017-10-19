@@ -38,9 +38,9 @@
 get_db <- function(test = FALSE, ...) {
     # db file url
     if(test == TRUE) {
-        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9525052/test.db.gz'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9537310/test.db.gz'
     } else {
-        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9525022/cRegulome.db.gz'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9537385/cRegulome.db.gz'
     }
 
     # check url exists
@@ -262,11 +262,11 @@ get_tf <- function(conn,
     }
 
     if(is.null(study)) {
-        study <- DBI::dbListFields(conn, table)[-1:-2]
+        studies <- DBI::dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
-        study <- as.character(study)
+        studies <- as.character(study)
     }
 
     if(is.null(min_abs_cor)) {
@@ -282,7 +282,7 @@ get_tf <- function(conn,
     
     dat <- conn %>%
         dplyr::tbl(table) %>%
-        dplyr::select(tf, feature, study) %>%
+        dplyr::select(tf, feature, studies) %>%
         dplyr::filter(tf %in% tf_id) %>%
         dplyr::collect() %>%
         tidyr::gather(study, cor, -tf, -feature) %>%
@@ -297,7 +297,7 @@ get_tf <- function(conn,
         tf_id <- unique(dat$tf)
         targets <- conn %>%
             dplyr::tbl('targets_tf') %>%
-            dplyr::filter(tf %in% tf_id) %>%
+            dplyr::filter(tf %in% tf_id, study %in% studies) %>%
             dplyr::collect()
 
         # subset main data to targets only

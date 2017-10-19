@@ -46,7 +46,7 @@ library(ggplot2)
 library(cRegulome)
 ```
 
-```{r prepare database file}
+```{r prepare database file, eval=FALSE}
 # download the db file when using it for the first time
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
@@ -55,6 +55,11 @@ if(!file.exists('cRegulome.db')) {
 
 # connect to the db file
 conn <- dbConnect(SQLite(), 'cRegulome.db')
+```
+
+```{r connect_db, echo=TRUE}
+db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
+conn <- dbConnect(SQLite(), db_file)
 ```
 
 ```{r simple_query}
@@ -67,9 +72,6 @@ dat <- get_mir(conn,
 
 # make a cmicroRNA object
 ob <- cmicroRNA(dat)
-
-# disconnect the db
-dbDisconnect(conn)
 ```
 
 ```{r print_object}
@@ -105,16 +107,11 @@ to genes mappings.  Two indices are created to facilitate the database
 search using the miRBase IDs and transcription factors symbols. The
 database file can be downloaded using the function `get_db`.  
 
-To show details of the database file, the following code looks at the file
-information of the file we downloaded in the previous example, connect to
+To show details of the database file, the following code connects to
 the database and show the names of tables and fields in each of them.  
 
 ```{r database_file}
-# display file informations
-file.info('cRegulome.db')
-
 # table names
-conn <- dbConnect(SQLite(), 'cRegulome.db')
 tabs <- dbListTables(conn)
 print(tabs)
 
@@ -272,7 +269,6 @@ citation('cRegulome')
 
 ```{r clean, echo=FALSE}
 dbDisconnect(conn)
-unlink('./cRegulome.db')
 unlink('./Venn*')
 ```
 
