@@ -6,8 +6,6 @@ vignette: >
     %\VignetteIndexEntry{Using cRegulome}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
-output: 
-    BiocStyle::html_document
 ---
 
 ```{r, echo=FALSE}
@@ -242,5 +240,6 @@ citation('cRegulome')
 ```{r clean, echo=FALSE}
 dbDisconnect(conn)
 unlink('./Venn*')
+unlink('./*.xls*')
 ```
 
