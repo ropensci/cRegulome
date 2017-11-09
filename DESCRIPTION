@@ -30,8 +30,7 @@ Imports: DBI,
    purrr,
    grid
 VignetteBuilder: knitr
-Suggests: BiocStyle, 
-    knitr, 
+Suggests: knitr, 
     rmarkdown, 
     testthat,
     covr,
@@ -43,5 +42,3 @@ Suggests: BiocStyle,
     readxl,
     stringr,
     AnnotationDbi
-biocViews: GeneExpression,
-    Transcription

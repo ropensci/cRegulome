@@ -253,11 +253,11 @@ comp_path@compareClusterResult %>%
 
 # Remarks  
 
-    + In the PLOS paper, the authors used annotation databases to identify the genes co-coregulated by TFs and microRNAs and to construct the network. In our analysis, we used a different approach to identify these targets. For TFs, the `targets_only` argument in the call to `get_tf` is based on a ChIP-seq data-driven analysis. For microRNAs, `targets_only` is based on the TargetScan annotations. For both cases, only highly correlated genes (absolute pearson's correlation > 0.3) were choosen to contiune the analysis with.  
+* In the PLOS paper, the authors used annotation databases to identify the genes co-coregulated by TFs and microRNAs and to construct the network. In our analysis, we used a different approach to identify these targets. For TFs, the `targets_only` argument in the call to `get_tf` is based on a ChIP-seq data-driven analysis. For microRNAs, `targets_only` is based on the TargetScan annotations. For both cases, only highly correlated genes (absolute pearson's correlation > 0.3) were choosen to contiune the analysis with.  
 
-    + In the publishe study, the authors used the high `degrees` of the nodes in the networks to define the hubs/or the genes with many outgoing edges to identify the ones which are co-regulated by the TFs and microRNAs of interest. However, we used the `degrees` of the nodes in the network to exclude the genes with few edges. Then, used a clustering algorithm to find highly correlated nodes, then perfomed the KEGG enrichment analysis on them as separated groups.  
+* In the publishe study, the authors used the high `degrees` of the nodes in the networks to define the hubs/or the genes with many outgoing edges to identify the ones which are co-regulated by the TFs and microRNAs of interest. However, we used the `degrees` of the nodes in the network to exclude the genes with few edges. Then, used a clustering algorithm to find highly correlated nodes, then perfomed the KEGG enrichment analysis on them as separated groups.  
 
-+ To sum, we constructed a co-regulation network of TF and microRNA gene targets in stomach and esophogeal cancer. We identified a number of genes that are likely to be regulated by these TFs and microRNAs. These genes were clustered in 4 groups. The KEGG pathways enrichment analysis showed a high enrichment of multiple pathways involved in DNA synthesis and repair.  
+* To sum, we constructed a co-regulation network of TF and microRNA gene targets in stomach and esophogeal cancer. We identified a number of genes that are likely to be regulated by these TFs and microRNAs. These genes were clustered in 4 groups. The KEGG pathways enrichment analysis showed a high enrichment of multiple pathways involved in DNA synthesis and repair.  
  
 
 # References  

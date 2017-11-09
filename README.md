@@ -48,47 +48,51 @@ the output to a cRegulome object to print and visualize.
 # install package from github (under development)
 devtools::install_github('MahShaaban/cRegulome')
 ```
-```r
+```{r load_libraries}
 # load required libraries
 library(cRegulome)
-library(R.utils)
-library(DBI)
 library(RSQLite)
-library(dplyr)
-library(dbplyr)
-library(tidyr)
 library(ggplot2)
 ```
 
 ```r
-# download and decompress the database file
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
     gunzip('cRegulome.db.gz')
 }
-# connect to the database file
+
+# connect to the db file
 conn <- dbConnect(SQLite(), 'cRegulome.db')
 ```
 
+Or access the same testset file from the package direcly  
+
 ```r
-# query the database
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
+```
+
+```r
+# enter a custom query with different arguments
 dat <- get_mir(conn,
-               mir = c('hsa-let-7b', 'hsa-mir-134'),
-               study = c('ACC', 'BLCA'),
+               mir = 'hsa-let-7g',
+               study = 'STES',
                min_abs_cor = .3,
-               targets_only = TRUE)
+               max_num = 5)
 
-# make a cmicroRNA object               
+# make a cmicroRNA object   
 ob <- cmicroRNA(dat)
-dbDisconnect(conn)
 ```
 
 ```r
-print(ob)
+# print object
+cor_print(ob)
 ```
 
 ```r
-plot(ob, study = 'ACC')
+# plot object
+cor_plot(ob)
 ```
 ## More
 
