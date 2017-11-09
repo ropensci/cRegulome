@@ -18,18 +18,23 @@ An \code{igraph} object of from \link{cmicroRNA} or \link{cTF}
 objects.
 }
 \examples{
-# connect to test database file
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+# load required libraries
+library(RSQLite)
+library(cRegulome)
 
-# get data for 2 microRNAs in the ACC study
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
+
+# enter a custom query with different arguments
 dat <- get_mir(conn,
-    mir = c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'))
-DBI::dbDisconnect(conn)
+               mir = c('hsa-let-7g', 'hsa-let-7i'),
+               study = 'STES')
 
-# convert to cmicroRNA object and plot
-ob <- cmicroRNA(dat)
-g <- cor_igraph(ob)
+# make a cmicroRNA object   
+cmir <- cmicroRNA(dat)
+
+# print object
+cor_igraph(cmir)
 
 }

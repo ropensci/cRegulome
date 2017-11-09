@@ -5,6 +5,9 @@
 #'
 #' @docType package
 #' @name cRegulome
+#' 
+#' @import DBI
+#' @import RSQLite
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines

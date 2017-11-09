@@ -29,16 +29,13 @@ or to update the database to the latest version.
 }
 \examples{
 \dontrun{
-# downlaod db file
-get_db()
-
-# check it exits in the current working directory
-# should return TRUE
-file.exists('./cRegulome.db.gz')
-
-# download a smaller test db file
+# download a test set of the database
 get_db(test = TRUE)
+
+# download the full database file
+get_db(test = FALSE)
 }
+
 
 # load the test db file from shipped with the pacakge
 db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")

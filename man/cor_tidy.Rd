@@ -20,20 +20,25 @@ is TCGA study ID.
 Tidy \link{cmicroRNA} and \link{cTF} objects
 }
 \examples{
-# connect to test database file
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+# load required libraries
+library(RSQLite)
+library(cRegulome)
 
-# get data for 2 microRNAs in the ACC study
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
+
+# enter a custom query with different arguments
 dat <- get_mir(conn,
-    mir = c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'),
-    min_abs_cor = .5)
-DBI::dbDisconnect(conn)
+               mir = 'hsa-let-7g',
+               study = 'STES',
+               min_abs_cor = .3,
+               max_num = 5)
 
-# convert to cmicroRNA object
-ob <- cmicroRNA(dat)
-dat <- cor_tidy(ob)
-dat[1:5,]
+# make a cmicroRNA object   
+cmir <- cmicroRNA(dat)
+
+# convert cmicroRNA object to a tidy data.frame
+tidy_cmir <- cor_tidy(cmir)
 
 }

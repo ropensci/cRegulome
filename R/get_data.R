@@ -17,18 +17,15 @@
 #' not advised to change the name to avoid breaking the other functions
 #' that calls the database.
 #'
-#' @examples
+#' @examples 
 #' \dontrun{
-#' # downlaod db file
-#' get_db()
-#'
-#' # check it exits in the current working directory
-#' # should return TRUE
-#' file.exists('./cRegulome.db.gz')
-#'
-#' # download a smaller test db file
+#' # download a test set of the database
 #' get_db(test = TRUE)
+#' 
+#' # download the full database file
+#' get_db(test = FALSE)
 #' }
+#' 
 #'
 #' # load the test db file from shipped with the pacakge
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
@@ -90,29 +87,32 @@ get_db <- function(test = FALSE, ...) {
 #' microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
 #' is the corresponding expression correlations and \code{study} is TCGA
 #' study ID.
-#'
-#' @examples
-#' \dontrun{
-#' # downlaod db file
-#' get_db(test = TRUE)
-#' gunzip('cRegulome.db.gz')
-#' }
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # provide only required arguments
-#' dat <- get_mir(conn, mir = 'hsa-let-7b')
-#'
-#' # optional arguments
-#' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5,
-#'     max_num = 100,
-#'     targets_only = TRUE)
-#' DBI::dbDisconnect(conn)
 #' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # get microRNA correlations in all studies
+#' get_mir(conn,
+#'         mir = 'hsa-let-7g')
+#' 
+#' # get correlations in a particular study
+#' get_mir(conn,
+#'         mir = 'hsa-let-7g',
+#'         study = 'STES')
+#' 
+#' # enter a custom query with different arguments
+#' get_mir(conn,
+#'         mir = 'hsa-let-7g',
+#'         study = 'STES',
+#'         min_abs_cor = .3,
+#'         max_num = 5)
+#'         
 #' @importFrom magrittr %>%
 #' 
 #' @export
@@ -217,29 +217,32 @@ get_mir <- function(conn,
 #' gene symbols of the genes contains the transcription factor, \code{feature}
 #' is the features/genes, cor is the corresponding expression correlations
 #' and \code{study} is TCGA study ID.
-#'
-#' @examples
-#' \dontrun{
-#' # downlaod db file
-#' get_db(test = TRUE)
-#' R.utils::gunzip('cRegulome.db.gz')
-#' }
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # provide only required arguments
-#' dat <- get_tf(conn, tf = 'AFF4')
-#'
-#' # optional arguments
-#' dat <- get_tf(conn,
-#'     tf = c('AFF4', 'ESR1'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5,
-#'     max_num = 100,
-#'     targets_only = TRUE)
-#' DBI::dbDisconnect(conn)
-#'
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # get transcription factors correlations in all studies
+#' get_tf(conn,
+#'         tf = 'LEF1')
+#' 
+#' # get correlations in a particular study
+#' get_tf(conn,
+#'        tf = 'LEF1',
+#'        study = 'STES*')
+#' 
+#' # enter a custom query with different arguments
+#' get_tf(conn,
+#'        tf = 'LEF1',
+#'        study = 'STES*',
+#'        min_abs_cor = .3,
+#'        max_num = 5)
+#'        
 #' @importFrom magrittr %>%
 #' 
 #' @export

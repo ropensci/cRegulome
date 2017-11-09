@@ -30,20 +30,16 @@ provides objects and methods to interact with and visualize the correlation
 data.  
 
 # Getting started  
-To get starting with cRegulome we show a very quick example. We first start
+
+To get starting with cRegulome, we show a very quick example. We first start
 by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
 ```{r load_libraries}
 # load required libraries
-library(R.utils)
-library(DBI)
-library(RSQLite)
-library(dplyr)
-library(dbplyr)
-library(tidyr)
-library(ggplot2)
 library(cRegulome)
+library(RSQLite)
+library(ggplot2)
 ```
 
 ```{r prepare database file, eval=FALSE}
@@ -57,20 +53,21 @@ if(!file.exists('cRegulome.db')) {
 conn <- dbConnect(SQLite(), 'cRegulome.db')
 ```
 
-```{r connect_db, echo=TRUE}
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- dbConnect(SQLite(), db_file)
+```{r connect_db, include=FALSE}
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
 ```
 
 ```{r simple_query}
-# query the db for two microRNAs
+# enter a custom query with different arguments
 dat <- get_mir(conn,
-               mir = c('hsa-let-7b', 'hsa-mir-134'),
-               study = c('ACC', 'BLCA'),
+               mir = 'hsa-let-7g',
+               study = 'STES',
                min_abs_cor = .3,
-               targets_only = TRUE)
+               max_num = 5)
 
-# make a cmicroRNA object
+# make a cmicroRNA object   
 ob <- cmicroRNA(dat)
 ```
 
@@ -80,10 +77,9 @@ cor_print(ob)
 ```
 
 ```{r plot_object}
-# plot object for the ACC study
-cor_plot(ob, study = 'ACC')
+# plot object
+cor_plot(ob)
 ```
-
 
 # Package Discription  
 ## Data sources  
@@ -141,42 +137,20 @@ the `get_*` functions are doing.
 ```{r database_query}
 # query the db for two microRNAs
 dat_mir <- get_mir(conn,
-               mir = c('hsa-let-7b', 'hsa-mir-134'),
-               study = c('ACC', 'BLCA'),
-               min_abs_cor = .3,
-               targets_only = TRUE)
+                   mir = c('hsa-let-7g', 'hsa-let-7i'),
+                   study = 'STES')
 
 # query the db for two transcription factors
 dat_tf <- get_tf(conn,
-                 tf = c('AFF4', 'AR'),
-                 study = c('ACC', 'BLCA'),
-                 min_abs_cor = .3)
+                 tf = c('LEF1', 'MYB'),
+                 study = 'STES*')
 
 # show first 6 line of each of the data.frames
 head(dat_mir); head(dat_tf)
 ```
 
-
-```{r equal_query}
-# equal query to the get_* functions
-dat_mir2 <- tbl(conn, 'cor_mir') %>%
-    dplyr::select(mirna_base, feature, ACC, BLCA) %>%
-    filter(mirna_base %in% c('hsa-let-7b', 'hsa-mir-134')) %>%
-    collect() %>%
-    gather(study, cor, -mirna_base, -feature) %>%
-    mutate(cor = cor/100) %>%
-    filter(abs(cor) > .3) %>%
-    arrange(desc(abs(cor))) %>%
-    na.omit()
-```
-
-```{r check_query}
-# check output
-all(dat_mir2$mirna_base %in% dat_mir$mirna_base)
-all(dat_mir2$study %in% dat_mir$study)
-```
-
 ## Objects  
+
 Two S3 objects are provided by cRegulome to store and dispatch methods on
 the correlation data. cmicroRNA and cTF for microRNA and transcription
 factors respectively. The structure of these objects is very similar.
@@ -188,8 +162,7 @@ from multiple studies.  Each of these data.frames has the regulome element
 (microRNAs or transcription factors) in columns and features/genes in rows.  
 To construct these objects, users need to call a construct function with
 the corresponding names on the data.frame output form `get_*`. The reverse
-is possible by calling the function `cor_tidy` on the object to get back the tidy
-`data.frame`.  
+is possible by calling the function `cor_tidy` on the object to get back the tidy `data.frame`.  
 
 ```{r cmicroRNA_object}
 # explore the cmicroRNA object
@@ -205,7 +178,8 @@ class(ob_tf)
 str(ob_tf)
 ```
 
-## Methods
+## Methods  
+
 cRegulome provides S3 methods to interact a visualize the correlations data
 in the cmicroRNA and cTF objects. Table 1 provides an over view of these
 functions. These methods dispatch directly on the objects and could be
@@ -223,13 +197,12 @@ methods(class = 'cTF')
 
 ```{r tidy_method}
 # tidy method
-tidy_dat <- cor_tidy(ob_tf)
-equals(dat_tf, tidy_dat)
+head(cor_tidy(ob_mir))
 ```
 
 ```{r cor_hist_method}
 # cor_hist method
-cor_hist(ob_tf, study = 'ACC',
+cor_hist(ob_mir,
      breaks = 100,
      main = '', xlab = 'Correlation')
 dev.off()
@@ -238,21 +211,20 @@ dev.off()
 
 ```{r cor_joy_method}
 # cor_joy method
-cor_joy(ob_tf, study = 'ACC') +
+cor_joy(ob_mir) +
     labs(x = 'Correlation', y = '')
 dev.off()
 ```
 
 ```{r venn.daigram_method}
 # venn.diagram method
-venn.diagram(ob_tf, study = 'ACC', 
-             cat.default.pos = 'text')
+venn.diagram(ob_mir, cat.default.pos = 'text')
 dev.off()
 ```
 
 ```{r cor_upset_method}
 # cor_upset method
-cor_upset(ob_tf, study = 'ACC')
+cor_upset(ob_mir)
 dev.off()
 ```
 

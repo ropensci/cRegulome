@@ -19,20 +19,22 @@ Constructs an S3 object called cTF contains data returned by calling
 transcription factors-gene expression correlations.
 }
 \examples{
-# connect to test database file
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+# load required libraries
+library(RSQLite)
+library(cRegulome)
 
-# optional arguments
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
+
+# enter a custom query with different arguments
 dat <- get_tf(conn,
-    tf = c('AFF4', 'ESR1'),
-    study = c('ACC', 'BLCA'),
-    min_abs_cor = .5,
-    max_num = 100,
-    targets_only = TRUE)
-DBI::dbDisconnect(conn)
+              tf = 'LEF1',
+              study = 'STES*',
+              min_abs_cor = .3,
+              max_num = 5)
 
-# convert to object
-ob <- cTF(dat)
+# make a cTF object   
+ctf <- cTF(dat)
 
 }

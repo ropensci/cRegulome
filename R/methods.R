@@ -5,23 +5,29 @@
 #' @param ... Other argument to \code{\link[base]{print}}.
 #'
 #' @return Printed text
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5)
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object
-#' ob <- cmicroRNA(dat)
-#' cor_print(ob)
-#'
+#'                mir = 'hsa-let-7g',
+#'                study = 'STES',
+#'                min_abs_cor = .3,
+#'                max_num = 5)
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_print(cmir)
+#' 
 #' @export
 cor_print <- function(ob, ...) {
     UseMethod('cor_print')
@@ -77,22 +83,28 @@ cor_print.cTF <- function(ob, ...) {
 #'
 #' @return A \code{ggplot} object of a dot plot of the correlation values 
 #' between genes and microRNAs or transcription factors in a TCGA study.
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5)
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object
-#' ob <- cmicroRNA(dat)
-#' cor_plot(ob, study = 'ACC')
+#'                mir = 'hsa-let-7g',
+#'                study = 'STES',
+#'                min_abs_cor = .3,
+#'                max_num = 5)
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_plot(cmir)
 #' 
 #' @importFrom magrittr %>%
 #' 
@@ -190,24 +202,29 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
 #' \code{tf}is the microRNA miRBase IDs, \code{feature} is the features/genes,
 #' \code{cor} is the corresponding expression correlations and \code{study}
 #' is TCGA study ID.
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5)
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object
-#' ob <- cmicroRNA(dat)
-#' dat <- cor_tidy(ob)
-#' dat[1:5,]
-#'
+#'                mir = 'hsa-let-7g',
+#'                study = 'STES',
+#'                min_abs_cor = .3,
+#'                max_num = 5)
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # convert cmicroRNA object to a tidy data.frame
+#' tidy_cmir <- cor_tidy(cmir)
+#' 
 #' @importFrom magrittr %>%
 #'
 #' @export
@@ -271,22 +288,26 @@ cor_tidy.cTF <- function(ob) {
 #' @inheritParams cor_plot
 #' @return A venn diagram with a circle or an ellipses for each microRNA and
 #' the number of correlated features.
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'),
-#'     min_abs_cor = .5)
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object and plot
-#' ob <- cmicroRNA(dat)
-#' venn.diagram(ob, study = 'ACC')
+#'                mir = c('hsa-let-7g', 'hsa-let-7i'),
+#'                study = 'STES')
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' venn.diagram(cmir)
 #' 
 #' @importFrom magrittr %>%
 #' 
@@ -373,22 +394,27 @@ venn.diagram.cTF <- function(ob, study = NULL, ...) {
 #' @inheritParams cor_plot
 #'
 #' @return An \code{\link[UpSetR]{upset}} plot
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'))
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object and plot
-#' ob <- cmicroRNA(dat)
-#' cor_upset(ob, study = 'ACC')
-#'
+#'                mir = c('hsa-let-7g', 'hsa-let-7i'),
+#'                study = 'STES')
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_upset(cmir)
+#' 
 #' @importFrom magrittr %>%
 #' 
 #' @export
@@ -463,22 +489,27 @@ cor_upset.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @return An \code{\link[graphics]{hist}} plot of the correlations values 
 #' between genes a microRNA or a transcription factor in a TCGA study
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'))
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object and plot
-#' ob <- cmicroRNA(dat)
-#' cor_hist(ob, study = 'ACC')
-#'
+#'                mir = c('hsa-let-7g', 'hsa-let-7i'),
+#'                study = 'STES')
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_hist(cmir)
+#' 
 #' @export
 cor_hist <- function(ob, study = NULL, ...) {
     UseMethod('cor_hist')
@@ -538,21 +569,26 @@ cor_hist.cTF <- function(ob, study = NULL, ...) {
 #' @inheritParams cor_plot
 #'
 #' @return An \code{\link{ggridges}} plot object
-#'
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' 
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'))
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object and plot
-#' ob <- cmicroRNA(dat)
-#' cor_joy(ob, study = 'ACC')
+#'                mir = c('hsa-let-7g', 'hsa-let-7i'),
+#'                study = 'STES')
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_joy(cmir)
 #' 
 #' @importFrom magrittr %>%
 #' 
@@ -640,20 +676,25 @@ cor_joy.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @return An \code{igraph} object 
 #' 
-#' @examples
-#' # connect to test database file
-#' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
-#'
-#' # get data for 2 microRNAs in the ACC study
+#' @examples 
+#' # load required libraries
+#' library(RSQLite)
+#' library(cRegulome)
+#' 
+#' # locate the testset file and connect
+#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+#' conn <- dbConnect(SQLite(), fl)
+#' 
+#' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
-#'     mir = c('hsa-let-7b', 'hsa-mir-134'),
-#'     study = c('ACC', 'BLCA'))
-#' DBI::dbDisconnect(conn)
-#'
-#' # convert to cmicroRNA object and plot
-#' ob <- cmicroRNA(dat)
-#' g <- cor_igraph(ob)
+#'                mir = c('hsa-let-7g', 'hsa-let-7i'),
+#'                study = 'STES')
+#' 
+#' # make a cmicroRNA object   
+#' cmir <- cmicroRNA(dat)
+#' 
+#' # print object
+#' cor_igraph(cmir)
 #' 
 #' @export
 cor_igraph <- function(ob) {

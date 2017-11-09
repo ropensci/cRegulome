@@ -43,25 +43,28 @@ returns an error if the database file \code{cRegulome.db} is not in the
 working directory.
 }
 \examples{
-\dontrun{
-# downlaod db file
-get_db(test = TRUE)
-gunzip('cRegulome.db.gz')
-}
-# connect to test database file
-db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
-conn <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+# load required libraries
+library(RSQLite)
+library(cRegulome)
 
-# provide only required arguments
-dat <- get_mir(conn, mir = 'hsa-let-7b')
+# locate the testset file and connect
+fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
+conn <- dbConnect(SQLite(), fl)
 
-# optional arguments
-dat <- get_mir(conn,
-    mir = c('hsa-let-7b', 'hsa-mir-134'),
-    study = c('ACC', 'BLCA'),
-    min_abs_cor = .5,
-    max_num = 100,
-    targets_only = TRUE)
-DBI::dbDisconnect(conn)
+# get microRNA correlations in all studies
+get_mir(conn,
+        mir = 'hsa-let-7g')
 
+# get correlations in a particular study
+get_mir(conn,
+        mir = 'hsa-let-7g',
+        study = 'STES')
+
+# enter a custom query with different arguments
+get_mir(conn,
+        mir = 'hsa-let-7g',
+        study = 'STES',
+        min_abs_cor = .3,
+        max_num = 5)
+        
 }
