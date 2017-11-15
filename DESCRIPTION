@@ -40,5 +40,4 @@ Suggests: knitr,
     igraph,
     org.Hs.eg.db,
     readxl,
-    stringr,
     AnnotationDbi

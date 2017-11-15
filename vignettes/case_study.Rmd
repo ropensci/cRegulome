@@ -29,6 +29,17 @@ Here, we tried tackling the same question using cRegulme data. We started from t
 
 We started by obtaining the lists of differentially expressed TFs and microRNAs which were compiled from the previous literature and microarrays profiling respectively.  
 
+```{r install_suggested_packages, include=FALSE}
+if (!require(BiocInstaller)) source("https://bioconductor.org/biocLite.R")
+if (!require(org.Hs.eg.db)) biocLite("org.Hs.eg.db")
+if (!require(AnnotationDbi)) biocLite("AnnotationDbi")
+
+if (!require(R.utils)) install.packages("R.utils")
+if (!require(clusterProfiler)) install.packages("clusterProfiler")
+if (!require(igraph)) install.packages("igraph")
+if (!require(readxl)) install.packages("readxl")
+```
+
 ```{r load_libraries}
 library(cRegulome)
 library(readxl)
@@ -62,7 +73,7 @@ length(unique(tf$SOURCE)); unique(tf$SOURCE) # TFs
 length(unique(mir$AccID)); head(unique(mir$AccID), 5) # microRNAs
 ```
 
-## Use cRegulome to access correlation data
+## Use cRegulome to access correlation data  
 In the previous section, we showed the code for obtaining the TF/microRNA-gene expression correlation in stomach and esophogeal cancer using Cistrome and miRCancerdb for comparison purpose. Here, we show the straight forward way of obtaining similar data using the pacakge `cRegulome`. This is only two simple steps. First, download the database if you are using the package for the first time. And make a query using the TF/microRNAs of interest and limit the output to their known targets.  
 
 ```{r cRegulome_data, eval=FALSE}
