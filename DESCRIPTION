@@ -40,4 +40,5 @@ Suggests: knitr,
     igraph,
     org.Hs.eg.db,
     readxl,
-    AnnotationDbi
+    AnnotationDbi,
+    BiocInstaller
