@@ -13,13 +13,13 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
 ```
 
 # Overview  
-Transcription factors and microRNAs are importing for regulating the gene
+Transcription factors and microRNAs are important for regulating the gene
 expression in normal physiology and pathological conditions. Many
-bioinformatics tools were built to predict and identify transcription
+bioinformatic tools were built to predict and identify transcription
 factors and microRNA targets and their role in development of diseases
 including cancers. The availability of public access high-throughput data
-allowed for data-driven validations and discoveries of these predictions.
-Here, we build on that kind of tools and integrative analysis to provide a
+allowed for data-driven discoveries and  validations of these predictions.
+Here, we build on that kind of tools and integrative analyses to provide a
 tool to access, manage and visualize data from open source databases.
 cRegulome provides a programmatic access to the regulome (microRNA and
 transcription factor) correlations with target genes in cancer. The package
@@ -78,8 +78,10 @@ cor_print(ob)
 cor_plot(ob)
 ```
 
-# Package Discription  
+# Package Description  
+
 ## Data sources  
+
 The two main sources of data used by this package are cistrome cancer and
 miRCancerdb databases. Cistrome Cancer is based on an integrative analysis of
 The Cancer Genome Atlas (TCGA) and public ChIP-seq data. It provides
@@ -90,17 +92,19 @@ miRCancerdb uses TCGA data and TargetScan annotations to correlate known
 microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.
   
 ## Database file  
+
 cRegulome obtains a pre-build sqlite database file of the cistrome cancer
 and miRCancerdb databases. The details of this build is provided at
-(cRegulomedb) in addition to the scripts used to pull, format and deposit
-the data at an on-line repository. Briefly, the sqlite database consist of
-4 tables `cor_mir` and `cor_tf` for correlation values; and `targets_mir`
-and `targets_tf` for microRNA miRBase ID and transcription factors symbols
-to genes mappings.  Two indices are created to facilitate the database
-search using the miRBase IDs and transcription factors symbols. The
-database file can be downloaded using the function `get_db`.  
+[cRegulomedb](https://github.com/MahShaaban/cRegulomedb) in addition to the 
+scripts used to pull, format and deposit the data at an on-line repository.
+Briefly, the sqlite database consist of 4 tables `cor_mir` and `cor_tf` for 
+correlation values; and `targets_mir` and `targets_tf` for microRNA miRBase 
+ID and transcription factors symbols to genes mappings.  Two indices were 
+created to facilitate the database search using the miRBase IDs and 
+transcription factors symbols. The database file can be downloaded using the 
+function `get_db`.  
 
-To show details of the database file, the following code connects to
+To show the details of the database file, the following code connects to
 the database and show the names of tables and fields in each of them.  
 
 ```{r database_file}
@@ -115,15 +119,16 @@ for(i in seq_along(tabs)) {
 ```
 
 ## Database query  
+
 To query the database using cRegulome, we provide two main functions;
 `get_mir` and `get_tf` for querying microRNA and transcription factors
 correlations respectively. Users need to provide the proper IDs for
 microRNA, transcription factor symbols and/or TCGA study identifiers.
 microRNAs are referred to by the official miRBase IDs, transcription
-factors by their corresponding official gene symbols and TCGA studies with
-their common identifiers. In either cases, the output of calling the these
-functions is a tidy data.frame of 4 columns; `mirna_base` or `tf`,
-`feature`, `cor` and `study` These correspond to the miRBase IDs or
+factors by their corresponding official gene symbols that contains them 
+and TCGA studies with their common identifiers. In either cases, the output of 
+calling the these functions is a tidy data.frame of 4 columns; `mirna_base`/ 
+`tf`, `feature`, `cor` and `study` These correspond to the miRBase IDs or
 transcription factors symbol, gene symbol, correlation value and the TCGA
 study identifier.  
 
@@ -153,13 +158,14 @@ the correlation data. cmicroRNA and cTF for microRNA and transcription
 factors respectively. The structure of these objects is very similar.
 Basically, as all S3 objects, it’s a list of 4 items; microRNA or TF for
 the regulome element, features for the gene hits, studies for the TCGA
-studies and finally corr is either a `data.frame` when the object has data
-from a single TCGA study or a named list of data.frame when it has data
+studies and finally corr is either a `data.frame` when the object has 
+data.from a single TCGA study or a named list of data.frames when it has data 
 from multiple studies.  Each of these data.frames has the regulome element
 (microRNAs or transcription factors) in columns and features/genes in rows.  
-To construct these objects, users need to call a construct function with
+To construct these objects, users need to call a constructor function with
 the corresponding names on the data.frame output form `get_*`. The reverse
-is possible by calling the function `cor_tidy` on the object to get back the tidy `data.frame`.  
+is possible by calling the function `cor_tidy` on the object to get back the 
+tidy data.frame.  
 
 ```{r cmicroRNA_object}
 # explore the cmicroRNA object
@@ -232,13 +238,12 @@ Comments, issues and contributions are welcomed at:
 # Citations  
 Please cite:  
 
-```{r citation}
+```{r citation, eval=FALSE}
 citation('cRegulome')
 ```
 
 ```{r clean, echo=FALSE}
 dbDisconnect(conn)
 unlink('./Venn*')
-unlink('./*.xls*')
 ```
 
