@@ -44,7 +44,6 @@ library(ggplot2)
 # download the db file when using it for the first time
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
-    gunzip('cRegulome.db.gz')
 }
 
 # connect to the db file

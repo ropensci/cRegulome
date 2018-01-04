@@ -28,14 +28,14 @@ Imports: DBI,
    tidyr,
    reshape2,
    purrr,
-   grid
+   grid,
+   R.utils
 VignetteBuilder: knitr
 Suggests: knitr, 
     rmarkdown, 
     testthat,
     covr,
     dbplyr,
-    R.utils,
     clusterProfiler,
     igraph,
     org.Hs.eg.db,

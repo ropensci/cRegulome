@@ -80,10 +80,9 @@ In the previous section, we showed the code for obtaining the TF/microRNA-gene e
 # obtain and connect the database
 if(!file.exists('cRegulome.db')) {
     get_db()
-    gunzip('cRegulome.db.gz')
 }
 
-conn <- dbConnect(SQLite(), '~/microRNA/cRegulomedb/cRegulome.db')
+conn <- dbConnect(SQLite(), './cRegulome.db')
 ```
 
 ```{r load_testset, include=FALSE}

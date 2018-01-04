@@ -49,9 +49,12 @@ get_db <- function(test = FALSE, ...) {
     if(file.exists('cRegulome.db') | file.exists('cRegulome.db.gz')) {
         message('File already exists in the current directory.')
     } else {
-        tryCatch(utils::download.file(url,                                     
-                                      destfile = 'cRegulome.db.gz',
-                                      mode = 'wb'),
+        tryCatch({
+            utils::download.file(url, 
+                                 destfile = 'cRegulome.db.gz',
+                                 mode = 'wb')
+            R.utils::gunzip('cRegulome.db.gz')
+            },
                 error = function(){
                     message('Downloading file failed')
                     return(NA)
@@ -81,7 +84,7 @@ get_db <- function(test = FALSE, ...) {
 #' for each \code{mir} in each \code{study}.
 #' @param targets_only A \code{logical}, default \code{FALSE}. When
 #' \code{TRUE}, \code{features} will be the microRNA targets as defined in
-#' the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.
+#' the package targetscan.Hs.eg.db.
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the
 #' microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}

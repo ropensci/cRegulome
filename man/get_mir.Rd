@@ -27,7 +27,7 @@ for each \code{mir} in each \code{study}.}
 
 \item{targets_only}{A \code{logical}, default \code{FALSE}. When
 \code{TRUE}, \code{features} will be the microRNA targets as defined in
-the package \code{\link[targetscan.Hs.eg.db]{targetscan.Hs.eg.db}}.}
+the package targetscan.Hs.eg.db.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} is the

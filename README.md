@@ -58,7 +58,6 @@ library(ggplot2)
 ```r
 if(!file.exists('cRegulome.db')) {
     get_db(test = TRUE)
-    gunzip('cRegulome.db.gz')
 }
 
 # connect to the db file
