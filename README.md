@@ -22,17 +22,17 @@ provides classes and methods to interact with and visualize the correlation
 data.  
 
 ## What is cRegulome used for?  
-cRegulome provieds programmtic access to regulome-gene correlation data in 
+cRegulome provides programmatic access to regulome-gene correlation data in 
 cancer from different data sources. Researches who are interested in studying 
 the role of microRNAs and transcription factors in cancer can use this package 
 to construct a small or large scale queries to answer different questions:  
 
-* Which micorRNAs and/or transcription factors are associated with a particular
+* Which microRNAs and/or transcription factors are associated with a particular
 set of genes?  
 * What different regulation patterns a microRNA or a transcription factor can 
 take in different types of cancer?  
 * For a given set of regulatory elements, which genes are likely to be 
-regulated by these elements in a cetain type of cancer?  
+regulated by these elements in a certain type of cancer?  
 
 In addition, cRegulome can be used with other R packages like `igraph` to 
 study the co-regulation networks in different types of cancer.  
@@ -64,7 +64,7 @@ if(!file.exists('cRegulome.db')) {
 conn <- dbConnect(SQLite(), 'cRegulome.db')
 ```
 
-Or access the same testset file from the package direcly  
+Or access the same test set file from the package directly  
 
 ```r
 # locate the testset file and connect
