@@ -47,6 +47,9 @@ the output to a cRegulome object to print and visualize.
 ```r
 # install package from github (under development)
 devtools::install_github('MahShaaban/cRegulome')
+
+# install package from github and build vignette
+devtools::install_github('MahShaaban/cRegulome', build_vignettes = TRUE)
 ```
 ```{r load_libraries}
 # load required libraries
