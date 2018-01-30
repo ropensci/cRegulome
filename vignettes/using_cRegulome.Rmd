@@ -82,22 +82,22 @@ cor_plot(ob)
 
 ## Data sources  
 
-The two main sources of data used by this package are cistrome cancer and
+The two main sources of data used by this package are Cistrome Cancer and
 miRCancerdb databases. Cistrome Cancer is based on an integrative analysis of
 The Cancer Genome Atlas (TCGA) and public ChIP-seq data. It provides
 calculated correlations of (n = 320) transcription factors and their target
-genes in (n = 29) cancer study. In addition, cistrome cancer provides the
+genes in (n = 29) cancer study. In addition, Cistrome Cancer provides the
 transcription factors regulatory potential to target and non-target genes.
 miRCancerdb uses TCGA data and TargetScan annotations to correlate known
 microRNAs (n = 750) and target and non-target genes in (n = 25) cancer studies.
   
 ## Database file  
 
-cRegulome obtains a pre-build sqlite database file of the cistrome cancer
+cRegulome obtains a pre-build SQLite database file of the Cistrome Cancer
 and miRCancerdb databases. The details of this build is provided at
 [cRegulomedb](https://github.com/MahShaaban/cRegulomedb) in addition to the 
 scripts used to pull, format and deposit the data at an on-line repository.
-Briefly, the sqlite database consist of 4 tables `cor_mir` and `cor_tf` for 
+Briefly, the SQLite database consist of 4 tables `cor_mir` and `cor_tf` for 
 correlation values; and `targets_mir` and `targets_tf` for microRNA miRBase 
 ID and transcription factors symbols to genes mappings.  Two indices were 
 created to facilitate the database search using the miRBase IDs and 
