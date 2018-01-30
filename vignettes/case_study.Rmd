@@ -3,8 +3,10 @@ title: "Case Study"
 author: "Mahmoud Ahmed"
 date: "August 22, 2017"
 subtitle: Transcription factors and microRNAs in Gastric cancer
-vignette: |
-  %\VignetteIndexEntry{Case Study} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
+vignette: >
+    %\VignetteIndexEntry{Case Study} 
+    %\VignetteEngine{knitr::rmarkdown} 
+    %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo=FALSE}
