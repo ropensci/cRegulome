@@ -35,7 +35,7 @@
 get_db <- function(test = FALSE, ...) {
     # db file url
     if(test == TRUE) {
-        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9537310/test.db.gz'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/10330329/test.db.gz'
     } else {
         url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9537385/cRegulome.db.gz'
     }

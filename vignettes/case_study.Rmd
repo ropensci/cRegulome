@@ -79,7 +79,7 @@ Here, we show the straight forward way of obtaining correlation/co-expression da
 ```{r cRegulome_data, eval=FALSE}
 # obtain and connect the database
 if(!file.exists('cRegulome.db')) {
-    get_db()
+    get_db(test = TRUE)
 }
 
 conn <- dbConnect(SQLite(), './cRegulome.db')
