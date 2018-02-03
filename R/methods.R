@@ -307,17 +307,17 @@ cor_tidy.cTF <- function(ob) {
 #' cmir <- cmicroRNA(dat)
 #' 
 #' # print object
-#' venn.diagram(cmir)
+#' cor_venn_diagram(cmir)
 #' 
 #' @importFrom magrittr %>%
 #' 
 #' @export
-venn.diagram <- function(ob, study = NULL, ...) {
-    UseMethod('venn.diagram')
+cor_venn_diagram <- function(ob, study = NULL, ...) {
+    UseMethod('cor_venn_diagram')
 }
 
 #' @export
-venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
+cor_venn_diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
@@ -352,7 +352,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
 }
 
 #' @export
-venn.diagram.cTF <- function(ob, study = NULL, ...) {
+cor_venn_diagram.cTF <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
