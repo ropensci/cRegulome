@@ -70,7 +70,7 @@ ob <- cmicroRNA(dat)
 
 ```{r print_object}
 # print object
-cor_print(ob)
+ob
 ```
 
 ```{r plot_object}

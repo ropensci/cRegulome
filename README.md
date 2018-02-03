@@ -89,12 +89,12 @@ ob <- cmicroRNA(dat)
 
 ```r
 # print object
-cor_print(ob)
+ob
 ```
 
 ```r
 # plot object
-cor_plot(ob)
+ob
 ```
 ## More
 
