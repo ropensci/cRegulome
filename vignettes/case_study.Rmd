@@ -18,10 +18,9 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = 'center')
 In this brief study, we attempted to answer questions raised by Shi and colleagues in a paper published in PLOS in 2015. The aim of this case study is to illustrate the use of `cRegulome` to obtain data based on queries of interest. Secondly, to integrate the package in a useful and meaningful workflow and give a context to the kind of information one can get from such databases.  
 
 # Motivation  
-Shi et al. studied tWe didn’t attempt to replicate the same findings but nevertheless we arrived at similar conclusions.he transcription factors and microRNA co-regulated genes in gastric cancer to reveal the signaling pathways that drive the development of the disease (Shi et al., 2015). Briefly, they used the previous literature and microarrays to identify the differentially expressed transcription factors (TF) and microRNAs in gastric cancer tissues compared to the normal ones. Then, they identified their target genes using annotation databases and constructed a TF-microRNA gene regulatory network. Finally, they identified the hub-genes and performed a functional analysis namely KEGG pathways enrichment to find which signalling pathways they belong to.  
+Shi et al. studied the transcription factors and microRNA co-regulation of genes involved in gastric cancer to reveal the signaling pathways that drive the development of the disease (Shi et al., 2015). Briefly, they used the previous literature and microarrays to identify the differentially expressed transcription factors (TF) and microRNAs in gastric cancer tissues compared to the normal ones. Then, they identified their target genes using annotation databases and constructed a TF-microRNA gene regulatory network. Finally, they identified the hub-genes and performed a functional analysis namely KEGG pathways enrichment to find which signalling pathways they belong to.  
 
-Here, we tried tackling the same question using cRegulome data. We started from the same point like the PLOS paper by using the lists of differentially expressed TF and microRNAs, then used cRegulome data to find driving genes and pathways in Stomach and esophageal cancer (STES). We didn't attempt to replicate the same findings but nevertheless we arrived at similar conclusions.  
-
+Here, we tried tackling the same question using `cRegulome` data. We started from the same point like the PLOS paper by using the lists of differentially expressed TF and microRNAs, then used `cRegulome` data to find driving genes and pathways in Stomach and esophageal cancer (STES).  
 
 # PLOS paper data  
 
@@ -243,7 +242,6 @@ lengths(clusters)
 ```
 
 ## Pathway enrichment analysis  
-The KEGG pathways enrichment analysis was applied to the three clusters separately. Clusters 1 and 3 resulted in the enrichment of 13 and 7 KEGG pathways respectively.  
 
 ```{r kegg_enrichment}
 # prepare entrez ids
@@ -262,13 +260,15 @@ comp_path@compareClusterResult %>%
     labs(x = '')
 ```
 
+The KEGG pathways enrichment analysis was applied to the `r length(levels(comp_path@compareClusterResult$Cluster))` clusters separately. Clusters `r  as.integer(unique(comp_path@compareClusterResult$Cluster)[1])` and `r  as.integer(unique(comp_path@compareClusterResult$Cluster)[2])` resulted in the enrichment of `r table(as.integer(comp_path@compareClusterResult$Cluster))[1]` and `r table(as.integer(comp_path@compareClusterResult$Cluster))[2]` KEGG pathways respectively. No significant enrichment was found by the other 3 clusters.  
+
 # Remarks  
 
 * In the PLOS paper, the authors used annotation databases to identify the genes co-regulated by TFs and microRNAs and to construct the network. In our analysis, we used a different approach to identify these targets. For TFs, the `targets_only` argument in the call to `get_tf` is based on a ChIP-seq data-driven analysis. For microRNAs, `targets_only` is based on the TargetScan annotations. For both cases, only highly correlated genes (absolute Pearson's correlation > 0.3) were chosen to continue the analysis with.  
 
 * In the published study, the authors used the high `degrees` of the nodes in the networks to define the hubs/or the genes with many outgoing edges to identify the ones which are co-regulated by the TFs and microRNAs of interest. However, we used the `degrees` of the nodes in the network to exclude the genes with few edges. Then, used a clustering algorithm to find highly correlated nodes, then performed the KEGG enrichment analysis on them as separated groups.  
 
-* To sum, we constructed a co-regulation network of TF and microRNA gene targets in stomach and esophageal cancer. We identified a number of genes that are likely to be regulated by these TFs and microRNAs. These genes were clustered in 4 groups. The KEGG pathways enrichment analysis showed a high enrichment of multiple pathways involved in DNA synthesis and repair.  
+* To sum, we constructed a co-regulation network of TF and microRNA gene targets in stomach and esophageal cancer. We identified a number of genes that are likely to be regulated by these TFs and microRNAs. These genes were clustered in 5 groups. The KEGG pathways enrichment analysis showed a high enrichment of multiple pathways involved in DNA synthesis and repair.  
  
 
 # References  
