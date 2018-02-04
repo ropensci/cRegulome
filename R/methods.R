@@ -1,68 +1,33 @@
-#' Print method for \link{cmicroRNA} and \link{cTF} objects
-#'
-#' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
-#' calling \link{cmicroRNA} or \link{cTF}.
-#' @param ... Other argument to \code{\link[base]{print}}.
-#'
-#' @return Printed text
-#' 
-#' @examples 
-#' # load required libraries
-#' library(RSQLite)
-#' library(cRegulome)
-#' 
-#' # locate the testset file and connect
-#' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-#' conn <- dbConnect(SQLite(), fl)
-#' 
-#' # enter a custom query with different arguments
-#' dat <- get_mir(conn,
-#'                mir = 'hsa-let-7g',
-#'                study = 'STES',
-#'                min_abs_cor = .3,
-#'                max_num = 5)
-#' 
-#' # make a cmicroRNA object   
-#' cmir <- cmicroRNA(dat)
-#' 
-#' # print object
-#' cor_print(cmir)
-#' 
 #' @export
-cor_print <- function(ob, ...) {
-    UseMethod('cor_print')
-}
-
-#' @export
-cor_print.cmicroRNA <- function(ob, ...) {
+print.cmicroRNA <- function(x, ...) {
     p <- paste(
         'A cmicroRNA object: microRNA-gene correlations in Cancer\n',
         'Contains:\n',
-        length(ob$studies), 'Cancer study/ies:', paste(ob$studies,
-                                                    collapse = ' '),
+        length(x$studies), 'Cancer study/ies:', paste(x$studies,
+                                                      collapse = ' '),
         '\n',
-        length(ob$microRNA), 'microRNA/s:', paste(ob$microRNA,
-                                                collapse = ' '),
+        length(x$microRNA), 'microRNA/s:', paste(x$microRNA,
+                                                 collapse = ' '),
         '\n',
-        length(ob$features), 'features:', paste(ob$features[1:5],
-                                                collapse = ' '),
+        length(x$features), 'features:', paste(x$features[1:5],
+                                               collapse = ' '),
         '\n')
     cat(p)
 }
 
 #' @export
-cor_print.cTF <- function(ob, ...) {
+print.cTF <- function(x, ...) {
     p <- paste(
         'A cTF object: transcription factor-gene correlations in Cancer\n',
         'Contains:\n',
-        length(ob$studies), 'Cancer study/ies:', paste(ob$studies,
-                                                        collapse = ' '),
+        length(x$studies), 'Cancer study/ies:', paste(x$studies,
+                                                      collapse = ' '),
         '\n',
-        length(ob$tf), 'Transcription factor/s:', paste(ob$TF,
-                                                        collapse = ' '),
+        length(x$tf), 'Transcription factor/s:', paste(x$TF,
+                                                       collapse = ' '),
         '\n',
-        length(ob$features), 'features:', paste(ob$features[1:5],
-                                                collapse = ' '),
+        length(x$features), 'features:', paste(x$features[1:5],
+                                               collapse = ' '),
         '\n')
     cat(p)
 }
@@ -118,7 +83,7 @@ cor_plot.cmicroRNA <- function(ob, study = NULL, ...) {
     # check the validity of the input study
     if(length(ob$studies) > 1) {
         if(is.null(study) || length(study) > 1) {
-          stop('User should provide a single study to plot.')
+            stop('User should provide a single study to plot.')
         }
     }
     
@@ -130,9 +95,9 @@ cor_plot.cmicroRNA <- function(ob, study = NULL, ...) {
         # object contains multiple studies
         dat <- ob$corr[[study]]
     }
-  
-
-        
+    
+    
+    
     # convet back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
@@ -172,7 +137,7 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
     }
     
     
-
+    
     # convet back to tidy format
     dat <- dat %>%
         tidyr::gather(tf, cor, -feature) %>%
@@ -189,7 +154,7 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
                                             color = 'Direction')) +
         ggplot2::geom_point() +
         ggplot2::theme_light()
-      
+    
     
     return(gg)
 }
@@ -229,7 +194,7 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
 #'
 #' @export
 cor_tidy <- function(ob) {
-UseMethod('cor_tidy')
+    UseMethod('cor_tidy')
 }
 
 #' @export
@@ -335,7 +300,7 @@ venn.diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     }
     
     
-
+    
     # convert back to tidy format
     dat <- dat %>%
         tidyr::gather(mirna_base, cor, -feature) %>%
@@ -445,7 +410,7 @@ cor_upset.cmicroRNA <- function(ob, study = NULL, ...) {
     # make a binary data.frame
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                        function(x) x <- ifelse(is.na(x), 0, 1))
+                         function(x) x <- ifelse(is.na(x), 0, 1))
     
     # generate plot
     UpSetR::upset(dat, ...)
@@ -474,7 +439,7 @@ cor_upset.cTF <- function(ob, study = NULL, ...) {
     # make a binary data.frame
     dat <- dat %>%
         dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                        function(x) x <- ifelse(is.na(x), 0, 1))
+                         function(x) x <- ifelse(is.na(x), 0, 1))
     
     # generate plot
     UpSetR::upset(dat, ...)
@@ -628,7 +593,7 @@ cor_joy.cmicroRNA <- function(ob, study = NULL, ...) {
                                             y = 'mirna_base')) +
         ggridges::geom_density_ridges() +
         ggplot2::theme_light()
-
+    
     return(gg)
 }
 
@@ -663,7 +628,7 @@ cor_joy.cTF <- function(ob, study = NULL, ...) {
                                             y = 'tf')) +
         ggridges::geom_density_ridges() +
         ggplot2::theme_light()
-
+    
     return(gg)
 }
 
