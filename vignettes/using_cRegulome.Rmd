@@ -219,9 +219,9 @@ cor_joy(ob_mir) +
 dev.off()
 ```
 
-```{r venn.daigram_method}
-# venn.diagram method
-venn.diagram(ob_mir, cat.default.pos = 'text')
+```{r cor_venn_diagram_method}
+# cor_venn_diagram method
+cor_venn_diagram(ob_mir, cat.default.pos = 'text')
 dev.off()
 ```
 
