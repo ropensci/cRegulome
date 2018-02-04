@@ -29,7 +29,7 @@ data.
 
 # Getting started  
 
-To get starting with cRegulome, we show a very quick example. We first start
+To get started with cRegulome, we show a very quick example. We first start
 by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
@@ -98,7 +98,7 @@ and miRCancerdb databases. The details of this build is provided at
 [cRegulomedb](https://github.com/MahShaaban/cRegulomedb) in addition to the 
 scripts used to pull, format and deposit the data at an on-line repository.
 Briefly, the SQLite database consist of 4 tables `cor_mir` and `cor_tf` for 
-correlation values; and `targets_mir` and `targets_tf` for microRNA miRBase 
+correlation values and `targets_mir` and `targets_tf` for microRNA miRBase 
 ID and transcription factors symbols to genes mappings.  Two indices were 
 created to facilitate the database search using the miRBase IDs and 
 transcription factors symbols. The database file can be downloaded using the 
@@ -127,7 +127,7 @@ microRNA, transcription factor symbols and/or TCGA study identifiers.
 microRNAs are referred to by the official miRBase IDs, transcription
 factors by their corresponding official gene symbols that contains them 
 and TCGA studies with their common identifiers. In either cases, the output of 
-calling the these functions is a tidy data.frame of 4 columns; `mirna_base`/ 
+calling the these functions is a tidy data frame of 4 columns; `mirna_base`/ 
 `tf`, `feature`, `cor` and `study` These correspond to the miRBase IDs or
 transcription factors symbol, gene symbol, correlation value and the TCGA
 study identifier.  
