@@ -110,3 +110,6 @@ More about the database file [here](https://github.com/MahShaaban/cRegulomedb)
 ```r
 citation("cRegulome")
 ```
+
+[![](http://www.ropensci.org/public_images/github_footer.png)](http://ropensci.org)
+
