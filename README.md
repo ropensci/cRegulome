@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/MahShaaban/cRegulome.svg?branch=master)](https://travis-ci.org/MahShaaban/cRegulome)
-[![Coverage Status](https://img.shields.io/codecov/c/github/MahShaaban/cRegulome/master.svg)](https://codecov.io/github/MahShaaban/cRegulome?branch=master)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MahShaaban/cRegulome?branch=master&svg=true)](https://ci.appveyor.com/project/MahShaaban/cRegulome)
+[![Build Status](https://travis-ci.org/ropensci/cRegulome.svg?branch=master)](https://travis-ci.org/ropensci/cRegulome)
+[![codecov](https://codecov.io/gh/ropensci/cRegulome/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/cRegulome)
+[![Build status](https://ci.appveyor.com/api/projects/status/qbq1lrqmbdrb3e4p?svg=true)](https://ci.appveyor.com/project/MahShaaban/cregulome-0cnd3)
 [![](https://badges.ropensci.org/149_status.svg)](https://github.com/ropensci/onboarding/issues/149)  
 
 # cRegulome  
