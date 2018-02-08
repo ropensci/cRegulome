@@ -1,6 +1,6 @@
 Package: cRegulome
 Type: Package
-Version: 0.0.0.9000
+Version: 0.1.0
 Title: Obtain and Visualize regulome-gene Expression Correlations in Cancer
 Description: Obtains a database of pre-calculated microRNA and
   transcription factor-gene correlations in cancer. In addition, the package
