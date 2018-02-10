@@ -54,13 +54,13 @@ library(clusterProfiler)
 # list of transcription factors
 if(!file.exists('tf.xlsx')) 
     download.file('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4393113/bin/pone.0122882.s001.xlsx',
-                  destfile = 'tf.xlsx')
+                  destfile = 'tf.xlsx', mode = 'wb')
 tf <- read_excel('tf.xlsx', skip = 1)
 
 # list of microRNAs
 if(!file.exists('mir.xls')) 
     download.file('https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4393113/bin/pone.0122882.s003.xls',
-                  destfile = 'mir.xls')
+                  destfile = 'mir.xls', mode = 'wb')
 mir <- read_excel('mir.xls', skip = 1)
 ```
 
