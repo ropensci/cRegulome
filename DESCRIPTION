@@ -5,7 +5,7 @@ Title: Obtain and Visualize Regulome-Gene Expression Correlations in Cancer
 Description: Builds a SQLite database file of pre-calculated transcription 
     factor/microRNA-gene correlations (co-expression) in cancer from the 
     Cistrome Cancer Liu et al. (2011) <doi:10.1186/gb-2011-12-8-r83> and 
-    miRCancerdb databases (in press). Provides custome classes and functions 
+    miRCancerdb databases (in press). Provides custom classes and functions 
     to query, tidy and plot the correlation data.
 License: GPL-3
 Authors@R: person("Mahmoud", "Ahmed",
