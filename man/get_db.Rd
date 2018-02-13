@@ -4,12 +4,16 @@
 \alias{get_db}
 \title{Get cRegulome.db file}
 \usage{
-get_db(test = FALSE, ...)
+get_db(test = FALSE, destfile, ...)
 }
 \arguments{
 \item{test}{A \code{logical}, default \code{FALSE}. When \code{TRUE}
 downloads a database file with the same structure with a subset of
 the data for speed.}
+
+\item{destfile}{A character vector for the desired path for the database 
+file. By default, when not specified, is constructed by using 
+\code{\link{tempdir}} as a directory and the string \code{cRegulome.db.gz}}
 
 \item{...}{Optional arguments passed to \code{\link[utils]{download.file}}}
 }

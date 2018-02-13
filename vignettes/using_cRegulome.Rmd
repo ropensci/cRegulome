@@ -42,12 +42,14 @@ library(ggplot2)
 
 ```{r prepare database file, eval=FALSE}
 # download the db file when using it for the first time
-if(!file.exists('cRegulome.db')) {
+destfile = paste(tempdir(), 'cRegulome.db.gz', sep = '/')
+if(!file.exists(destfile)) {
     get_db(test = TRUE)
 }
 
 # connect to the db file
-conn <- dbConnect(SQLite(), 'cRegulome.db')
+db_file = paste(tempdir(), 'cRegulome.db', sep = '/')
+conn <- dbConnect(SQLite(), db_file)
 ```
 
 ```{r connect_db, include=FALSE}

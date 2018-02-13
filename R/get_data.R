@@ -10,6 +10,9 @@
 #' @param test A \code{logical}, default \code{FALSE}. When \code{TRUE}
 #' downloads a database file with the same structure with a subset of
 #' the data for speed.
+#' @param destfile A character vector for the desired path for the database 
+#' file. By default, when not specified, is constructed by using 
+#' \code{\link{tempdir}} as a directory and the string \code{cRegulome.db.gz}
 #' @param ... Optional arguments passed to \code{\link[utils]{download.file}}
 #'
 #' @return Downloads a compressed \code{sqlite} file to the current working
@@ -32,7 +35,7 @@
 #' file.info(db_file)
 #'
 #' @export
-get_db <- function(test = FALSE, ...) {
+get_db <- function(test = FALSE, destfile, ...) {
     # db file url
     if(test == TRUE) {
         url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/10330329/test.db.gz'
@@ -44,16 +47,20 @@ get_db <- function(test = FALSE, ...) {
     if(httr::http_error(url)) {
         stop("URL doesn't exist.")
     }
-
+    
+    # make a destfile
+    if(missing(destfile)) {
+        destfile <- paste(tempdir(), 'cRegulome.db.gz', sep = '/')
+    }
     # download file
-    if(file.exists('cRegulome.db') | file.exists('cRegulome.db.gz')) {
-        message('File already exists in the current directory.')
+    if(file.exists(destfile)) {
+        message('File already exists in the directory.')
     } else {
         tryCatch({
             utils::download.file(url, 
-                                 destfile = 'cRegulome.db.gz',
+                                 destfile = destfile,
                                  mode = 'wb')
-            R.utils::gunzip('cRegulome.db.gz')
+            R.utils::gunzip(destfile)
             },
                 error = function(){
                     message('Downloading file failed')

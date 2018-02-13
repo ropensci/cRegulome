@@ -76,12 +76,15 @@ length(unique(mir$AccID)); head(unique(mir$AccID), 5) # microRNAs
 Here, we show the straight forward way of obtaining correlation/co-expression data using the `cRegulome` package. This is only two simple steps. First, download the database if you are using the package for the first time. And make a query using the TF/microRNAs of interest and limit the output to their known targets. For convenience, the data were included in a test subset of the database file and is used throughout this vignette instead of the full database file.   
 
 ```{r cRegulome_data, eval=FALSE}
-# obtain and connect the database
-if(!file.exists('cRegulome.db')) {
+# download the db file when using it for the first time
+destfile = paste(tempdir(), 'cRegulome.db.gz', sep = '/')
+if(!file.exists(destfile)) {
     get_db(test = TRUE)
 }
 
-conn <- dbConnect(SQLite(), './cRegulome.db')
+# connect to the db file
+db_file = paste(tempdir(), 'cRegulome.db', sep = '/')
+conn <- dbConnect(SQLite(), db_file)
 ```
 
 ```{r load_testset, include=FALSE}
