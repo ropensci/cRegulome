@@ -20,3 +20,4 @@ This is a new release, so there are no reverse dependencies.
 * First submission v0.1.0
 * Updated the title and description fields
 * Updated the description with quoted software names
+* Default 'get_db' to write to a temporary directory
