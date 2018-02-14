@@ -6,3 +6,4 @@
 # cRegulome 0.1.0
 
   - cRegulome v0.1.0 (2018-02-08) Approved by rOpenSci
+  - On CRAN

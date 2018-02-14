@@ -43,14 +43,19 @@ To get starting with cRegulome we show a very quick example. We first start
 by downloading a small test database file, make a simple query and convert
 the output to a cRegulome object to print and visualize.  
 
+```r
+# install the package from CRAN
+install.packages('cRegulome')
+```
 
 ```r
-# install package from github (under development)
-devtools::install_github('MahShaaban/cRegulome')
+# install the development version from github
+devtools::install_github('ropensci/cRegulome')
 
-# install package from github and build vignette
-devtools::install_github('MahShaaban/cRegulome', build_vignettes = TRUE)
+# install the development version and build vignette from github 
+devtools::install_github('ropensci/cRegulome', build_vignettes = TRUE)
 ```
+
 ```{r load_libraries}
 # load required libraries
 library(cRegulome)
