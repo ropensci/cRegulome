@@ -28,16 +28,6 @@ Here, we tried tackling the same question using `cRegulome` data. We started fro
 
 We started by obtaining the lists of differentially expressed TFs and microRNAs which were compiled from the previous literature and microarray profiling respectively.  
 
-```{r install_suggested_package}
-if (!require(BiocInstaller)) source("https://bioconductor.org/biocLite.R")
-if (!require(org.Hs.eg.db)) biocLite("org.Hs.eg.db")
-if (!require(AnnotationDbi)) biocLite("AnnotationDbi")
-if (!require(clusterProfiler)) biocLite("clusterProfiler")
-
-if (!require(igraph)) install.packages("igraph")
-if (!require(readxl)) install.packages("readxl")
-```
-
 ```{r load_libraries}
 library(cRegulome)
 library(readxl)
