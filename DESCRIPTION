@@ -18,29 +18,29 @@ LazyData: true
 RoxygenNote: 6.0.1
 Depends: R(>= 2.10.0)
 Imports: DBI,
-   graphics,
-   httr,
-   RSQLite,
-   UpSetR,
-   VennDiagram,
-   magrittr,
-   dplyr,
-   ggplot2,
-   ggridges,
-   tidyr,
-   reshape2,
-   purrr,
-   grid,
-   R.utils
+    graphics,
+    httr,
+    RSQLite,
+    UpSetR,
+    VennDiagram,
+    magrittr,
+    dplyr,
+    ggplot2,
+    ggridges,
+    tidyr,
+    reshape2,
+    purrr,
+    grid,
+    R.utils,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    clusterProfiler
 VignetteBuilder: knitr
 Suggests: knitr, 
     rmarkdown, 
     testthat,
     covr,
     dbplyr,
-    clusterProfiler,
     igraph,
-    org.Hs.eg.db,
-    readxl,
-    AnnotationDbi,
-    BiocInstaller
+    readxl
+    
