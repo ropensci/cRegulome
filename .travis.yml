@@ -2,7 +2,6 @@
 
 language: r
 r:
-  - bioc-devel
   - bioc-release
 cache: packages
 r_packages:
