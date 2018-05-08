@@ -4,6 +4,9 @@ language: r
 r:
   - bioc-release
 cache: packages
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libudunits2-dev
 r_packages:
   - covr
 warnings_are_errors: false
