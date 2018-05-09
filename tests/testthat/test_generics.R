@@ -4,16 +4,16 @@ if(file.exists('cRegulome.db')) unlink('cRegulome.db')
 
 test_that('get_db downlaods db file succussfully', {
     get_db(test = TRUE)
-    expect_true(file.exists(paste(tempdir(), 'cRegulome.db.gz', sep = '/')))
+    expect_true(file.exists(paste(tempdir(), 'cRegulome.db', sep = '/')))
 })
 
 
 
 
-test_that('get_db stop when db file exist in the current directory', {
-   expect_message(get_db(test = TRUE))
-})
-if(file.exists('cRegulome.db')) unlink('cRegulome.db')
+
+
+
+
 
 # connect to the db file
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
