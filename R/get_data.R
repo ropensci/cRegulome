@@ -29,11 +29,14 @@
 #' get_db(test = FALSE)
 #' }
 #' 
-#'
 #' # load the test db file from shipped with the pacakge
 #' db_file <- system.file("extdata", "cRegulome.db", package = "cRegulome")
 #' file.info(db_file)
-#'
+#' 
+#' @importFrom httr http_error
+#' @importFrom utils download.file
+#' @importFrom R.utils gunzip
+#' 
 #' @export
 get_db <- function(test = FALSE, destfile, ...) {
     # db file url
@@ -44,30 +47,24 @@ get_db <- function(test = FALSE, destfile, ...) {
     }
 
     # check url exists
-    if(httr::http_error(url)) {
+    if(http_error(url)) {
         stop("URL doesn't exist.")
     }
     
     # make a destfile
     if(missing(destfile)) {
-        destfile <- paste(tempdir(), 'cRegulome.db.gz', sep = '/')
+        destfile <- paste(tempdir(), 'cRegulome.db', sep = '/')
     }
     # download file
     if(file.exists(destfile)) {
         message('File already exists in the directory.')
     } else {
-        utils::download.file(url, 
-                             destfile = destfile,
-                             mode = 'wb')
-        R.utils::gunzip(destfile)
+        download.file(url, 
+                      destfile = paste(destfile, 'gz', sep = '.'),
+                      mode = 'wb')
+        gunzip(paste(destfile, 'gz', sep = '.'))
     }
     }
-
-
-
-
-
-
 
 #' Get microRNA correlations from cRegulome.db
 #'
@@ -124,6 +121,10 @@ get_db <- function(test = FALSE, destfile, ...) {
 #'         max_num = 5)
 #'         
 #' @importFrom magrittr %>%
+#' @importFrom DBI dbListFields
+#' @importFrom dplyr tbl select filter collect mutate arrange group_by slice desc inner_join
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
 #' 
 #' @export
 get_mir <- function(conn,
@@ -164,28 +165,28 @@ get_mir <- function(conn,
     # get main data by applying filters and tidy
     
     dat <- conn %>%
-        dplyr::tbl(table) %>%
-        dplyr::select(mirna_base, feature, study) %>%
-        dplyr::filter(mirna_base %in% mir) %>%
-        dplyr::collect() %>%
-        tidyr::gather(study, cor, -mirna_base, -feature) %>%
-        dplyr::mutate(cor = cor/100) %>%
-        dplyr::filter(abs(cor) > min_abs_cor) %>%
-        dplyr::arrange(dplyr::desc(abs(cor))) %>%
-        stats::na.omit()
+        tbl(table) %>%
+        select(mirna_base, feature, study) %>%
+        filter(mirna_base %in% mir) %>%
+        collect() %>%
+        gather(study, cor, -mirna_base, -feature) %>%
+        mutate(cor = cor/100) %>%
+        filter(abs(cor) > min_abs_cor) %>%
+        arrange(desc(abs(cor))) %>%
+        na.omit()
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
         targets <- conn %>%
-            dplyr::tbl('targets_mir') %>%
-            dplyr::filter(mirna_base %in% mir) %>%
-            dplyr::collect() %>%
+            tbl('targets_mir') %>%
+            filter(mirna_base %in% mir) %>%
+            collect() %>%
             unique()
 
         # subset main data to targets only
-        dat <- dplyr::inner_join(dat, targets) %>%
-            stats::na.omit()
+        dat <- inner_join(dat, targets) %>%
+            na.omit()
     }
 
     # subset to max_num
@@ -194,8 +195,8 @@ get_mir <- function(conn,
         stop("max_num should be a positive integer.")
     } else {
         dat <- dat %>%
-            dplyr::group_by(mirna_base, study) %>%
-            dplyr::slice(1:max_num)
+            group_by(mirna_base, study) %>%
+            slice(1:max_num)
     }
 
     # return dat
@@ -254,6 +255,10 @@ get_mir <- function(conn,
 #'        max_num = 5)
 #'        
 #' @importFrom magrittr %>%
+#' @importFrom DBI dbListFields
+#' @importFrom dplyr tbl select filter collect mutate arrange group_by slice desc inner_join
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
 #' 
 #' @export
 get_tf <- function(conn,
@@ -275,7 +280,7 @@ get_tf <- function(conn,
     }
 
     if(is.null(study)) {
-        studies <- DBI::dbListFields(conn, table)[-1:-2]
+        studies <- dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
@@ -294,28 +299,28 @@ get_tf <- function(conn,
     # get main data by applying filters and tidy
     
     dat <- conn %>%
-        dplyr::tbl(table) %>%
-        dplyr::select(tf, feature, studies) %>%
-        dplyr::filter(tf %in% tf_id) %>%
-        dplyr::collect() %>%
-        tidyr::gather(study, cor, -tf, -feature) %>%
-        dplyr::mutate(cor = cor/100) %>%
-        dplyr::filter(abs(cor) > min_abs_cor) %>%
-        dplyr::arrange(dplyr::desc(abs(cor))) %>%
-        stats::na.omit()
+        tbl(table) %>%
+        select(tf, feature, studies) %>%
+        filter(tf %in% tf_id) %>%
+        collect() %>%
+        gather(study, cor, -tf, -feature) %>%
+        mutate(cor = cor/100) %>%
+        filter(abs(cor) > min_abs_cor) %>%
+        arrange(desc(abs(cor))) %>%
+        na.omit()
 
     # apply targets only filters when TRUE
     if(targets_only == TRUE) {
         # subset targets
         tf_id <- unique(dat$tf)
         targets <- conn %>%
-            dplyr::tbl('targets_tf') %>%
-            dplyr::filter(tf %in% tf_id, study %in% studies) %>%
-            dplyr::collect()
+            tbl('targets_tf') %>%
+            filter(tf %in% tf_id, study %in% studies) %>%
+            collect()
 
         # subset main data to targets only
-        dat <- dplyr::inner_join(dat, targets) %>%
-            stats::na.omit()
+        dat <- inner_join(dat, targets) %>%
+            na.omit()
     }
 
     # subset to max_num
@@ -324,8 +329,8 @@ get_tf <- function(conn,
         stop("max_num should be a positive integer.")
     } else {
         dat <- dat %>%
-            dplyr::group_by(tf, study) %>%
-            dplyr::slice(1:max_num)
+            group_by(tf, study) %>%
+            slice(1:max_num)
     }
 
     # return dat

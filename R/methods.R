@@ -72,6 +72,10 @@ print.cTF <- function(x, ...) {
 #' cor_plot(cmir)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
+#' @importFrom dplyr mutate 
+#' @import ggplot2
 #' 
 #' @export
 cor_plot <- function(ob, study = NULL, ...) {
@@ -100,20 +104,20 @@ cor_plot.cmicroRNA <- function(ob, study = NULL, ...) {
     
     # convet back to tidy format
     dat <- dat %>%
-        tidyr::gather(mirna_base, cor, -feature) %>%
-        stats::na.omit()
+        gather(mirna_base, cor, -feature) %>%
+        na.omit()
     
     # create correlation and direction variables
     # plot 
     gg <- dat %>%
-        dplyr::mutate(Correlation = abs(cor),
-                      Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
-        ggplot2::ggplot(ggplot2::aes_string(x = 'mirna_base',
-                                            y = 'feature',
-                                            size = 'Correlation',
-                                            color = 'Direction')) +
-        ggplot2::geom_point() +
-        ggplot2::theme_light()
+        mutate(Correlation = abs(cor),
+               Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
+        ggplot(aes_string(x = 'mirna_base',
+                          y = 'feature',
+                          size = 'Correlation',
+                          color = 'Direction')) +
+        geom_point() +
+        theme_light()
     
     return(gg)
 }
@@ -140,21 +144,20 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
     
     # convet back to tidy format
     dat <- dat %>%
-        tidyr::gather(tf, cor, -feature) %>%
-        stats::na.omit()
+        gather(tf, cor, -feature) %>%
+        na.omit()
     
     # create correlation and direction variables
     # plot 
     gg <- dat %>%
-        dplyr::mutate(Correlation = abs(cor),
-                      Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
-        ggplot2::ggplot(ggplot2::aes_string(x = 'tf',
-                                            y = 'feature',
-                                            size = 'Correlation',
-                                            color = 'Direction')) +
-        ggplot2::geom_point() +
-        ggplot2::theme_light()
-    
+        mutate(Correlation = abs(cor),
+               Direction = ifelse(cor > 0, 'Positive', 'Negative')) %>%
+        ggplot(aes_string(x = 'tf',
+                          y = 'feature',
+                          size = 'Correlation',
+                          color = 'Direction')) +
+        geom_point() +
+        theme_light()
     
     return(gg)
 }
@@ -191,6 +194,10 @@ cor_plot.cTF <- function(ob, study = NULL, ...) {
 #' tidy_cmir <- cor_tidy(cmir)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
+#' @importFrom dplyr mutate bind_rows select
+#' @importFrom purrr map
 #'
 #' @export
 cor_tidy <- function(ob) {
@@ -205,18 +212,18 @@ cor_tidy.cmicroRNA <- function(ob) {
     if(length(ob$studies) == 1) {
         # object contains a single study
         dat <- ob$corr %>%
-            tidyr::gather(mirna_base, cor, -feature) %>%
-            stats::na.omit() %>%
-            dplyr::mutate(study = ob$studies)
+            gather(mirna_base, cor, -feature) %>%
+            na.omit() %>%
+            mutate(study = ob$studies)
     } else {
         # object with multiple studies
-        dat <- purrr::map(ob$corr, function(x) {
+        dat <- map(ob$corr, function(x) {
             x %>%
-                tidyr::gather(mirna_base, cor, -feature) %>%
-                stats::na.omit()
+                gather(mirna_base, cor, -feature) %>%
+                na.omit()
         }) %>%
-            dplyr::bind_rows(.id = 'study') %>%
-            dplyr::select(2:4, study)
+            bind_rows(.id = 'study') %>%
+            select(2:4, study)
     }
     
     return(dat)
@@ -230,18 +237,18 @@ cor_tidy.cTF <- function(ob) {
     if(length(ob$studies) == 1) {
         # object contains a single study
         dat <- ob$corr %>%
-            tidyr::gather(tf, cor, -feature) %>%
-            stats::na.omit() %>%
-            dplyr::mutate(study = ob$studies)
+            gather(tf, cor, -feature) %>%
+            na.omit() %>%
+            mutate(study = ob$studies)
     } else {
         # object with multiple studies
-        dat <- purrr::map(ob$corr, function(x) {
+        dat <- map(ob$corr, function(x) {
             x %>%
-                tidyr::gather(tf, cor, -feature) %>%
-                stats::na.omit()
+                gather(tf, cor, -feature) %>%
+                na.omit()
         }) %>%
-            dplyr::bind_rows(.id = 'study') %>%
-            dplyr::select(2:4, study)
+            bind_rows(.id = 'study') %>%
+            select(2:4, study)
     }
 }
 
@@ -275,6 +282,10 @@ cor_tidy.cTF <- function(ob) {
 #' cor_venn_diagram(cmir)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
+#' @importFrom VennDiagram venn.diagram
+#' @importFrom grid grid.draw
 #' 
 #' @export
 cor_venn_diagram <- function(ob, study = NULL, ...) {
@@ -303,17 +314,18 @@ cor_venn_diagram.cmicroRNA <- function(ob, study = NULL, ...) {
     
     # convert back to tidy format
     dat <- dat %>%
-        tidyr::gather(mirna_base, cor, -feature) %>%
-        stats::na.omit()
+        gather(mirna_base, cor, -feature) %>%
+        na.omit()
     
     # make a named list of features
     dat <- with(dat, split(feature, mirna_base))
     
     # generate plot
-    pp <- VennDiagram::venn.diagram(dat,
-                                    imagetype = 'png', 
-                                    filename = NULL, ...)
-    grid::grid.draw(pp)
+    pp <- venn.diagram(dat,
+                       imagetype = 'png', 
+                       filename = NULL, ...)
+    
+    grid.draw(pp)
 }
 
 #' @export
@@ -338,17 +350,18 @@ cor_venn_diagram.cTF <- function(ob, study = NULL, ...) {
     
     # convert back to tidy format
     dat <- dat %>%
-        tidyr::gather(tf, cor, -feature) %>%
-        stats::na.omit()
+        gather(tf, cor, -feature) %>%
+        na.omit()
     
     # make a named list of features
     dat <- with(dat, split(feature, tf))
     
     # generate plot
-    pp <- VennDiagram::venn.diagram(dat,
-                                    imagetype = 'png', 
-                                    filename = NULL, ...)
-    grid::grid.draw(pp)
+    pp <- venn.diagram(dat,
+                       imagetype = 'png', 
+                       filename = NULL, ...)
+    
+    grid.draw(pp)
 }
 
 #' \code{\link[UpSetR]{upset}} plot of microRNA or tf sets
@@ -381,6 +394,8 @@ cor_venn_diagram.cTF <- function(ob, study = NULL, ...) {
 #' cor_upset(cmir)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom dplyr mutate_at vars
+#' @importFrom UpSetR upset
 #' 
 #' @export
 cor_upset <- function(ob, study = NULL, ...) {
@@ -405,15 +420,13 @@ cor_upset.cmicroRNA <- function(ob, study = NULL, ...) {
         dat <- ob$corr[[study]]
     }
     
-    
-    
     # make a binary data.frame
     dat <- dat %>%
-        dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                         function(x) x <- ifelse(is.na(x), 0, 1))
+        mutate_at(vars(2:ncol(dat)),
+                  function(x) x <- ifelse(is.na(x), 0, 1))
     
     # generate plot
-    UpSetR::upset(dat, ...)
+    upset(dat, ...)
 }
 
 #' @export
@@ -438,11 +451,11 @@ cor_upset.cTF <- function(ob, study = NULL, ...) {
     
     # make a binary data.frame
     dat <- dat %>%
-        dplyr::mutate_at(dplyr::vars(2:ncol(dat)),
-                         function(x) x <- ifelse(is.na(x), 0, 1))
+        mutate_at(vars(2:ncol(dat)),
+                  function(x) x <- ifelse(is.na(x), 0, 1))
     
     # generate plot
-    UpSetR::upset(dat, ...)
+    upset(dat, ...)
 }
 
 #' A histogram of the correlations of microRNA or tf sets
@@ -475,6 +488,8 @@ cor_upset.cTF <- function(ob, study = NULL, ...) {
 #' # print object
 #' cor_hist(cmir)
 #' 
+#' @importFrom graphics hist
+#' 
 #' @export
 cor_hist <- function(ob, study = NULL, ...) {
     UseMethod('cor_hist')
@@ -500,7 +515,7 @@ cor_hist.cmicroRNA <- function(ob, study = NULL, ...) {
     
     # generate plot
     dat <- unlist(dat[, -1])
-    graphics::hist(dat, ...)
+    hist(dat, ...)
 }
 
 #' @export
@@ -523,7 +538,7 @@ cor_hist.cTF <- function(ob, study = NULL, ...) {
     
     # generate plot
     dat <- unlist(dat[, -1])
-    graphics::hist(dat, ...)
+    hist(dat, ...)
 }
 
 #' A joy plot of correlation of microRNA or tf sets
@@ -556,6 +571,10 @@ cor_hist.cTF <- function(ob, study = NULL, ...) {
 #' cor_joy(cmir)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom tidyr gather
+#' @importFrom stats na.omit
+#' @importFrom ggridges geom_density_ridges
+#' @import ggplot2 
 #' 
 #' @export
 cor_joy <- function(ob, study = NULL, ...) {
@@ -584,15 +603,15 @@ cor_joy.cmicroRNA <- function(ob, study = NULL, ...) {
     
     # convert back to tidy format
     dat <- dat %>%
-        tidyr::gather(mirna_base, cor, -feature) %>%
-        stats::na.omit()
+        gather(mirna_base, cor, -feature) %>%
+        na.omit()
     
     # generate plot
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
-                                            y = 'mirna_base')) +
-        ggridges::geom_density_ridges() +
-        ggplot2::theme_light()
+        ggplot(aes_string(x = 'cor',
+                          y = 'mirna_base')) +
+        geom_density_ridges() +
+        theme_light()
     
     return(gg)
 }
@@ -614,20 +633,18 @@ cor_joy.cTF <- function(ob, study = NULL, ...) {
         # object contains multiple studies
         dat <- ob$corr[[study]]
     }
-    
-    
-    
+
     # convert back to tidy format
     dat <- dat %>%
-        tidyr::gather(tf, cor, -feature) %>%
-        stats::na.omit()
+        gather(tf, cor, -feature) %>%
+        na.omit()
     
     # generate plot
     gg <- dat %>%
-        ggplot2::ggplot(ggplot2::aes_string(x = 'cor',
-                                            y = 'tf')) +
-        ggridges::geom_density_ridges() +
-        ggplot2::theme_light()
+        ggplot(aes_string(x = 'cor',
+                          y = 'tf')) +
+        geom_density_ridges() +
+        theme_light()
     
     return(gg)
 }
@@ -661,6 +678,9 @@ cor_joy.cTF <- function(ob, study = NULL, ...) {
 #' # print object
 #' cor_igraph(cmir)
 #' 
+#' @importFrom reshape2 melt
+#' @importFrom igraph graph_from_data_frame
+#' 
 #' @export
 cor_igraph <- function(ob) {
     UseMethod('cor_igraph')
@@ -681,13 +701,13 @@ cor_igraph.cmicroRNA <- function(ob) {
     # make vertices
     vrtcs <- list(microRNA = unique(edgs$from),
                   gene = unique(edgs$to))
-    vrtcs <- reshape2::melt(vrtcs)
+    vrtcs <- melt(vrtcs)
     names(vrtcs) <- c('id', 'type')
     
     # make graph
-    g <- igraph::graph_from_data_frame(d = edgs,
-                                       directed = FALSE,
-                                       vrtcs)
+    g <- graph_from_data_frame(d = edgs,
+                               directed = FALSE,
+                               vrtcs)
     # return graph
     return(g)
 }
@@ -707,13 +727,13 @@ cor_igraph.cTF <- function(ob) {
     # make vertices
     vrtcs <- list(TF = unique(edgs$from),
                   gene = unique(edgs$to))
-    vrtcs <- unique(reshape2::melt(vrtcs))
+    vrtcs <- unique(melt(vrtcs))
     names(vrtcs) <- c('id', 'type')
     
     # make graph
-    g <- igraph::graph_from_data_frame(d = edgs,
-                                       directed = FALSE,
-                                       vrtcs)
+    g <- graph_from_data_frame(d = edgs,
+                               directed = FALSE,
+                               vrtcs)
     
     # return graph
     return(g)

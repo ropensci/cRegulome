@@ -1,8 +1,8 @@
-context('Testing methods output')
+context('methods')
 
 # connect to the db file
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-conn <- dbConnect(SQLite(), fl)
+conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 
 test_that('cor_tidy output a data.frame identical to output of get_mir', {
     dat <- get_mir(conn,
@@ -16,7 +16,6 @@ test_that('cor_tidy output a data.frame identical to output of get_mir', {
     
     expect_equal(dat, tidy_cmir)
 })
-
 
 test_that('tidy output a data.frame identical to output of get_tf', {
     dat <- get_tf(conn,
@@ -46,4 +45,4 @@ test_that("cor_igraph retruns a the proper object", {
 })
 
 # clean up
-dbDisconnect(conn)
+RSQLite::dbDisconnect(conn)

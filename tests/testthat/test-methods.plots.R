@@ -2,11 +2,15 @@ context("Testing plots")
 
 # connect to the db file
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-conn <- dbConnect(SQLite(), fl)
+conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
+
+# query db
 dat <- get_mir(conn,
                 mir = 'hsa-let-7g',
                 study = 'STES',
                 min_abs_cor = .3)
+
+# make cmicroRNA object
 cmir <- cmicroRNA(dat)
 
 test_that('cor_plot cmicroRNA objects', {
@@ -34,13 +38,14 @@ test_that('cor_joy cmicroRNA objects', {
                                  height = 'density'))
 })
 
+# query db
 dat <- get_tf(conn,
-               tf = 'LEF1',
-               study = 'STES*',
-               min_abs_cor = .3)
+              tf = 'LEF1',
+              study = 'STES*',
+              min_abs_cor = .3)
 
+# make cTF object
 ctf <- cTF(dat)
-
 
 test_that('cor_plot cTF objects', {
     gg <- cor_plot(ctf)  
@@ -68,5 +73,4 @@ test_that('cor_joy cTF objects', {
 })
 
 # clean up
-dbDisconnect(conn)
-
+RSQLite::dbDisconnect(conn)

@@ -29,6 +29,8 @@
 #' cmir <- cmicroRNA(dat)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom reshape2 dcast
+#' @importFrom dplyr filter
 #' 
 #' @export
 cmicroRNA <- function(dat_mir){
@@ -44,16 +46,16 @@ cmicroRNA <- function(dat_mir){
     # object contains a single study
     if(length(studies) == 1) {
         corr <- dat_mir %>%
-            reshape2::dcast(feature ~ mirna_base, value.var = 'cor')
+            dcast(feature ~ mirna_base, value.var = 'cor')
     } else {
         # object with multiple studies
         # returns a list of data.frames
         corr <- lapply(unique(dat_mir$study),
                     function(x) {
                         dat_mir %>%
-                            dplyr::filter(study == x) %>%
-                            reshape2::dcast(feature ~ mirna_base,
-                                            value.var = 'cor')
+                            filter(study == x) %>%
+                            dcast(feature ~ mirna_base,
+                                  value.var = 'cor')
                         })
         names(corr) <- unique(dat_mir$study)
     }
@@ -99,6 +101,8 @@ cmicroRNA <- function(dat_mir){
 #' ctf <- cTF(dat)
 #' 
 #' @importFrom magrittr %>%
+#' @importFrom reshape2 dcast
+#' @importFrom dplyr filter
 #' 
 #' @export
 cTF <- function(dat_tf){
@@ -114,15 +118,16 @@ cTF <- function(dat_tf){
     # object contains a single study
     if(length(studies) == 1) {
         corr <- dat_tf %>%
-            reshape2::dcast(feature ~ tf, value.var = 'cor')
+            dcast(feature ~ tf, value.var = 'cor')
     } else {
         # object with multiple studies
         # returns a list of data.frames
         corr <- lapply(unique(dat_tf$study),
                     function(x) {
                         dat_tf %>%
-                            dplyr::filter(study == x) %>%
-                            reshape2::dcast(feature ~ tf, value.var = 'cor')
+                            filter(study == x) %>%
+                            dcast(feature ~ tf,
+                                  value.var = 'cor')
                         })
         names(corr) <- unique(dat_tf$study)
     }
