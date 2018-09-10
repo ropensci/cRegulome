@@ -74,21 +74,11 @@ get_db <- function(test = FALSE, destfile, ...) {
 #' returns an error if the database file \code{cRegulome.db} is not in the 
 #' working directory.
 #'
-#' @param conn A connection to the database file by \code{\link[DBI]{dbConnect}}
 #' @param mir A required \code{character} vector of the microRNAs of interest.
 #' These are the miRBase ID which are the official identifiers of the
 #' widely used miRBase database, \url{http://www.mirbase.org/}.
-#' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
-#' study identifiers. To view the available studies in TCGA project,
-#' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
-#' default \code{NULL} all available studies will be included.
-#' @param min_abs_cor A \code{numeric}, an absolute correlation minimum between 0
-#' and 1 for each \code{mir}.
-#' @param max_num An \code{integer}, maximum number of \code{features} to show
-#' for each \code{mir} in each \code{study}.
-#' @param targets_only A \code{logical}, default \code{FALSE}. When
-#' \code{TRUE}, \code{features} will be the microRNA targets as defined in
-#' the package targetscan.Hs.eg.db.
+#' @inheritParams stat_make
+#' @inheritParams stat_collect
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{mirna_base} is the
 #' microRNA miRBase IDs, \code{feature} is the features/genes, \code{cor}
@@ -96,13 +86,9 @@ get_db <- function(test = FALSE, destfile, ...) {
 #' study ID.
 #' 
 #' @examples 
-#' # load required libraries
-#' library(RSQLite)
-#' library(cRegulome)
-#' 
 #' # locate the testset file and connect
 #' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-#' conn <- dbConnect(SQLite(), fl)
+#' conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 #' 
 #' # get microRNA correlations in all studies
 #' get_mir(conn,
@@ -119,86 +105,67 @@ get_db <- function(test = FALSE, destfile, ...) {
 #'         study = 'STES',
 #'         min_abs_cor = .3,
 #'         max_num = 5)
-#'         
-#' @importFrom magrittr %>%
-#' @importFrom DBI dbListFields
-#' @importFrom dplyr tbl select filter collect mutate arrange group_by slice desc inner_join
-#' @importFrom tidyr gather
-#' @importFrom stats na.omit
+#' 
+#' @importFrom RSQLite dbListFields
 #' 
 #' @export
-get_mir <- function(conn,
-                    mir,
-                    study = NULL,
-                    min_abs_cor = NULL,
-                    max_num = NULL,
+get_mir <- function(conn, mir, study, min_abs_cor, max_num,
                     targets_only = FALSE) {
-
-    # unpack filters and check types
-    table <- 'cor_mir'
-
-    if(is.null(mir)) {
+    if(missing(mir)) {
         stop("User should provide at least one microRNA ID")
     } else if(!is.character(mir)) {
         stop("mir should be a character vector")
     } else {
-        mir <- as.character(mir)
+        tf_id <- as.character(mir)
     }
-
-    if(is.null(study)) {
-        study <- DBI::dbListFields(conn, table)[-1:-2]
+    
+    if(missing(study)) {
+        studies <- dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
-        study <- as.character(study)
+        studies <- as.character(study)
     }
-
-    if(is.null(min_abs_cor)) {
-        min_abs_cor <- 0
-    } else if(!is.numeric(min_abs_cor) || min_abs_cor > 1 || min_abs_cor < 0) {
-        stop("min_abs_cor should be a numeric between 0 and 1.")
-    }
-    else {
-        min_abs_cor <- as.numeric(min_abs_cor)
-    }
-
-    # get main data by applying filters and tidy
     
-    dat <- conn %>%
-        tbl(table) %>%
-        select(mirna_base, feature, study) %>%
-        filter(mirna_base %in% mir) %>%
-        collect() %>%
-        gather(study, cor, -mirna_base, -feature) %>%
-        mutate(cor = cor/100) %>%
-        filter(abs(cor) > min_abs_cor) %>%
-        arrange(desc(abs(cor))) %>%
-        na.omit()
-
-    # apply targets only filters when TRUE
-    if(targets_only == TRUE) {
-        # subset targets
-        targets <- conn %>%
-            tbl('targets_mir') %>%
-            filter(mirna_base %in% mir) %>%
-            collect() %>%
-            unique()
-
-        # subset main data to targets only
-        dat <- inner_join(dat, targets) %>%
-            na.omit()
+    if(!missing(min_abs_cor)) {
+        if(!is.numeric(min_abs_cor)) {
+            stop("min_abs_cor should be a numeric between 0 and 1.")
+            }
+        if(min_abs_cor > 1 || min_abs_cor < 0) {
+            stop('min_abs_cor should be a numeric between 0 and 1.')
+        }
     }
-
-    # subset to max_num
-    if(is.null(max_num)) {
-    } else if(max_num %% 1 != 0 || max_num <= 0) {
-        stop("max_num should be a positive integer.")
-    } else {
-        dat <- dat %>%
-            group_by(mirna_base, study) %>%
-            slice(1:max_num)
+    if(!missing(max_num)) {
+        if(!is.numeric(max_num)) {
+            stop('max_num should be a positive integer.')
+        }
+        if(max_num < 1) {
+            stop('max_num should be a positive integer.')
+        }
     }
-
+    
+    # construct and excute query
+    ll1 <- list()
+    ll2 <- list()
+    
+    for(m in 1:length(mir)) {
+        for(s in 1:length(study)) {
+             stat <- stat_make(mir[m],
+                              study = study[s],
+                              min_abs_cor = min_abs_cor,
+                              max_num = max_num)
+             df <- stat_collect(conn,
+                                study = study[s],
+                                stat)
+             ll2[[s]] <- df
+        }
+        ll1[[m]] <- ll2
+    }
+    
+    # make data.frame
+    ll <- unlist(ll1, recursive = FALSE)
+    dat <- do.call('rbind', ll)
+    
     # return dat
     return(dat)
 }
@@ -214,29 +181,18 @@ get_mir <- function(conn,
 #' @param tf A required \code{character} vector of the transcription factor of
 #' interest. These are the HUGO official gene symbols of the genes contains the
 #' transcription factor.
-#' @inheritParams get_mir
-#' @param min_abs_cor A \code{numeric}, an absolute correlation minimum between
-#'  0 and 1 for each \code{tf}.
-#' @param max_num An \code{integer}, maximum number of \code{features} to show
-#' for each \code{tf} in each \code{study}.
-#' @param targets_only A \code{logical}, default \code{FALSE}. When
-#' \code{TRUE}, \code{features} will be the targets of the transcription
-#' factors as identified in the Cistrome Cancer,
-#' \url{http://cistrome.org/CistromeCancer/}
+#' @inheritParams stat_make
+#' @inheritParams stat_collect
 #'
 #' @return A tidy \code{data.frame} of four columns. \code{tf} is the official
 #' gene symbols of the genes contains the transcription factor, \code{feature}
 #' is the features/genes, cor is the corresponding expression correlations
 #' and \code{study} is TCGA study ID.
 #' 
-#' @examples 
-#' # load required libraries
-#' library(RSQLite)
-#' library(cRegulome)
-#' 
+#' @examples
 #' # locate the testset file and connect
 #' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-#' conn <- dbConnect(SQLite(), fl)
+#' conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 #' 
 #' # get transcription factors correlations in all studies
 #' get_tf(conn,
@@ -245,94 +201,212 @@ get_mir <- function(conn,
 #' # get correlations in a particular study
 #' get_tf(conn,
 #'        tf = 'LEF1',
-#'        study = 'STES*')
+#'        study = '"STES*"')
 #' 
 #' # enter a custom query with different arguments
 #' get_tf(conn,
 #'        tf = 'LEF1',
-#'        study = 'STES*',
+#'        study = '"STES*"',
 #'        min_abs_cor = .3,
 #'        max_num = 5)
-#'        
-#' @importFrom magrittr %>%
-#' @importFrom DBI dbListFields
-#' @importFrom dplyr tbl select filter collect mutate arrange group_by slice desc inner_join
-#' @importFrom tidyr gather
-#' @importFrom stats na.omit
+#' 
+#' @importFrom RSQLite dbListFields
 #' 
 #' @export
-get_tf <- function(conn,
-                    tf,
-                    study = NULL,
-                    min_abs_cor = NULL,
-                    max_num = NULL,
+get_tf <- function(conn, tf, study, min_abs_cor, max_num,
                     targets_only = FALSE) {
-
-    # unpack filters and check types
-    table <- 'cor_tf'
-
-    if(is.null(tf)) {
+    if(missing(tf)) {
         stop("User should provide at least one TF ID")
     } else if(!is.character(tf)) {
         stop("tf should be a character vector")
     } else {
         tf_id <- as.character(tf)
     }
-
-    if(is.null(study)) {
+    
+    if(missing(study)) {
         studies <- dbListFields(conn, table)[-1:-2]
     } else if(!is.character(study)){
         stop("Study should be a character vector")
     } else {
         studies <- as.character(study)
     }
-
-    if(is.null(min_abs_cor)) {
-        min_abs_cor <- 0
-    } else if(!is.numeric(min_abs_cor) || min_abs_cor > 1 || min_abs_cor < 0) {
-        stop("min_abs_cor should be a numeric between 0 and 1.")
-    }
-    else {
-        min_abs_cor <- as.numeric(min_abs_cor)
-    }
-
-    # get main data by applying filters and tidy
     
-    dat <- conn %>%
-        tbl(table) %>%
-        select(tf, feature, studies) %>%
-        filter(tf %in% tf_id) %>%
-        collect() %>%
-        gather(study, cor, -tf, -feature) %>%
-        mutate(cor = cor/100) %>%
-        filter(abs(cor) > min_abs_cor) %>%
-        arrange(desc(abs(cor))) %>%
-        na.omit()
-
-    # apply targets only filters when TRUE
-    if(targets_only == TRUE) {
-        # subset targets
-        tf_id <- unique(dat$tf)
-        targets <- conn %>%
-            tbl('targets_tf') %>%
-            filter(tf %in% tf_id, study %in% studies) %>%
-            collect()
-
-        # subset main data to targets only
-        dat <- inner_join(dat, targets) %>%
-            na.omit()
+    if(!missing(min_abs_cor)) {
+        if(!is.numeric(min_abs_cor)) {
+            stop("min_abs_cor should be a numeric between 0 and 1.")
+        }
+        if(min_abs_cor > 1 || min_abs_cor < 0) {
+            stop('min_abs_cor should be a numeric between 0 and 1.')
+        }
     }
-
-    # subset to max_num
-    if(is.null(max_num)) {
-    } else if(max_num %% 1 != 0 | max_num <= 0) {
-        stop("max_num should be a positive integer.")
-    } else {
-        dat <- dat %>%
-            group_by(tf, study) %>%
-            slice(1:max_num)
+    
+    if(!missing(max_num)) {
+        if(!is.numeric(max_num)) {
+            stop('max_num should be a positive integer.')
+        }
+        if(max_num < 1) {
+            stop('max_num should be a positive integer.')
+        }
     }
-
+    
+    # construct and excute query
+    ll1 <- list()
+    ll2 <- list()
+    
+    for(m in 1:length(tf)) {
+        for(s in 1:length(study)) {
+            stat <- stat_make(tf[m],
+                              study = study[s],
+                              min_abs_cor = min_abs_cor,
+                              max_num = max_num,
+                              type = 'tf')
+            df <- stat_collect(conn,
+                               study = study[s],
+                               stat,
+                               type = 'tf')
+            ll2[[s]] <- df
+        }
+        ll1[[m]] <- ll2
+    }
+    
+    # make data.frame
+    ll <- unlist(ll1, recursive = FALSE)
+    dat <- do.call('rbind', ll)
+    
     # return dat
     return(dat)
+}
+
+#' Make A SQL statment
+#'
+#' @param reg A \code{character} vector of one or more regulator ID.
+#' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
+#' study identifiers. To view the available studies in TCGA project,
+#' \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
+#' default \code{NULL} all available studies will be included.
+#' @param min_abs_cor A \code{numeric}, an absolute correlation minimum between 0
+#' and 1 for each \code{mir}.
+#' @param max_num An \code{integer}, maximum number of \code{features} to show
+#' for each \code{mir} in each \code{study}.
+#' @param targets_only A \code{logical}, default \code{FALSE}. When
+#' \code{TRUE}, \code{features} will be the microRNA targets as defined in
+#' the package targetscan.Hs.eg.db.
+#' @param type A \code{character} string. Either 'mir' of 'tf'. Used to define
+#' columns and tables names.
+#' 
+#' @examples 
+#' stat_make(mir = 'hsa-let-7g',
+#'           study = 'STES')
+#'           
+#' stat_make(mir = 'hsa-let-7g',
+#'           study = 'STES',
+#'           min_abs_cor = .3)
+#'           
+#' stat_make(mir = 'hsa-let-7g',
+#'           study = 'STES',
+#'           min_abs_cor = .3,
+#'           max_num = 5)
+#'           
+#' @return A character string
+#' 
+#' @export
+stat_make <- function(reg, study, min_abs_cor, max_num, targets_only = FALSE,
+                      type = 'mir') {
+    # define columns and tables based on type
+    # column name
+    id <- switch(type,
+                 'mir' = 'mirna_base',
+                 'tf' = 'tf'
+    )
+    
+    # correlation table
+    cor_tab <- switch(type,
+                      'mir' = 'cor_mir',
+                      'tf' = 'cor_tf' 
+    )
+    
+    # targets table
+    targets_tab <- switch(type,
+                          'mir' = 'targets_mir',
+                          'tf' = 'targets_tf')
+    
+    # make statement
+    ## main select statement
+    main <- paste0(
+        'SELECT ',
+        cor_tab, '.', id, ', ',
+        cor_tab, '.feature, ',
+        cor_tab, '.', study,
+        ' FROM ', cor_tab
+    )
+    
+    ## select targets only
+    if(targets_only) {
+        join <- paste0(
+            'INNER JOIN ',
+            targets_tab, ' ON ',
+            cor_tab, '.', id, ' = ', targets_tab, '.', id,
+            ' AND ',
+            cor_tab, '.feature', ' = ', targets_tab, '.feature'  
+        )
+        main <- paste(main, join)
+    }
+    
+    ## filter one regulator
+    whr <- paste0(
+        'WHERE ', cor_tab, '.', id, '=', '"', reg, '"'
+    )
+    main <- paste(main, whr)
+    
+    ## minimum value
+    if(!missing(min_abs_cor)) {
+        fltr1 <- paste0(
+            'AND ', 'ABS(', cor_tab, '.', study, ' * 100)', ' > ', abs(min_abs_cor) * 100
+        )
+        main <- paste(main, fltr1)
+    }
+    
+    ## limit returned entries 
+    if(!missing(max_num)) {
+        fltr2 <- paste0(
+            'ORDER BY ABS(', cor_tab, '.', study,') DESC ', 
+            'LIMIT ', max_num
+        )
+        main <- paste(main, fltr2)
+    }
+    
+    # return statement
+    return(main)
+}
+
+#' Collect data from SQLite database
+#'
+#' @param conn A connection such as this returned by 
+#' \code{\link[RSQLite]{dbConnect}}
+#' @inheritParams stat_make
+#' @param stat A string such as this returned by \code{\link{stat_make}}
+#'
+#' @return A data.frame
+#' 
+#' @importFrom RSQLite dbGetQuery
+#' 
+#' @export
+stat_collect <- function(conn, study, stat, type = 'mir') {
+    # define colum name based on type
+    id <- switch (type,
+        'mir' = 'mirna_base',
+        'tf' = 'tf'
+    )
+    
+    # get query
+    df <- dbGetQuery(conn, stat)
+    
+    # add study column
+    df$study <- study
+    
+    # rename columns
+    names(df) <- c(id, 'feature', 'cor', 'study')
+    
+    # return data.frame
+    return(df)
 }

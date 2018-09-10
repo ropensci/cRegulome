@@ -31,7 +31,7 @@ tf_id <- c("ETV4", "LEF1", "MYB", "MYBL2", "TFAP2A")
 
 cor_tf <- get_tf(db,
                  tf = tf_id,
-                 study = 'STES*',
+                 study = '"STES*"',
                  targets_only = TRUE)
 cor_tf <- mutate(cor_tf, cor = cor * 100) %>%
     dcast(tf + feature ~ study, value.var = 'cor')

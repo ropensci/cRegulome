@@ -1,4 +1,4 @@
-context('methods')
+context('methods.tidy')
 
 # connect to the db file
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
@@ -20,7 +20,7 @@ test_that('cor_tidy output a data.frame identical to output of get_mir', {
 test_that('tidy output a data.frame identical to output of get_tf', {
     dat <- get_tf(conn,
                   tf = 'LEF1',
-                  study = 'STES*',
+                  study = '"STES*"',
                   min_abs_cor = .3,
                   max_num = 5)
     
@@ -42,6 +42,35 @@ test_that("cor_igraph retruns a the proper object", {
     
     g <- cor_igraph(cmir)
     expect_s3_class(g, 'igraph')
+})
+
+test_that('cor_prep works', {
+    dat <- get_tf(conn,
+                  tf = 'LEF1',
+                  study = '"STES*"',
+                  min_abs_cor = .3,
+                  max_num = 5)
+    
+    ctf <- cTF(dat)
+    df <- cor_prep(ctf, '"STES*"')
+    expect_true(is.data.frame(df))
+    expect_true('Direction' %in% names(df))
+    expect_true('Correlation' %in% names(df))
+    expect_equal(unique(df$study), '"STES*"')
+})
+
+test_that('cor_prep works with multiple queries', {
+    dat <- get_mir(conn,
+                   mir = c('hsa-let-7g', 'hsa-let-7i'),
+                   study = 'STES')
+    
+    cmir <- cmicroRNA(dat)
+    
+    df <- cor_prep(cmir, 'STES')
+    expect_true(is.data.frame(df))
+    expect_true('Direction' %in% names(df))
+    expect_true('Correlation' %in% names(df))
+    expect_equal(unique(df$study), "STES")
 })
 
 # clean up

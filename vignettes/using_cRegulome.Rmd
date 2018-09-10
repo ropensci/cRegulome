@@ -147,7 +147,7 @@ dat_mir <- get_mir(conn,
 # query the db for two transcription factors
 dat_tf <- get_tf(conn,
                  tf = c('LEF1', 'MYB'),
-                 study = 'STES*')
+                 study = '"STES*"')
 
 # show first 6 line of each of the data.frames
 head(dat_mir); head(dat_tf)
