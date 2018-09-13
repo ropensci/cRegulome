@@ -8,7 +8,7 @@ get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 
-\code{\link[RSQLite]{dbConnect}}}
+\code{\link[DBI]{dbConnect}}}
 
 \item{tf}{A required \code{character} vector of the transcription factor of
 interest. These are the HUGO official gene symbols of the genes contains the
@@ -47,9 +47,11 @@ not in the working directory.
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
 conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 
+\dontrun{
 # get transcription factors correlations in all studies
 get_tf(conn,
         tf = 'LEF1')
+}
 
 # get correlations in a particular study
 get_tf(conn,

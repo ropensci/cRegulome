@@ -48,11 +48,14 @@ cmicroRNA <- function(dat_mir){
             ll[[i]] <- m
         }
         
-        mat <- Reduce(function(x, y) {merge(x, y, by = 'row.names')}, ll)
-        if(colnames(mat)[1] == 'Row.names') {
-            rownames(mat) <- mat[, 1]
-            mat <- mat[, -1]
-        }
+        mat <- Reduce(function(x, y) {
+            m <- merge(x, y, by = 'row.names', all = TRUE)
+            if(colnames(m)[1] == 'Row.names') {
+                rownames(m) <- m[, 1]
+                m <- m[, -1]
+                m
+            }
+        }, ll)
         
         corr[[l]] <- mat
     }
@@ -121,7 +124,14 @@ cTF <- function(dat_tf){
             ll[[i]] <- m
         }
         
-        mat <- Reduce(function(x, y) {merge(x, y, by = 'row.names')}, ll)
+        mat <- Reduce(function(x, y) {
+            m <- merge(x, y, by = 'row.names', all = TRUE)
+            if(colnames(m)[1] == 'Row.names') {
+                rownames(m) <- m[, 1]
+                m <- m[, -1]
+            m
+            }
+            }, ll)
         
         corr[[l]] <- mat
     }

@@ -104,6 +104,16 @@ cor_venn_diagram <- function(ob, study, ...) {
 
 #' @export
 cor_venn_diagram.cmicroRNA <- function(ob, study, ...) {
+    # stop if one set of microRNAs
+    mir <- ob$microRNA
+    if(length(mir) == 1) {
+        stop(
+            paste('ob contains data for one microRNA.',
+                'Venn diagram is used to compare at least two sets.'
+            )
+        )
+    }
+    
     # prepare data for plotting
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
@@ -120,6 +130,16 @@ cor_venn_diagram.cmicroRNA <- function(ob, study, ...) {
 
 #' @export
 cor_venn_diagram.cTF <- function(ob, study, ...) {
+    # stop if one set of TF
+    tf <- ob$TF
+    if(length(tf) == 1) {
+        stop(
+            paste('ob contains data for one TF.',
+                  'Venn diagram is used to compare at least two sets.'
+            )
+        )
+    }
+    
     # prepare data for plotting
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
@@ -160,8 +180,6 @@ cor_venn_diagram.cTF <- function(ob, study, ...) {
 #' # print object
 #' cor_upset(cmir)
 #' 
-#' @importFrom magrittr %>%
-#' @importFrom dplyr mutate_at vars
 #' @importFrom UpSetR upset
 #' 
 #' @export
@@ -171,6 +189,15 @@ cor_upset <- function(ob, study, ...) {
 
 #' @export
 cor_upset.cmicroRNA <- function(ob, study, ...) {
+    # stop if one set of microRNAs
+    mir <- ob$microRNA
+    if(length(mir) == 1) {
+        stop(
+            paste('ob contains data for one microRNA.',
+                  'upset plot is used to compare at least two sets.'
+            )
+        )
+    }
     # check the validity of the input study
     studies <- ob$studies
     
@@ -182,12 +209,11 @@ cor_upset.cmicroRNA <- function(ob, study, ...) {
         study <- studies[[1]]
     }
     
+    # reshape data
     dat <- ob$corr[[study]]
-    
-    # make a binary data.frame
-    dat <- dat %>%
-        mutate_at(vars(2:ncol(dat)),
-                  function(x) x <- ifelse(is.na(x), 0, 1))
+    dat <- apply(dat, 2, function(x) ifelse(is.na(x), 0, 1))
+    dat <- cbind(feature = rownames(dat), as.data.frame(dat))
+    rownames(dat) <- NULL
     
     # generate plot
     upset(dat, ...)
@@ -195,6 +221,16 @@ cor_upset.cmicroRNA <- function(ob, study, ...) {
 
 #' @export
 cor_upset.cTF <- function(ob, study, ...) {
+    # stop if one set of TF
+    tf <- ob$TF
+    if(length(tf) == 1) {
+        stop(
+            paste('ob contains data for one TF.',
+                  'upset plot is used to compare at least two sets.'
+            )
+        )
+    }
+    
     # check the validity of the input study
     studies <- ob$studies
     
@@ -206,12 +242,11 @@ cor_upset.cTF <- function(ob, study, ...) {
         study <- studies[[1]]
     }
     
+    # reshape data
     dat <- ob$corr[[study]]
-    
-    # make a binary data.frame
-    dat <- dat %>%
-        mutate_at(vars(2:ncol(dat)),
-                  function(x) x <- ifelse(is.na(x), 0, 1))
+    dat <- apply(dat, 2, function(x) ifelse(is.na(x), 0, 1))
+    dat <- cbind(feature = rownames(dat), as.data.frame(dat))
+    rownames(dat) <- NULL
     
     # generate plot
     upset(dat, ...)
@@ -256,7 +291,7 @@ cor_hist.cmicroRNA <- function(ob, study, ...) {
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
     # generate plot
-    dat <- unlist(dat[, -1])
+    dat <- dat$cor
     hist(dat, ...)
 }
 
@@ -266,7 +301,7 @@ cor_hist.cTF <- function(ob, study, ...) {
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
     # generate plot
-    dat <- unlist(dat[, -1])
+    dat <- dat$cor
     hist(dat, ...)
 }
 
@@ -280,13 +315,9 @@ cor_hist.cTF <- function(ob, study, ...) {
 #' @return An \code{\link{ggridges}} plot object
 #' 
 #' @examples 
-#' # load required libraries
-#' library(RSQLite)
-#' library(cRegulome)
-#' 
 #' # locate the testset file and connect
 #' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-#' conn <- dbConnect(SQLite(), fl)
+#' conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 #' 
 #' # enter a custom query with different arguments
 #' dat <- get_mir(conn,
@@ -299,9 +330,6 @@ cor_hist.cTF <- function(ob, study, ...) {
 #' # print object
 #' cor_joy(cmir)
 #' 
-#' @importFrom magrittr %>%
-#' @importFrom tidyr gather
-#' @importFrom stats na.omit
 #' @importFrom ggridges geom_density_ridges
 #' @import ggplot2 
 #' 
@@ -316,8 +344,7 @@ cor_joy.cmicroRNA <- function(ob, study, ...) {
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
     # generate plot
-    gg <- dat %>%
-        ggplot(aes_string(x = 'cor',
+    gg <- ggplot(dat, aes_string(x = 'cor',
                           y = 'mirna_base')) +
         geom_density_ridges() +
         theme_light()
@@ -331,12 +358,10 @@ cor_joy.cTF <- function(ob, study, ...) {
     dat <- cor_prep(ob, study = study, add_dir = FALSE, add_corr = FALSE)
     
     # generate plot
-    gg <- dat %>%
-        ggplot(aes_string(x = 'cor',
+    gg <- ggplot(dat, aes_string(x = 'cor',
                           y = 'tf')) +
         geom_density_ridges() +
         theme_light()
     
     return(gg)
 }
-s

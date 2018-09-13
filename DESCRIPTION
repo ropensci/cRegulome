@@ -23,24 +23,18 @@ Imports: DBI,
     RSQLite,
     UpSetR,
     VennDiagram,
-    magrittr,
-    dplyr,
     ggplot2,
     ggridges,
-    tidyr,
-    reshape2,
-    purrr,
     grid,
     R.utils,
-    AnnotationDbi,
-    org.Hs.eg.db,
-    clusterProfiler
+    igraph
 VignetteBuilder: knitr
 Suggests: knitr, 
     rmarkdown, 
     testthat,
     covr,
-    dbplyr,
-    igraph,
-    readxl
+    readxl,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    clusterProfiler
     

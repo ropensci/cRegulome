@@ -8,7 +8,7 @@ get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 
-\code{\link[RSQLite]{dbConnect}}}
+\code{\link[DBI]{dbConnect}}}
 
 \item{mir}{A required \code{character} vector of the microRNAs of interest.
 These are the miRBase ID which are the official identifiers of the

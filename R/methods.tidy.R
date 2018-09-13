@@ -60,6 +60,7 @@ cor_tidy.cmicroRNA <- function(ob) {
     # order the columns and remove row.names
     dat <- ll[, c('mirna_base', 'feature', 'cor', 'study')]
     row.names(dat) <- NULL
+    dat <- dat[!is.na(dat$cor),]
     
     # return data.frame
     return(dat)
@@ -95,6 +96,7 @@ cor_tidy.cTF <- function(ob) {
     # order the columns and remove row.names
     dat <- ll[, c('tf', 'feature', 'cor', 'study')]
     row.names(dat) <- NULL
+    dat <- dat[!is.na(dat$cor),]
     
     # return data.frame
     return(dat)
@@ -129,7 +131,6 @@ cor_tidy.cTF <- function(ob) {
 #' # print object
 #' cor_igraph(cmir)
 #' 
-#' @importFrom reshape2 melt
 #' @importFrom igraph graph_from_data_frame
 #' 
 #' @export
@@ -205,6 +206,8 @@ cor_igraph.cTF <- function(ob) {
 }
 
 #' Prepare correlation data for plotting
+#' 
+#' Not meant to be called direclty by the user.
 #'
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
 #' calling \link{cmicroRNA} or \link{cTF}.
@@ -215,7 +218,7 @@ cor_igraph.cTF <- function(ob) {
 #' @param add_dir A \code{logical} default TRUE for whether to add a column
 #' called Direction that has the direction of the correlation; positive or 
 #' negative.
-#' @param add_cor A \code{logical} default TRUE for whether to add a colum
+#' @param add_corr A \code{logical} default TRUE for whether to add a colum
 #' called Correlation that has the absolute value of the correlation
 #'
 #' @return A \code{data.frame}
@@ -236,6 +239,7 @@ cor_prep <- function(ob, study, add_dir = TRUE, add_corr = TRUE) {
     # prepare data
     dat <- cor_tidy(ob)
     dat <- dat[dat$study == study,]
+    dat <- dat[!is.na(dat$cor),]
     
     # create correlation and direction variables
     dat['Correlation'] <- abs(dat$cor)
@@ -243,6 +247,7 @@ cor_prep <- function(ob, study, add_dir = TRUE, add_corr = TRUE) {
     
     return(dat)
 }
+
 #' @export
 print.cmicroRNA <- function(x, ...) {
     p <- paste(

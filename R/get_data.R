@@ -106,7 +106,7 @@ get_db <- function(test = FALSE, destfile, ...) {
 #'         min_abs_cor = .3,
 #'         max_num = 5)
 #' 
-#' @importFrom RSQLite dbListFields
+#' @importFrom DBI dbListFields
 #' 
 #' @export
 get_mir <- function(conn, mir, study, min_abs_cor, max_num,
@@ -119,12 +119,13 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
         tf_id <- as.character(mir)
     }
     
-    if(missing(study)) {
-        studies <- dbListFields(conn, table)[-1:-2]
-    } else if(!is.character(study)){
-        stop("Study should be a character vector")
+    if(!missing(study)) {
+        if(!is.character(study)) {
+            stop("Study should be a character vector.")
+        }
+        study <- as.character(study)
     } else {
-        studies <- as.character(study)
+        study <- dbListFields(conn, 'cor_mir')[-1:-2]
     }
     
     if(!missing(min_abs_cor)) {
@@ -166,6 +167,9 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
     ll <- unlist(ll1, recursive = FALSE)
     dat <- do.call('rbind', ll)
     
+    # return cor to the -1:1 range
+    dat$cor <- dat$cor/100
+    
     # return dat
     return(dat)
 }
@@ -194,9 +198,11 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
 #' fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
 #' conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 #' 
+#' \dontrun{
 #' # get transcription factors correlations in all studies
 #' get_tf(conn,
 #'         tf = 'LEF1')
+#' }
 #' 
 #' # get correlations in a particular study
 #' get_tf(conn,
@@ -210,7 +216,7 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
 #'        min_abs_cor = .3,
 #'        max_num = 5)
 #' 
-#' @importFrom RSQLite dbListFields
+#' @importFrom DBI dbListFields
 #' 
 #' @export
 get_tf <- function(conn, tf, study, min_abs_cor, max_num,
@@ -223,12 +229,13 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
         tf_id <- as.character(tf)
     }
     
-    if(missing(study)) {
-        studies <- dbListFields(conn, table)[-1:-2]
-    } else if(!is.character(study)){
-        stop("Study should be a character vector")
+    if(!missing(study)) {
+        if(!is.character(study)) {
+            stop("Study should be a character vector.")
+        }
+        study <- as.character(study)
     } else {
-        studies <- as.character(study)
+        study <- dbListFields(conn, 'cor_tf')[-1:-2]
     }
     
     if(!missing(min_abs_cor)) {
@@ -264,7 +271,7 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
                                study = study[s],
                                stat,
                                type = 'tf')
-            ll2[[s]] <- df
+                ll2[[s]] <- df
         }
         ll1[[m]] <- ll2
     }
@@ -273,11 +280,16 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
     ll <- unlist(ll1, recursive = FALSE)
     dat <- do.call('rbind', ll)
     
+    # return cor to the -1:1 range
+    dat$cor <- dat$cor/100
+    
     # return dat
     return(dat)
 }
 
 #' Make A SQL statment
+#' 
+#' Not meant to be called direclty by the user.
 #'
 #' @param reg A \code{character} vector of one or more regulator ID.
 #' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
@@ -295,14 +307,14 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
 #' columns and tables names.
 #' 
 #' @examples 
-#' stat_make(mir = 'hsa-let-7g',
+#' stat_make(reg = 'hsa-let-7g',
 #'           study = 'STES')
 #'           
-#' stat_make(mir = 'hsa-let-7g',
+#' stat_make(reg = 'hsa-let-7g',
 #'           study = 'STES',
 #'           min_abs_cor = .3)
 #'           
-#' stat_make(mir = 'hsa-let-7g',
+#' stat_make(reg = 'hsa-let-7g',
 #'           study = 'STES',
 #'           min_abs_cor = .3,
 #'           max_num = 5)
@@ -361,7 +373,7 @@ stat_make <- function(reg, study, min_abs_cor, max_num, targets_only = FALSE,
     ## minimum value
     if(!missing(min_abs_cor)) {
         fltr1 <- paste0(
-            'AND ', 'ABS(', cor_tab, '.', study, ' * 100)', ' > ', abs(min_abs_cor) * 100
+            'AND ', 'ABS(', cor_tab, '.', study, ')', ' > ', abs(min_abs_cor) * 100
         )
         main <- paste(main, fltr1)
     }
@@ -380,9 +392,11 @@ stat_make <- function(reg, study, min_abs_cor, max_num, targets_only = FALSE,
 }
 
 #' Collect data from SQLite database
+#' 
+#' Not meant to be called direclty by the user.
 #'
 #' @param conn A connection such as this returned by 
-#' \code{\link[RSQLite]{dbConnect}}
+#' \code{\link[DBI]{dbConnect}}
 #' @inheritParams stat_make
 #' @param stat A string such as this returned by \code{\link{stat_make}}
 #'
@@ -401,11 +415,13 @@ stat_collect <- function(conn, study, stat, type = 'mir') {
     # get query
     df <- dbGetQuery(conn, stat)
     
-    # add study column
-    df$study <- study
-    
-    # rename columns
-    names(df) <- c(id, 'feature', 'cor', 'study')
+    if(nrow(df) > 0) {
+        # add study column
+        df$study <- study
+        
+        # rename columns
+        names(df) <- c(id, 'feature', 'cor', 'study')
+    } 
     
     # return data.frame
     return(df)

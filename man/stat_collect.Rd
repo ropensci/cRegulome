@@ -8,7 +8,7 @@ stat_collect(conn, study, stat, type = "mir")
 }
 \arguments{
 \item{conn}{A connection such as this returned by 
-\code{\link[RSQLite]{dbConnect}}}
+\code{\link[DBI]{dbConnect}}}
 
 \item{study}{A \code{character} vector of The Cancer Genome Atlas (TCGA)
 study identifiers. To view the available studies in TCGA project,
@@ -24,5 +24,5 @@ columns and tables names.}
 A data.frame
 }
 \description{
-Collect data from SQLite database
+Not meant to be called direclty by the user.
 }

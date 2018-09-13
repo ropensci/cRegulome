@@ -32,17 +32,17 @@ columns and tables names.}
 A character string
 }
 \description{
-Make A SQL statment
+Not meant to be called direclty by the user.
 }
 \examples{
-stat_make(mir = 'hsa-let-7g',
+stat_make(reg = 'hsa-let-7g',
           study = 'STES')
           
-stat_make(mir = 'hsa-let-7g',
+stat_make(reg = 'hsa-let-7g',
           study = 'STES',
           min_abs_cor = .3)
           
-stat_make(mir = 'hsa-let-7g',
+stat_make(reg = 'hsa-let-7g',
           study = 'STES',
           min_abs_cor = .3,
           max_num = 5)
