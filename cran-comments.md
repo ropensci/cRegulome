@@ -27,3 +27,11 @@ This is a new release, so there are no reverse dependencies.
 ## Fixed
 
 * Fix installing in default library tree
+
+--- 
+
+## v0.2.0
+
+* Submission v0.2.0
+* Reduced code dependencies
+* Improved code performance

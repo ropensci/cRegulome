@@ -11,3 +11,8 @@
 # cRegulome 0.1.1
 
     - fix installing in default library tree
+
+# cRegulome 0.2.0
+    
+    - Reduced code dependencies
+    - Improved code performance
