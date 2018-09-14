@@ -1,6 +1,6 @@
 Package: cRegulome
 Type: Package
-Version: 0.1.1
+Version: 0.2.0
 Title: Obtain and Visualize Regulome-Gene Expression Correlations in Cancer
 Description: Builds a 'SQLite' database file of pre-calculated transcription 
     factor/microRNA-gene correlations (co-expression) in cancer from the 
@@ -23,24 +23,18 @@ Imports: DBI,
     RSQLite,
     UpSetR,
     VennDiagram,
-    magrittr,
-    dplyr,
     ggplot2,
     ggridges,
-    tidyr,
-    reshape2,
-    purrr,
     grid,
     R.utils,
-    AnnotationDbi,
-    org.Hs.eg.db,
-    clusterProfiler
+    igraph
 VignetteBuilder: knitr
 Suggests: knitr, 
     rmarkdown, 
     testthat,
     covr,
-    dbplyr,
-    igraph,
-    readxl
+    readxl,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    clusterProfiler
     

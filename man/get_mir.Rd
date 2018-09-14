@@ -4,11 +4,11 @@
 \alias{get_mir}
 \title{Get microRNA correlations from cRegulome.db}
 \usage{
-get_mir(conn, mir, study = NULL, min_abs_cor = NULL, max_num = NULL,
-  targets_only = FALSE)
+get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE)
 }
 \arguments{
-\item{conn}{A connection to the database file by \code{\link[DBI]{dbConnect}}}
+\item{conn}{A connection such as this returned by 
+\code{\link[DBI]{dbConnect}}}
 
 \item{mir}{A required \code{character} vector of the microRNAs of interest.
 These are the miRBase ID which are the official identifiers of the
@@ -43,13 +43,9 @@ returns an error if the database file \code{cRegulome.db} is not in the
 working directory.
 }
 \examples{
-# load required libraries
-library(RSQLite)
-library(cRegulome)
-
 # locate the testset file and connect
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-conn <- dbConnect(SQLite(), fl)
+conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 
 # get microRNA correlations in all studies
 get_mir(conn,
@@ -66,5 +62,5 @@ get_mir(conn,
         study = 'STES',
         min_abs_cor = .3,
         max_num = 5)
-        
+
 }

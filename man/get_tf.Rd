@@ -4,11 +4,11 @@
 \alias{get_tf}
 \title{Get transcription factor correlations from cRegulome.db}
 \usage{
-get_tf(conn, tf, study = NULL, min_abs_cor = NULL, max_num = NULL,
-  targets_only = FALSE)
+get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE)
 }
 \arguments{
-\item{conn}{A connection to the database file by \code{\link[DBI]{dbConnect}}}
+\item{conn}{A connection such as this returned by 
+\code{\link[DBI]{dbConnect}}}
 
 \item{tf}{A required \code{character} vector of the transcription factor of
 interest. These are the HUGO official gene symbols of the genes contains the
@@ -19,16 +19,15 @@ study identifiers. To view the available studies in TCGA project,
 \url{https://tcga-data.nci.nih.gov/docs/publications/tcga}. When left to
 default \code{NULL} all available studies will be included.}
 
-\item{min_abs_cor}{A \code{numeric}, an absolute correlation minimum between
-0 and 1 for each \code{tf}.}
+\item{min_abs_cor}{A \code{numeric}, an absolute correlation minimum between 0
+and 1 for each \code{mir}.}
 
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
-for each \code{tf} in each \code{study}.}
+for each \code{mir} in each \code{study}.}
 
 \item{targets_only}{A \code{logical}, default \code{FALSE}. When
-\code{TRUE}, \code{features} will be the targets of the transcription
-factors as identified in the Cistrome Cancer,
-\url{http://cistrome.org/CistromeCancer/}}
+\code{TRUE}, \code{features} will be the microRNA targets as defined in
+the package targetscan.Hs.eg.db.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{tf} is the official
@@ -44,28 +43,26 @@ The function returns an error if the database file \code{cRegulome.db} is
 not in the working directory.
 }
 \examples{
-# load required libraries
-library(RSQLite)
-library(cRegulome)
-
 # locate the testset file and connect
 fl <- system.file('extdata', 'cRegulome.db', package = 'cRegulome')
-conn <- dbConnect(SQLite(), fl)
+conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 
+\dontrun{
 # get transcription factors correlations in all studies
 get_tf(conn,
         tf = 'LEF1')
+}
 
 # get correlations in a particular study
 get_tf(conn,
        tf = 'LEF1',
-       study = 'STES*')
+       study = '"STES*"')
 
 # enter a custom query with different arguments
 get_tf(conn,
        tf = 'LEF1',
-       study = 'STES*',
+       study = '"STES*"',
        min_abs_cor = .3,
        max_num = 5)
-       
+
 }
