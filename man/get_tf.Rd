@@ -4,7 +4,8 @@
 \alias{get_tf}
 \title{Get transcription factor correlations from cRegulome.db}
 \usage{
-get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE)
+get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE,
+  targets)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 
@@ -25,9 +26,10 @@ and 1 for each \code{mir}.}
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
 for each \code{mir} in each \code{study}.}
 
-\item{targets_only}{A \code{logical}, default \code{FALSE}. When
-\code{TRUE}, \code{features} will be the microRNA targets as defined in
-the package targetscan.Hs.eg.db.}
+\item{targets_only}{A \code{logical} whether restrict the output to 
+the recognized target features.}
+
+\item{targets}{A \code{character} vector of gene symbol names.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{tf} is the official
@@ -56,12 +58,12 @@ get_tf(conn,
 # get correlations in a particular study
 get_tf(conn,
        tf = 'LEF1',
-       study = '"STES*"')
+       study = 'STES')
 
 # enter a custom query with different arguments
 get_tf(conn,
        tf = 'LEF1',
-       study = '"STES*"',
+       study = 'STES',
        min_abs_cor = .3,
        max_num = 5)
 

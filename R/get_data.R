@@ -41,9 +41,9 @@
 get_db <- function(test = FALSE, destfile, ...) {
     # db file url
     if(test == TRUE) {
-        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/10330329/test.db.gz'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/13877372/test.db.gz'
     } else {
-        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/9537385/cRegulome.db.gz'
+        url <- 'https://s3-eu-west-1.amazonaws.com/pfigshare-u-files/13891013/cRegulome.db.gz'
     }
 
     # check url exists
@@ -77,6 +77,8 @@ get_db <- function(test = FALSE, destfile, ...) {
 #' @param mir A required \code{character} vector of the microRNAs of interest.
 #' These are the miRBase ID which are the official identifiers of the
 #' widely used miRBase database, \url{http://www.mirbase.org/}.
+#' @param targets_only A \code{logical} whether restrict the output to 
+#' the recognized target features.
 #' @inheritParams stat_make
 #' @inheritParams stat_collect
 #'
@@ -107,16 +109,17 @@ get_db <- function(test = FALSE, destfile, ...) {
 #'         max_num = 5)
 #' 
 #' @importFrom DBI dbListFields
+#' @importFrom stats na.omit
 #' 
 #' @export
 get_mir <- function(conn, mir, study, min_abs_cor, max_num,
-                    targets_only = FALSE) {
+                    targets_only = FALSE, targets) {
     if(missing(mir)) {
         stop("User should provide at least one microRNA ID")
     } else if(!is.character(mir)) {
         stop("mir should be a character vector")
     } else {
-        tf_id <- as.character(mir)
+        mir <- as.character(mir)
     }
     
     if(!missing(study)) {
@@ -146,20 +149,68 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
     }
     
     # construct and excute query
+    # but first, empty lists
     ll1 <- list()
     ll2 <- list()
     
+    # loop over tf and studies
+    # for each: identify targets when requested
+    # and construct and excute the query
     for(m in 1:length(mir)) {
         for(s in 1:length(study)) {
-             stat <- stat_make(mir[m],
-                              study = study[s],
-                              min_abs_cor = min_abs_cor,
-                              max_num = max_num)
-             df <- stat_collect(conn,
-                                study = study[s],
-                                stat)
-             ll2[[s]] <- df
+            # when targets are neither requested provided
+            if(!targets_only & missing(targets)) {
+                # construct query statment
+                stat <- stat_make(mir[m],
+                                  study = study[s],
+                                  min_abs_cor = min_abs_cor,
+                                  max_num = max_num)
+                
+                # excute and collect data
+                df <- stat_collect(conn,
+                                   study = study[s],
+                                   stat)
+            } else {
+                # targets only request
+                if(targets_only) {
+                    # construct a query to extract targets
+                    tars_stat <- stat_make_targets(reg = mir[m])
+                    
+                    # excute query and collect targets
+                    tars <- stat_collect_targets(conn,
+                                                 stat = tars_stat)
+                } else {
+                    # targets are not requested but provided
+                    # essentially a filter of target features
+                    tars <- targets
+                }
+                
+                # when targets are requested and feature names are provided
+                # only the intersect is returned
+                if(targets_only & !missing(targets)) {
+                    tars <- intersect(tars, targets)
+                }
+                
+                # construct a query statment, with targets
+                stat <- stat_make(mir[m],
+                                  study = study[s],
+                                  min_abs_cor = min_abs_cor,
+                                  max_num = max_num,
+                                  targets = tars,
+                                  type = 'mir')
+                
+                # excute and collect the output
+                df <- stat_collect(conn,
+                                   study = study[s],
+                                   stat,
+                                   type = 'mir')
+            }
+            
+            # make a list of returned data.frame outputs
+            ll2[[s]] <- df
         }
+        
+        # make a list of lists of the returned list output
         ll1[[m]] <- ll2
     }
     
@@ -169,6 +220,9 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
     
     # return cor to the -1:1 range
     dat$cor <- dat$cor/100
+    
+    # remove na
+    dat <- na.omit(dat)
     
     # return dat
     return(dat)
@@ -185,6 +239,7 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
 #' @param tf A required \code{character} vector of the transcription factor of
 #' interest. These are the HUGO official gene symbols of the genes contains the
 #' transcription factor.
+#' @inheritParams get_mir
 #' @inheritParams stat_make
 #' @inheritParams stat_collect
 #'
@@ -207,20 +262,21 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
 #' # get correlations in a particular study
 #' get_tf(conn,
 #'        tf = 'LEF1',
-#'        study = '"STES*"')
+#'        study = 'STES')
 #' 
 #' # enter a custom query with different arguments
 #' get_tf(conn,
 #'        tf = 'LEF1',
-#'        study = '"STES*"',
+#'        study = 'STES',
 #'        min_abs_cor = .3,
 #'        max_num = 5)
 #' 
 #' @importFrom DBI dbListFields
+#' @importFrom stats na.omit
 #' 
 #' @export
 get_tf <- function(conn, tf, study, min_abs_cor, max_num,
-                    targets_only = FALSE) {
+                    targets_only = FALSE, targets) {
     if(missing(tf)) {
         stop("User should provide at least one TF ID")
     } else if(!is.character(tf)) {
@@ -257,22 +313,72 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
     }
     
     # construct and excute query
+    # but first, empty lists
     ll1 <- list()
     ll2 <- list()
     
+    # loop over tf and studies
+    # for each: identify targets when requested
+    # and construct and excute the query
     for(m in 1:length(tf)) {
         for(s in 1:length(study)) {
-            stat <- stat_make(tf[m],
-                              study = study[s],
-                              min_abs_cor = min_abs_cor,
-                              max_num = max_num,
-                              type = 'tf')
-            df <- stat_collect(conn,
-                               study = study[s],
-                               stat,
-                               type = 'tf')
-                ll2[[s]] <- df
+            # when targets are neither requested provided
+            if(!targets_only & missing(targets)) {
+                # construct query statment
+                stat <- stat_make(tf[m],
+                                  study = study[s],
+                                  min_abs_cor = min_abs_cor,
+                                  max_num = max_num,
+                                  type = 'tf')
+                
+                # excute and collect data
+                df <- stat_collect(conn,
+                                   study = study[s],
+                                   stat,
+                                   type = 'tf')
+            } else {
+                # targets only request
+                if(targets_only) {
+                    # construct a query to extract targets
+                    tars_stat <- stat_make_targets(reg = tf[m],
+                                                   study = study[s],
+                                                   type = 'tf')
+                    
+                    # excute query and collect targets
+                    tars <- stat_collect_targets(conn,
+                                                 stat = tars_stat)
+                } else {
+                    # targets are not requested but provided
+                    # essentially a filter of target features
+                    tars <- targets
+                }
+                
+                # when targets are requested and feature names are provided
+                # only the intersect is returned
+                if(targets_only & !missing(targets)) {
+                    tars <- intersect(tars, targets)
+                }
+                
+                # construct a query statment, with targets
+                stat <- stat_make(tf[m],
+                                  study = study[s],
+                                  min_abs_cor = min_abs_cor,
+                                  max_num = max_num,
+                                  targets = tars,
+                                  type = 'tf')
+                
+                # excute and collect the output
+                df <- stat_collect(conn,
+                                   study = study[s],
+                                   stat,
+                                   type = 'tf')
+            }
+            
+            # make a list of returned data.frame outputs
+            ll2[[s]] <- df
         }
+        
+        # make a list of lists of the returned list output
         ll1[[m]] <- ll2
     }
     
@@ -282,6 +388,9 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
     
     # return cor to the -1:1 range
     dat$cor <- dat$cor/100
+    
+    # remove na
+    dat <- na.omit(dat)
     
     # return dat
     return(dat)
@@ -300,9 +409,7 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
 #' and 1 for each \code{mir}.
 #' @param max_num An \code{integer}, maximum number of \code{features} to show
 #' for each \code{mir} in each \code{study}.
-#' @param targets_only A \code{logical}, default \code{FALSE}. When
-#' \code{TRUE}, \code{features} will be the microRNA targets as defined in
-#' the package targetscan.Hs.eg.db.
+#' @param targets A \code{character} vector of gene symbol names.
 #' @param type A \code{character} string. Either 'mir' of 'tf'. Used to define
 #' columns and tables names.
 #' 
@@ -322,7 +429,7 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
 #' @return A character string
 #' 
 #' @export
-stat_make <- function(reg, study, min_abs_cor, max_num, targets_only = FALSE,
+stat_make <- function(reg, study, min_abs_cor, max_num, targets,
                       type = 'mir') {
     # define columns and tables based on type
     # column name
@@ -352,22 +459,19 @@ stat_make <- function(reg, study, min_abs_cor, max_num, targets_only = FALSE,
         ' FROM ', cor_tab
     )
     
-    ## select targets only
-    if(targets_only) {
-        join <- paste0(
-            'INNER JOIN ',
-            targets_tab, ' ON ',
-            cor_tab, '.', id, ' = ', targets_tab, '.', id,
-            ' AND ',
-            cor_tab, '.feature', ' = ', targets_tab, '.feature'  
-        )
-        main <- paste(main, join)
-    }
-    
     ## filter one regulator
     whr <- paste0(
         'WHERE ', cor_tab, '.', id, '=', '"', reg, '"'
     )
+    ## select targets only
+    if(!missing(targets)) {
+        whr2 <- paste0(
+            'AND ', cor_tab, '.feature', ' IN ',
+            '("', paste(targets, collapse = '", "'), '")'
+        )
+        whr <- paste(whr, whr2)
+    }
+    
     main <- paste(main, whr)
     
     ## minimum value
@@ -425,4 +529,43 @@ stat_collect <- function(conn, study, stat, type = 'mir') {
     
     # return data.frame
     return(df)
+}
+
+#' Make A SQL statment to extract target features
+#' 
+#' Not meant to be called direclty by the user.
+#'
+#' @inheritParams stat_make
+#' 
+#' @return A character string
+#' 
+#' @export
+stat_make_targets <- function(reg, study, type = 'mir') {
+    if(type == 'tf') {
+        paste0('SELECT feature FROM targets_tf',
+               ' WHERE tf = ', '"', reg, '"',
+               ' AND study=', '"', study, '"')
+    } else {
+        paste0('SELECT feature FROM targets_mir',
+               ' WHERE mirna_base = ', '"', reg, '"')
+    }
+}
+
+#' Collect target features from SQLite database
+#' 
+#' Not meant to be called direclty by the user.
+#'
+#' @inheritParams stat_collect
+#'
+#' @return A \code{character} vector
+#' 
+#' @importFrom RSQLite dbGetQuery
+#' 
+#' @export
+stat_collect_targets <- function(conn, stat) {
+    # get query
+    tars <- unlist(dbGetQuery(conn, stat), use.names = FALSE)
+    
+    # return a character vector
+    return(tars)
 }

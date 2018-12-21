@@ -3,7 +3,7 @@ require(dplyr)
 library(cRegulome)
 library(reshape2)
 
-db <- dbConnect(SQLite(), './cRegulome.db')
+db <- dbConnect(SQLite(), '../cregart/cRegulome.db')
 mirna <- c("hsa-miR-18b*", "hsa-miR-409-3p", "hsa-let-7g", "hsa-miR-30c", "hsa-miR-30a", "hsa-miR-150", "hsa-miR-1237",
            "hsa-miR-200a", "hsa-let-7f", "hsa-miR-92b", "hsa-miR-497", "hsa-miR-99a", "hsa-miR-1247", "hsa-miR-200b*",
            "hsa-miR-940", "hsa-miR-99b", "hsa-miR-30b", "hsa-miR-1227", "hsa-miR-501-3p", "hsa-miR-324-3p", "hsa-miR-574-5p",
@@ -31,15 +31,18 @@ tf_id <- c("ETV4", "LEF1", "MYB", "MYBL2", "TFAP2A")
 
 cor_tf <- get_tf(db,
                  tf = tf_id,
-                 study = '"STES*"',
+                 study = 'STES',
                  targets_only = TRUE)
+
 cor_tf <- mutate(cor_tf, cor = cor * 100) %>%
     dcast(tf + feature ~ study, value.var = 'cor')
-targets_tf <- select(cor_tf, tf, feature) %>% unique()
+targets_tf <- select(cor_tf, tf, feature) %>%
+    unique() %>%
+    mutate(study = 'STES')
 
 dbDisconnect(db)
 
-db <- dbConnect(SQLite(), 'test.db')
+db <- dbConnect(SQLite(), 'test2.db')
 dbWriteTable(db, 'cor_mir', cor_mir, overwrite = TRUE)
 dbWriteTable(db, 'targets_mir', targets_mir, overwrite = TRUE)
 dbWriteTable(db, 'cor_tf', cor_tf, overwrite = TRUE)

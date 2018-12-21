@@ -37,7 +37,7 @@ test_that('objects cmicroRNA are constructed from multiple queries and filters',
 test_that('objects cTF are constructed properly', {
     dat <- get_tf(conn,
                   tf = 'LEF1',
-                  study = '"STES*"',
+                  study = 'STES',
                   min_abs_cor = .3,
                   max_num = 5)
     ctf <- cTF(dat)
@@ -45,7 +45,7 @@ test_that('objects cTF are constructed properly', {
     expect_s3_class(ctf, 'cTF')
     expect_identical(names(ctf), c("TF", "features", "studies", "corr"))
     expect_identical(ctf$TF, 'LEF1')
-    expect_identical(ctf$studies, '"STES*"')
+    expect_identical(ctf$studies, 'STES')
     expect_equal(length(ctf$features), 5)
     expect_true(min(abs(ctf$corr[[1]][, 1])) > .3)
 })
@@ -54,7 +54,7 @@ test_that('cTF works with more than two tfs', {
     tf = c("TFAP2A", "ETV4", "LEF1", "MYB", "MYBL2")
     dat <- get_tf(conn,
                  tf  = tf,
-                 study = '"STES*"')
+                 study = 'STES')
     ctf <- cTF(dat)
     expect_equal(class(ctf), 'cTF')
     expect_true(all(colnames(ctf$corr[[1]]) %in% tf))

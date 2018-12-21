@@ -16,7 +16,7 @@ cmir <- cmicroRNA(dat)
 # enter a custom query with different arguments
 dat <- get_tf(conn, 
               tf = c('LEF1', 'MYB'),
-              study = '"STES*"',
+              study = 'STES',
               max_num = 5)
 
 # make a cTF object   
@@ -74,7 +74,7 @@ cmir <- cmicroRNA(dat)
 # enter a custom query with different arguments
 dat <- get_tf(conn, 
               tf = 'MYB',
-              study = '"STES*"',
+              study = 'STES',
               max_num = 5)
 
 # make a cTF object   
