@@ -33,7 +33,7 @@ test_that('cor_tidy works with mulitple queries', {
 test_that('tidy output a data.frame identical to output of get_tf', {
     dat <- get_tf(conn,
                   tf = 'LEF1',
-                  study = '"STES*"',
+                  study = 'STES',
                   min_abs_cor = .3,
                   max_num = 5)
     
@@ -58,7 +58,7 @@ test_that("cor_igraph retruns a the proper object", {
     
     dat <- get_tf(conn,
                   tf = 'LEF1',
-                  study = '"STES*"',
+                  study = 'STES',
                   min_abs_cor = .3,
                   max_num = 5)
     
@@ -70,16 +70,16 @@ test_that("cor_igraph retruns a the proper object", {
 test_that('cor_prep works', {
     dat <- get_tf(conn,
                   tf = 'LEF1',
-                  study = '"STES*"',
+                  study = 'STES',
                   min_abs_cor = .3,
                   max_num = 5)
     
     ctf <- cTF(dat)
-    df <- cor_prep(ctf, '"STES*"')
+    df <- cor_prep(ctf, 'STES')
     expect_true(is.data.frame(df))
     expect_true('Direction' %in% names(df))
     expect_true('Correlation' %in% names(df))
-    expect_equal(unique(df$study), '"STES*"')
+    expect_equal(unique(df$study), 'STES')
 })
 
 test_that('cor_prep works with multiple queries', {

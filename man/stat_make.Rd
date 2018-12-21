@@ -4,8 +4,7 @@
 \alias{stat_make}
 \title{Make A SQL statment}
 \usage{
-stat_make(reg, study, min_abs_cor, max_num, targets_only = FALSE,
-  type = "mir")
+stat_make(reg, study, min_abs_cor, max_num, targets, type = "mir")
 }
 \arguments{
 \item{reg}{A \code{character} vector of one or more regulator ID.}
@@ -21,9 +20,7 @@ and 1 for each \code{mir}.}
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
 for each \code{mir} in each \code{study}.}
 
-\item{targets_only}{A \code{logical}, default \code{FALSE}. When
-\code{TRUE}, \code{features} will be the microRNA targets as defined in
-the package targetscan.Hs.eg.db.}
+\item{targets}{A \code{character} vector of gene symbol names.}
 
 \item{type}{A \code{character} string. Either 'mir' of 'tf'. Used to define
 columns and tables names.}

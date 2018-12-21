@@ -4,7 +4,8 @@
 \alias{get_mir}
 \title{Get microRNA correlations from cRegulome.db}
 \usage{
-get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE)
+get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE,
+  targets)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 
@@ -25,9 +26,10 @@ and 1 for each \code{mir}.}
 \item{max_num}{An \code{integer}, maximum number of \code{features} to show
 for each \code{mir} in each \code{study}.}
 
-\item{targets_only}{A \code{logical}, default \code{FALSE}. When
-\code{TRUE}, \code{features} will be the microRNA targets as defined in
-the package targetscan.Hs.eg.db.}
+\item{targets_only}{A \code{logical} whether restrict the output to 
+the recognized target features.}
+
+\item{targets}{A \code{character} vector of gene symbol names.}
 }
 \value{
 A tidy \code{data.frame} of four columns. \code{mirna_base} is the

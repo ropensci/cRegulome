@@ -65,31 +65,19 @@ test_that('stat_make works with filters', {
     expect_equal(nrow(df), 5)
 })
 
-test_that('stat_make works with targets', {
-    stat <- stat_make('hsa-let-7g',
-                      study = 'STES',
-                      targets_only = TRUE)
-    expect_identical(
-        stat,
-        paste0('SELECT cor_mir.mirna_base, cor_mir.feature, cor_mir.STES FROM cor_mir',
-               ' INNER JOIN targets_mir ON cor_mir.mirna_base = targets_mir.mirna_base AND cor_mir.feature = targets_mir.feature',
-               ' WHERE cor_mir.mirna_base=\"hsa-let-7g\"')
-    )
-})
-
 test_that('stat_make works for tf', {
     stat <- stat_make('LEF1',
-                      study = '"STES*"',
+                      study = 'STES',
                       type = 'tf')
     expect_identical(
         stat,
-        'SELECT cor_tf.tf, cor_tf.feature, cor_tf."STES*" FROM cor_tf WHERE cor_tf.tf=\"LEF1\"')
+        'SELECT cor_tf.tf, cor_tf.feature, cor_tf.STES FROM cor_tf WHERE cor_tf.tf=\"LEF1\"')
     
     df <- RSQLite::dbGetQuery(conn, stat)
     
     expect_true(is.data.frame(df))
     expect_identical(unique(df$tf), 'LEF1')
-    expect_identical(names(df)[3], 'STES*')
+    expect_identical(names(df)[3], 'STES')
 })
 
 test_that("stat_collect works", {
@@ -104,22 +92,34 @@ test_that("stat_collect works", {
     expect_identical(unique(df$study), 'STES')
 })
 
-test_that('stat_collect works with targets', {
-    stat1 <- stat_make('hsa-mir-149',
-                       study = 'STES')
-    df1 <- stat_collect(conn, 'STES', stat1)
+test_that("stat_make_targets work", {
+    stat <- stat_make_targets(reg = 'LEF1',
+                              study = 'STES',
+                              type = 'tf')
+    expect_equal(stat, "SELECT feature FROM targets_tf WHERE tf = \"LEF1\" AND study=\"STES\"")
     
-    stat2 <- stat_make('hsa-mir-149',
-                       study = 'STES',
-                       targets_only = TRUE)
+    stat <- stat_make_targets(reg = 'hsa-let-7g',
+                              study = 'STES')
+    expect_equal(stat, "SELECT feature FROM targets_mir WHERE mirna_base = \"hsa-let-7g\"")
+})
+
+test_that("stat_collect_targets work", {
+    stat <- stat_make_targets(reg = 'hsa-let-7g',
+                              study = 'STES')
+    tars <- stat_collect_targets(conn, 
+                                 stat = stat)
     
-    df2 <- stat_collect(conn, 'STES', stat2)
+    expect_true(is.character(tars))
+    expect_true(length(tars) > 0)
     
-    targets <- RSQLite::dbGetQuery(conn, 'SELECT * FROM targets_mir WHERE mirna_base = \"hsa-mir-149\"')
+    stat <- stat_make_targets(reg = 'LEF1',
+                              study = 'STES',
+                              type = 'tf')
+    tars <- stat_collect_targets(conn, 
+                                 stat = stat)
     
-    expect_true(all(df2$feature %in% targets$feature))
-    # only apply when testing on full database file
-    #expect_false(all(df1$feature %in% targets$feature))
+    expect_true(is.character(tars))
+    expect_true(length(tars) > 0)
 })
 
 test_that('stat_collect returns df with nrow 0 when reg is not id db', {
@@ -130,7 +130,7 @@ test_that('stat_collect returns df with nrow 0 when reg is not id db', {
     expect_equal(nrow(df), 0)
     
     stat <- stat_make('AAA',
-                      study = '"STES*"',
+                      study = 'STES',
                       type = 'tf')
     df <- stat_collect(conn, 'STES', stat, type = 'tf')
     expect_true(is.data.frame(df))
@@ -198,6 +198,28 @@ test_that("get_mir returns skips mir that doesn't exist in db", {
     expect_true(!'AAA' %in% unique(df$mirna_base))
 })
 
+test_that('get_mir works with targets', {
+    df <- get_mir(conn, 
+                  mir = 'hsa-let-7g',
+                  study = 'STES',
+                  targets_only = TRUE)
+    
+    expect_true(is.data.frame(df))
+    expect_equal(ncol(df), 4)
+    expect_identical(unique(df$mirna_base), 'hsa-let-7g')
+    expect_identical(unique(df$study), 'STES')
+    
+    df <- get_mir(conn, 
+                  mir = 'hsa-let-7g',
+                  study = 'STES',
+                  targets = c('ABL2', 'ACTR10'))
+    
+    expect_true(is.data.frame(df))
+    expect_equal(ncol(df), 4)
+    expect_identical(unique(df$mirna_base), 'hsa-let-7g')
+    expect_identical(unique(df$study), 'STES')
+})
+
 test_that('get_mir handels errors', {
     expect_error(get_mir(conn))
     expect_error(get_mir(conn, list('hsa-let-7g')))
@@ -225,36 +247,36 @@ test_that('get_mir handels errors', {
 test_that('get_tf works', {
     df <- get_tf(conn, 
                  tf = 'LEF1',
-                 study = '"STES*"')
+                 study = 'STES')
     
     expect_true(is.data.frame(df))
     expect_equal(ncol(df), 4)
     expect_identical(unique(df$tf), 'LEF1')
-    expect_identical(unique(df$study), '"STES*"')
+    expect_identical(unique(df$study), 'STES')
 })
 
 test_that('get_tf works with multiple queries', {
     df <- get_tf(conn, 
                  tf = c('LEF1', 'MYB'),
-                 study = '"STES*"')
+                 study = 'STES')
     
     expect_true(is.data.frame(df))
     expect_equal(ncol(df), 4)
     expect_identical(unique(df$tf), c('LEF1', 'MYB'))
-    expect_identical(unique(df$study), '"STES*"')
+    expect_identical(unique(df$study), 'STES')
 })
 
 test_that("get_tf returns skips tf that doesn't exist in db", {
     df <- get_tf(conn, 
                  tf = 'AAA',
-                 study = '"STES*"')
+                 study = 'STES')
     
     expect_true(is.data.frame(df))
     expect_equal(nrow(df), 0)
     
     df <- get_tf(conn, 
                   tf = c('LEF1', 'AAA'),
-                  study = '"STES*"')
+                  study = 'STES')
     
     expect_true(is.data.frame(df))
     expect_true(!'AAA' %in% unique(df$mirna_base))
@@ -263,8 +285,30 @@ test_that("get_tf returns skips tf that doesn't exist in db", {
 test_that('get_tf works with more than two tfs', {
     df <- get_tf(conn,
                  tf = c("TFAP2A", "ETV4", "LEF1", "MYB", "MYBL2"),
-                 study = '"STES*"')
+                 study = 'STES')
     expect_true(is.data.frame(df))
+})
+
+test_that('get_tf works with targets', {
+    df <- get_tf(conn, 
+                 tf = 'LEF1',
+                 study = 'STES',
+                 targets_only = TRUE)
+    
+    expect_true(is.data.frame(df))
+    expect_equal(ncol(df), 4)
+    expect_identical(unique(df$tf), 'LEF1')
+    expect_identical(unique(df$study), 'STES')
+    
+    df <- get_tf(conn, 
+                 tf = 'LEF1',
+                 study = 'STES',
+                 targets = c('A2M', 'A4GALT'))
+    
+    expect_true(is.data.frame(df))
+    expect_equal(ncol(df), 4)
+    expect_identical(unique(df$tf), 'LEF1')
+    expect_identical(unique(df$study), 'STES')
 })
 
 test_that('get_tf handels errors', {
@@ -272,22 +316,22 @@ test_that('get_tf handels errors', {
     expect_error(get_tf(conn, list('LEF1')))
     expect_error(get_tf(conn, 
                         tf = 'LEF1',
-                        study = list('"STES*"')))
+                        study = list('STES')))
     expect_error(get_tf(conn, 
                          tf = 'LEF1',
-                         study = '"STES*"',
+                         study = 'STES',
                          min_abs_cor = '1'))
     expect_error(get_tf(conn, 
                          tf = 'LEF1',
-                         study = '"STES*"',
+                         study = 'STES',
                          min_abs_cor = 2))
     expect_error(get_tf(conn, 
                          tf = 'LEF1',
-                         study = '"STES*"',
+                         study = 'STES',
                          max_num = -1))
     expect_error(get_tf(conn, 
                         tf = 'LEF1',
-                        study = '"STES*"',
+                        study = 'STES',
                         max_num = '1'))
 })
 

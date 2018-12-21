@@ -26,7 +26,7 @@ conn <- RSQLite::dbConnect(RSQLite::SQLite(), fl)
 # enter a custom query with different arguments
 dat <- get_tf(conn,
               tf = 'LEF1',
-              study = '"STES*"',
+              study = 'STES',
               min_abs_cor = .3,
               max_num = 5)
 
