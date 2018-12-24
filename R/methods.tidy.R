@@ -165,8 +165,7 @@ cor_igraph.cmicroRNA <- function(ob) {
     
     # make graph
     g <- graph_from_data_frame(d = edgs,
-                               directed = FALSE,
-                               vrtcs)
+                               vertices = vrtcs)
     # return graph
     return(g)
 }
@@ -198,8 +197,7 @@ cor_igraph.cTF <- function(ob) {
     
     # make graph
     g <- graph_from_data_frame(d = edgs,
-                               directed = FALSE,
-                               vrtcs)
+                               vertices = vrtcs)
     
     # return graph
     return(g)
