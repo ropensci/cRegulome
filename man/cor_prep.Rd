@@ -19,12 +19,12 @@ default \code{NULL} all available studies will be included.}
 called Direction that has the direction of the correlation; positive or 
 negative.}
 
-\item{add_corr}{A \code{logical} default TRUE for whether to add a colum
+\item{add_corr}{A \code{logical} default TRUE for whether to add a column
 called Correlation that has the absolute value of the correlation}
 }
 \value{
 A \code{data.frame}
 }
 \description{
-Not meant to be called direclty by the user.
+Not meant to be called directly by the user.
 }

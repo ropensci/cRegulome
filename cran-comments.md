@@ -35,3 +35,9 @@ This is a new release, so there are no reverse dependencies.
 * Submission v0.2.0
 * Reduced code dependencies
 * Improved code performance
+
+## v0.3.0
+
+* Submission v0.3.0
+* A bug fix
+* Minor changes to get_tf, get_mir and cor_igraph

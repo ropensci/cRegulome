@@ -24,5 +24,5 @@ columns and tables names.}
 A data.frame
 }
 \description{
-Not meant to be called direclty by the user.
+Not meant to be called directly by the user.
 }

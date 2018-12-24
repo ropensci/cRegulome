@@ -16,5 +16,5 @@ stat_collect_targets(conn, stat)
 A \code{character} vector
 }
 \description{
-Not meant to be called direclty by the user.
+Not meant to be called directly by the user.
 }

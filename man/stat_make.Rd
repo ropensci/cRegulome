@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_data.R
 \name{stat_make}
 \alias{stat_make}
-\title{Make A SQL statment}
+\title{Make A SQL statement}
 \usage{
 stat_make(reg, study, min_abs_cor, max_num, targets, type = "mir")
 }
@@ -29,7 +29,7 @@ columns and tables names.}
 A character string
 }
 \description{
-Not meant to be called direclty by the user.
+Not meant to be called directly by the user.
 }
 \examples{
 stat_make(reg = 'hsa-let-7g',

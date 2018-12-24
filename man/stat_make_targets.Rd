@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_data.R
 \name{stat_make_targets}
 \alias{stat_make_targets}
-\title{Make A SQL statment to extract target features}
+\title{Make A SQL statement to extract target features}
 \usage{
 stat_make_targets(reg, study, type = "mir")
 }
@@ -21,5 +21,5 @@ columns and tables names.}
 A character string
 }
 \description{
-Not meant to be called direclty by the user.
+Not meant to be called directly by the user.
 }

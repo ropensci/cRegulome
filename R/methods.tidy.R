@@ -108,7 +108,7 @@ cor_tidy.cTF <- function(ob) {
 #' objects. 
 #' 
 #' @inheritParams cor_plot
-#' @param directed A \code{logical} when \code{FALSE} the graph is undirected
+#' @param directed A \code{logical} when \code{FALSE} the graph is indirected
 #'
 #' @return An \code{igraph} object 
 #' 
@@ -208,7 +208,7 @@ cor_igraph.cTF <- function(ob, directed = FALSE) {
 
 #' Prepare correlation data for plotting
 #' 
-#' Not meant to be called direclty by the user.
+#' Not meant to be called directly by the user.
 #'
 #' @param ob A \link{cmicroRNA} or \link{cTF} object such as this returned by
 #' calling \link{cmicroRNA} or \link{cTF}.
@@ -219,7 +219,7 @@ cor_igraph.cTF <- function(ob, directed = FALSE) {
 #' @param add_dir A \code{logical} default TRUE for whether to add a column
 #' called Direction that has the direction of the correlation; positive or 
 #' negative.
-#' @param add_corr A \code{logical} default TRUE for whether to add a colum
+#' @param add_corr A \code{logical} default TRUE for whether to add a column
 #' called Correlation that has the absolute value of the correlation
 #'
 #' @return A \code{data.frame}

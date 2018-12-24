@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/ropensci/cRegulome/branch/master/graph/badge.svg)](https://codecov.io/gh/ropensci/cRegulome)
 [![Build status](https://ci.appveyor.com/api/projects/status/gcmojtcsyt7rcwtk?svg=true)](https://ci.appveyor.com/project/ropensci/cregulome)
 [![](https://badges.ropensci.org/149_status.svg)](https://github.com/ropensci/onboarding/issues/149)  
-[![CRAN version](https://img.shields.io/badge/CRAN-v0.1.0-blue.svg)](https://CRAN.R-project.org/package=cRegulome) 
+[![CRAN version](https://img.shields.io/badge/CRAN-v0.3.0-blue.svg)](https://CRAN.R-project.org/package=cRegulome) 
 ![downloads](https://cranlogs.r-pkg.org/badges/grand-total/cRegulome)  
 
 # cRegulome  

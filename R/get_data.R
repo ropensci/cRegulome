@@ -160,7 +160,7 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
         for(s in 1:length(study)) {
             # when targets are neither requested provided
             if(!targets_only & missing(targets)) {
-                # construct query statment
+                # construct query statement
                 stat <- stat_make(mir[m],
                                   study = study[s],
                                   min_abs_cor = min_abs_cor,
@@ -191,7 +191,7 @@ get_mir <- function(conn, mir, study, min_abs_cor, max_num,
                     tars <- intersect(tars, targets)
                 }
                 
-                # construct a query statment, with targets
+                # construct a query statement, with targets
                 stat <- stat_make(mir[m],
                                   study = study[s],
                                   min_abs_cor = min_abs_cor,
@@ -324,7 +324,7 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
         for(s in 1:length(study)) {
             # when targets are neither requested provided
             if(!targets_only & missing(targets)) {
-                # construct query statment
+                # construct query statement
                 stat <- stat_make(tf[m],
                                   study = study[s],
                                   min_abs_cor = min_abs_cor,
@@ -359,7 +359,7 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
                     tars <- intersect(tars, targets)
                 }
                 
-                # construct a query statment, with targets
+                # construct a query statement, with targets
                 stat <- stat_make(tf[m],
                                   study = study[s],
                                   min_abs_cor = min_abs_cor,
@@ -396,9 +396,9 @@ get_tf <- function(conn, tf, study, min_abs_cor, max_num,
     return(dat)
 }
 
-#' Make A SQL statment
+#' Make A SQL statement
 #' 
-#' Not meant to be called direclty by the user.
+#' Not meant to be called directly by the user.
 #'
 #' @param reg A \code{character} vector of one or more regulator ID.
 #' @param study A \code{character} vector of The Cancer Genome Atlas (TCGA)
@@ -497,7 +497,7 @@ stat_make <- function(reg, study, min_abs_cor, max_num, targets,
 
 #' Collect data from SQLite database
 #' 
-#' Not meant to be called direclty by the user.
+#' Not meant to be called directly by the user.
 #'
 #' @param conn A connection such as this returned by 
 #' \code{\link[DBI]{dbConnect}}
@@ -531,9 +531,9 @@ stat_collect <- function(conn, study, stat, type = 'mir') {
     return(df)
 }
 
-#' Make A SQL statment to extract target features
+#' Make A SQL statement to extract target features
 #' 
-#' Not meant to be called direclty by the user.
+#' Not meant to be called directly by the user.
 #'
 #' @inheritParams stat_make
 #' 
@@ -553,7 +553,7 @@ stat_make_targets <- function(reg, study, type = 'mir') {
 
 #' Collect target features from SQLite database
 #' 
-#' Not meant to be called direclty by the user.
+#' Not meant to be called directly by the user.
 #'
 #' @inheritParams stat_collect
 #'

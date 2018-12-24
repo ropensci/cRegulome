@@ -10,7 +10,7 @@ cor_igraph(ob, directed = FALSE)
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
 
-\item{directed}{A \code{logical} when \code{FALSE} the graph is undirected}
+\item{directed}{A \code{logical} when \code{FALSE} the graph is indirected}
 }
 \value{
 An \code{igraph} object
