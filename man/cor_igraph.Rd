@@ -4,11 +4,13 @@
 \alias{cor_igraph}
 \title{Make an igraph object}
 \usage{
-cor_igraph(ob)
+cor_igraph(ob, directed = FALSE)
 }
 \arguments{
 \item{ob}{A \link{cmicroRNA} or \link{cTF} object such as this returned by
 calling \link{cmicroRNA} or \link{cTF}.}
+
+\item{directed}{A \code{logical} when \code{FALSE} the graph is undirected}
 }
 \value{
 An \code{igraph} object

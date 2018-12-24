@@ -108,6 +108,7 @@ cor_tidy.cTF <- function(ob) {
 #' objects. 
 #' 
 #' @inheritParams cor_plot
+#' @param directed A \code{logical} when \code{FALSE} the graph is undirected
 #'
 #' @return An \code{igraph} object 
 #' 
@@ -134,12 +135,12 @@ cor_tidy.cTF <- function(ob) {
 #' @importFrom igraph graph_from_data_frame
 #' 
 #' @export
-cor_igraph <- function(ob) {
+cor_igraph <- function(ob, directed = FALSE) {
     UseMethod('cor_igraph')
 }
 
 #' @export
-cor_igraph.cmicroRNA <- function(ob) {
+cor_igraph.cmicroRNA <- function(ob, directed = FALSE) {
     # get a tidy data.frame of the object
     dat <- cor_tidy(ob)
     
@@ -165,13 +166,14 @@ cor_igraph.cmicroRNA <- function(ob) {
     
     # make graph
     g <- graph_from_data_frame(d = edgs,
-                               vertices = vrtcs)
+                               vertices = vrtcs,
+                               directed = directed)
     # return graph
     return(g)
 }
 
 #' @export
-cor_igraph.cTF <- function(ob) {
+cor_igraph.cTF <- function(ob, directed = FALSE) {
     # get a tidy data.frame of the object
     dat <- cor_tidy(ob)
     
@@ -197,7 +199,8 @@ cor_igraph.cTF <- function(ob) {
     
     # make graph
     g <- graph_from_data_frame(d = edgs,
-                               vertices = vrtcs)
+                               vertices = vrtcs,
+                               directed = directed)
     
     # return graph
     return(g)
