@@ -17,7 +17,7 @@
     - Reduced code dependencies
     - Improved code performance
 
-# cRegulome 0.2.0
+# cRegulome 0.3.0
     
     - Bug fix: since 0.2.0 the argument targets_only did not work  properly.
     The bug is fixed and tested in this release.
