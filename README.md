@@ -99,18 +99,13 @@ ob <- cmicroRNA(dat)
 ob
 ```
 
-```r
-# plot object
-ob
-```
-## More
+## Documentation
 
-More information and examples of using **cRegulome**  
 ```r
 browseVignettes("cRegulome")
-```  
-
-More about the database file [here](https://github.com/MahShaaban/cRegulomedb)  
+```
+Alternatively, the vingettes can be found online, [case_study](http://rpubs.com/MahShaaban/cRegulome1) 
+and [using_cRegulome](http://rpubs.com/MahShaaban/cRegulome2).
 
 ## Citation  
 
