@@ -40,10 +40,10 @@ test_that('cor_venn_diagram works', {
 
 test_that('cor_upset works', {
     g <- cor_upset(cmir)
-    expect_true(is.null(g))
+    expect_s3_class(g, 'upset')
     
     g <- cor_upset(ctf)
-    expect_true(is.null(g))
+    expect_s3_class(g, 'upset')
 })
 
 test_that('cor_hist works', {

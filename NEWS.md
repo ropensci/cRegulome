@@ -1,3 +1,7 @@
+# cRegulome 0.3.1
+    
+    - Fixed a CRAN test failure due to changes in a dep pkg
+
 # cRegulome 0.3.0
     
     - Bug fix: since 0.2.0 the argument targets_only did not work properly.
