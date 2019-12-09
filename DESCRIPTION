@@ -12,7 +12,7 @@ Authors@R: person("Mahmoud", "Ahmed",
     email = "mahmoud.s.fahmy@students.kasralainy.edu.eg",
     role = c("aut", "cre"),
     comment = c(ORCID = "0000-0002-4377-6541"))
-URL: https://github.com/ropensci/cRegulome
+URL: https://docs.ropensci.org/cRegulome, https://github.com/ropensci/cRegulome
 BugReports: https://github.com/ropensci/cRegulome/issues
 Encoding: UTF-8
 LazyData: true
