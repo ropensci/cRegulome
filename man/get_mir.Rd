@@ -4,8 +4,7 @@
 \alias{get_mir}
 \title{Get microRNA correlations from cRegulome.db}
 \usage{
-get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE,
-  targets)
+get_mir(conn, mir, study, min_abs_cor, max_num, targets_only = FALSE, targets)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 

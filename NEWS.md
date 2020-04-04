@@ -1,3 +1,7 @@
+# cRegulome 0.3.2
+    
+    - Restored on CRAN
+    
 # cRegulome 0.3.1
     
     - Fixed a CRAN test failure due to changes in a dep pkg

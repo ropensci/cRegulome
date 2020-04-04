@@ -4,8 +4,7 @@
 \alias{get_tf}
 \title{Get transcription factor correlations from cRegulome.db}
 \usage{
-get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE,
-  targets)
+get_tf(conn, tf, study, min_abs_cor, max_num, targets_only = FALSE, targets)
 }
 \arguments{
 \item{conn}{A connection such as this returned by 

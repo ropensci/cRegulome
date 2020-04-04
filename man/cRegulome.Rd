@@ -3,7 +3,6 @@
 \docType{package}
 \name{cRegulome}
 \alias{cRegulome}
-\alias{cRegulome-package}
 \title{\code{cRegulome} package}
 \description{
 Download, access and visualize Regulome (microRNA and transcription factors)

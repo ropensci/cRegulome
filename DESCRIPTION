@@ -1,6 +1,6 @@
 Package: cRegulome
 Type: Package
-Version: 0.3.1
+Version: 0.3.2
 Title: Obtain and Visualize Regulome-Gene Expression Correlations in Cancer
 Description: Builds a 'SQLite' database file of pre-calculated transcription 
     factor/microRNA-gene correlations (co-expression) in cancer from the 
@@ -16,7 +16,7 @@ URL: https://docs.ropensci.org/cRegulome, https://github.com/ropensci/cRegulome
 BugReports: https://github.com/ropensci/cRegulome/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Depends: R(>= 2.10.0)
 Imports: DBI,
     graphics,
